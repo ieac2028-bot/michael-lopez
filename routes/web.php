@@ -11,6 +11,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/attorneys', [PageController::class, 'attorneys'])->name('attorneys');
 Route::get('/practice-areas', [PageController::class, 'practiceAreas'])->name('practice-areas');
 Route::get('/the-firm', [PageController::class, 'firm'])->name('firm');
+Route::get('/about-us', [PageController::class, 'aboutUs'])->name('about-us');
 
 Route::get('/client-portal', [ClientPortalController::class, 'show'])->name('client-portal');
 Route::post('/client-portal/lookup', [ClientPortalController::class, 'lookup'])->name('client-portal.lookup');

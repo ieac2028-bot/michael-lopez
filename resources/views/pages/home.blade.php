@@ -59,6 +59,16 @@
     <div class="badge"><div class="mark">Connect</div><div class="full">Send a consultation inquiry</div></div>
   </div>
 
+  <section class="home-about" aria-labelledby="home-about-title">
+    <div class="eyebrow">ABOUT US</div>
+    <h2 class="home-about__title" id="home-about-title">SALUDO TALEON OCAMPO AND ASSOCIATES LAW OFFICES</h2>
+    <p class="home-about__lead"><strong>With over 60 years of experience, the firm brings depth, continuity, and familiarity with both longstanding and emerging legal issues in the Philippines.</strong></p>
+    <p>The firm provides legal services designed to meet a wide range of client needs. With coordinated legal divisions, it handles matters across multiple areas of law, offering cohesive legal support through each stage of a case or transaction. Its work focuses on practical results aligned with client objectives, guided by clear strategies and informed assessments.</p>
+    <p>The firm also maintains an active litigation practice, with lawyers regularly appearing before courts and administrative bodies in a variety of cases.</p>
+
+    <a class="home-about__link" href="{{ route('about-us') }}" target="_blank" rel="noopener">Read More about the Firm <span aria-hidden="true">↗</span></a>
+  </section>
+
   @include('partials.recognition-logos')
 
 @endsection
