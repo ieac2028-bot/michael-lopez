@@ -319,6 +319,7 @@ p.lead { color: var(--ink-soft); font-size: 1rem; line-height: 1.65; max-width: 
 .footer-col a, .footer-col .hours-val { display: block; font-size: 0.84rem; color: #C9BDB6; text-decoration: none; margin-bottom: 9px; cursor: pointer; background: none; border: none; padding: 0; text-align: left; font-family: var(--font-sans); }
 .footer-col a:hover { color: var(--red); }
 .footer-col .hours-val { color: #fff; font-weight: 600; cursor: default; }
+.footer-col .footer-office-hours { margin: 0; color: #fff; font-size: clamp(1.25rem, 2vw, 1.65rem); font-weight: 700; letter-spacing: -.02em; line-height: 1.25; }
 
 .footer-bottom { border-top: 1px solid #312A25; }
 .footer-bottom-inner { max-width: 1120px; margin: 0 auto; padding: 16px 28px calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; color: #9A8F88; }
@@ -547,7 +548,9 @@ input, select, textarea { border-radius: 12px; }
 .safalaw-recognitions__grid img { display: block; width: auto; max-width: 100%; height: 66px; object-fit: contain; }
 .safalaw-recognitions__grid figcaption { color: var(--ink-soft); font-size: .73rem; line-height: 1.35; }
 .firm-profile { margin: 10px 0 40px; }
-.firm-profile__image { display: block; width: 100%; height: clamp(230px, 38vw, 480px); margin: 0 0 28px; border: 1px solid var(--line); border-radius: 16px; object-fit: cover; object-position: center 43%; }
+.firm-profile__image-frame { width: 100%; height: clamp(230px, 38vw, 480px); margin: 0 0 28px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; }
+.firm-profile__image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 43%; transform: scale(1); transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%); transition: transform 220ms ease-out; }
+.firm-profile__image-frame.is-zooming .firm-profile__image { transform: scale(1.65); }
 .firm-profile__practice-heading { margin: 0 0 14px; }
 .firm-profile__practice-heading a { color: var(--red-deep); text-decoration: none; font-weight: 600; }
 .firm-profile__practice-heading a:hover, .firm-profile__practice-heading a:focus-visible { text-decoration: underline; text-underline-offset: .18em; }
@@ -558,12 +561,21 @@ input, select, textarea { border-radius: 12px; }
 .firm-profile__copy p { color: var(--ink-soft); font-size: .98rem; line-height: 1.8; }
 .firm-profile__recognitions { margin-top: 30px; padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
 .firm-profile__recognitions h2 { margin: 0 0 20px; color: var(--ink); text-align: center; font: 600 clamp(1.1rem, 2vw, 1.5rem)/1.35 Georgia, 'Times New Roman', serif; }
+.firm-reviews { margin: 40px 0 12px; }
+.firm-reviews__title { margin: 0 0 8px; color: var(--ink); font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.04em; }
+.firm-reviews__note { margin: 0 0 20px; color: var(--ink-soft); font-size: .84rem; }
+.firm-review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.firm-review { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 30px -26px rgba(6,12,26,.55); }
+.firm-review__stars { color: #D99A20; font-size: 1.05rem; letter-spacing: .12em; }
+.firm-review blockquote { margin: 12px 0 16px; color: var(--ink); font-size: .94rem; line-height: 1.65; }
+.firm-review__label { color: var(--ink-soft); font-size: .73rem; font-weight: 600; }
 .footer-brand .footer-contact a { display: inline; margin: 0; }
 @media (max-width: 900px) { .safalaw-recognitions__grid { gap: 8px; } }
 @media (max-width: 600px) {
   .brand__safalaw-logo { width: 142px; height: 68px; }
   .safalaw-recognitions { padding: 18px 12px; }
-  .firm-profile__image { height: clamp(210px, 58vw, 340px); margin-bottom: 20px; border-radius: 12px; }
+  .firm-profile__image-frame { height: clamp(210px, 58vw, 340px); margin-bottom: 20px; border-radius: 12px; }
+  .firm-review-grid { grid-template-columns: 1fr; }
   .firm-profile__practice-heading { align-items: flex-start; }
   .firm-profile__recognitions { padding: 18px 12px; }
   .safalaw-recognitions__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
@@ -748,6 +760,14 @@ input, select, textarea { border-radius: 12px; }
   --red-deep: #FF9A4D;
   --red-soft: #21170F;
   --black-stripe: #04070F;
+  --header-control-bg: #121B2C;
+  --header-control-hover: #1A2940;
+  --header-control-active: #22344F;
+  --header-control-border: #2A3952;
+  --header-control-active-border: #FF9A4D;
+  --header-cta-bg: #FF923D;
+  --header-cta-hover: #FFA85E;
+  --header-cta-text: #111827;
 }
 .theme-toggle--mobile { display: none; }
 .theme-toggle {
@@ -969,3 +989,43 @@ body { position: relative; isolation: isolate; }
   .accessibility__panel { bottom: 62px; }
   .launcher { right: 8px; }
 }
+
+/* Give header controls a distinct surface in dark mode. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --header-control-bg: #121B2C;
+    --header-control-hover: #1A2940;
+    --header-control-active: #22344F;
+    --header-control-border: #2A3952;
+    --header-control-active-border: #FF9A4D;
+    --header-cta-bg: #FF923D;
+    --header-cta-hover: #FFA85E;
+    --header-cta-text: #111827;
+  }
+}
+:root[data-theme='dark'] {
+  --header-control-bg: #121B2C;
+  --header-control-hover: #1A2940;
+  --header-control-active: #22344F;
+  --header-control-border: #2A3952;
+  --header-control-active-border: #FF9A4D;
+  --header-cta-bg: #FF923D;
+  --header-cta-hover: #FFA85E;
+  --header-cta-text: #111827;
+}
+header nav.topnav a {
+  background: var(--header-control-bg, transparent);
+  box-shadow: inset 0 0 0 1px var(--header-control-border, transparent);
+  transition: color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+header nav.topnav a.active {
+  background: var(--header-control-active, rgba(11,30,63,.08));
+  box-shadow: inset 0 0 0 1px var(--header-control-active-border, transparent);
+}
+header nav.topnav a:hover:not(.active) { background: var(--header-control-hover, rgba(11,30,63,.05)); }
+.theme-toggle {
+  background: var(--header-control-bg, var(--panel));
+  border-color: var(--header-control-border, var(--line));
+}
+.consult-btn { background: var(--header-cta-bg, var(--red)); color: var(--header-cta-text, #fff); }
+.consult-btn:hover { background: var(--header-cta-hover, var(--red-deep)); }

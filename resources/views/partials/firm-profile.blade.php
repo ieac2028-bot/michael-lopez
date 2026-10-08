@@ -1,5 +1,7 @@
 <section class="firm-profile" aria-labelledby="firm-profile-title">
-  <img class="firm-profile__image" src="{{ asset('images/safalaw/firm-team.png') }}" alt="The Saludo Taleon Ocampo and Associates Law Offices team">
+  <div class="firm-profile__image-frame" data-pointer-zoom>
+    <img class="firm-profile__image" src="{{ asset('images/safalaw/firm-team.png') }}" alt="The Saludo Taleon Ocampo and Associates Law Offices team">
+  </div>
   @if($showPracticeAreas ?? false)
     <div class="section-label firm-profile__practice-heading">
       <span>Our Areas of Practice</span>

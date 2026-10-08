@@ -250,6 +250,23 @@ document.querySelectorAll('[data-pointer-art]').forEach((art) => {
   });
 });
 
+// Magnify the homepage team image around the pointer on mouse/trackpad devices.
+document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
+  const image = frame.querySelector('.firm-profile__image');
+  if (!image || !window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) return;
+
+  frame.addEventListener('pointermove', (event) => {
+    const bounds = frame.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((event.clientX - bounds.left) / bounds.width) * 100));
+    const y = Math.max(0, Math.min(100, ((event.clientY - bounds.top) / bounds.height) * 100));
+    frame.style.setProperty('--zoom-x', `${x}%`);
+    frame.style.setProperty('--zoom-y', `${y}%`);
+    frame.classList.add('is-zooming');
+  });
+
+  frame.addEventListener('pointerleave', () => frame.classList.remove('is-zooming'));
+});
+
 // ---- Abogadokonek FAQ assistant ----
 (function () {
   const chatPanel = document.getElementById('chatPanel');

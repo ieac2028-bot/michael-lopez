@@ -116,10 +116,8 @@
     </div>
 
     <div class="footer-col">
-      <h4>Project</h4>
-      <span class="hours-val">Laravel prototype<br>4th-year project</span>
-      <h4 style="margin-top:22px;">Platform</h4>
-      <span class="platform-list">Attorney discovery<br>Consultation inquiries<br>Basic FAQ assistant</span>
+      <h4>Office Hours</h4>
+      <p class="footer-office-hours">9 AM – 5 PM</p>
     </div>
   </div>
 
@@ -146,7 +144,7 @@
 </div>
 
   <button class="launcher" id="launcher" aria-label="Click to open the Abogadokonek assistant" aria-controls="chatPanel" aria-expanded="false">
-  <span class="launcher__prompt" aria-hidden="true">What can I help you with?</span>
+  <span class="launcher__prompt" aria-hidden="true">How can we assist you?</span>
   <svg class="launcher__justice" viewBox="0 0 72 84" aria-hidden="true" focusable="false">
     <defs>
       <linearGradient id="justice-bronze" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F4FCFF"/><stop offset=".35" stop-color="#9CB7C8"/><stop offset=".68" stop-color="#536B7C"/><stop offset="1" stop-color="#DFEFF7"/></linearGradient>
