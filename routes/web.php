@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\ContactController;
@@ -25,3 +27,16 @@ Route::get('/book-consultation', [ConsultationController::class, 'show'])->name(
 Route::post('/book-consultation', [ConsultationController::class, 'store'])->name('consultation.store');
 
 Route::post('/api/chat', [ChatbotController::class, 'respond'])->name('chat.respond');
+
+Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+Route::get('/admin/login', [AdminAuthController::class, 'show'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login')->name('admin.login.store');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->middleware('auth')->name('admin.logout');
+
+Route::middleware(['auth', 'can:manage-safalaw'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::patch('/inquiries/{inquiry}', [AdminController::class, 'updateInquiry'])->name('inquiries.update');
+    Route::post('/inquiries/{inquiry}/accept', [AdminController::class, 'acceptInquiry'])->name('inquiries.accept');
+    Route::patch('/cases/{caseRecord}', [AdminController::class, 'updateCase'])->name('cases.update');
+    Route::patch('/attorneys/{attorney}', [AdminController::class, 'updateAttorney'])->name('attorneys.update');
+});

@@ -19,7 +19,7 @@ class ClientPortalController extends Controller
             'reference_no' => ['required', 'string', 'max:50'],
         ]);
 
-        $caseRecord = CaseRecord::with('attorney')
+        $caseRecord = CaseRecord::with(['attorney', 'practiceArea'])
             ->where('client_email', $data['email'])
             ->where('reference_no', $data['reference_no'])
             ->first();

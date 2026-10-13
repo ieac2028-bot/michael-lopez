@@ -37,6 +37,14 @@
         <div class="glance-card" style="margin-bottom:12px;">
           <div class="k">Assigned attorney</div><div class="v">{{ $caseRecord->attorney->name ?? 'Unassigned' }}</div>
         </div>
+        <div class="glance-card" style="margin-bottom:12px;">
+          <div class="k">Practice area · case status</div><div class="v">{{ $caseRecord->practiceArea?->name ?? 'Under review' }} · {{ ucfirst(str_replace('_', ' ', $caseRecord->status ?? 'active')) }}</div>
+        </div>
+        @if($caseRecord->submitted_at && $caseRecord->accepted_at)
+          <div class="glance-card" style="margin-bottom:12px;">
+            <div class="k">Referral accepted</div><div class="v">{{ $caseRecord->accepted_at->format('M j, Y') }} · Response time {{ $caseRecord->submitted_at->diffForHumans($caseRecord->accepted_at, true) }}</div>
+          </div>
+        @endif
         <div class="glance-card">
           <div class="k">Status timeline</div>
           <div class="v" style="margin-top:8px;">

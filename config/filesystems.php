@@ -33,7 +33,9 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // This app has no file upload/serving flow. Keep Laravel's
+            // signed local-storage endpoints disabled until one is designed.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],

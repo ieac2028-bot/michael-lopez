@@ -55,11 +55,11 @@ function syncThemeButtons() {
     if (themeLogo && logo.getAttribute('src') !== themeLogo) logo.src = themeLogo;
   });
   themeButtons.forEach((button) => {
+    const icon = button.querySelector('.theme-toggle__icon');
+    if (icon) icon.dataset.activeTheme = activeTheme;
     button.setAttribute('aria-pressed', String(activeTheme === 'dark'));
     button.setAttribute('aria-label', `Switch to ${nextTheme} mode`);
-    const icon = button.querySelector('.theme-toggle__icon');
     const label = button.querySelector('.theme-toggle__label');
-    if (icon) icon.textContent = nextTheme === 'dark' ? '☾' : '☀';
     if (label) label.textContent = `${nextTheme === 'dark' ? 'Dark' : 'Light'} mode`;
   });
 }
@@ -76,9 +76,7 @@ themeButtons.forEach((button) => {
       syncThemeButtons();
     };
 
-    const reduceMotion = themeRoot.dataset.a11yMotion === 'true'
-      || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (document.startViewTransition && !reduceMotion) {
+    if (document.startViewTransition) {
       const bounds = button.getBoundingClientRect();
       themeRoot.style.setProperty('--theme-origin-x', `${bounds.left + bounds.width / 2}px`);
       themeRoot.style.setProperty('--theme-origin-y', `${bounds.top + bounds.height / 2}px`);
@@ -149,12 +147,12 @@ document.querySelectorAll('.stat-row').forEach((row) => {
   const trigger = document.querySelector('[data-a11y-trigger]');
   const panel = document.querySelector('[data-a11y-panel]');
   if (!trigger || !panel) return;
-  const defaults = { text: 'default', contrast: false, motion: false, links: false };
+  const defaults = { text: 'default', contrast: false, motion: false, links: false, spacing: false, font: false };
   let prefs = { ...defaults };
   try { prefs = { ...defaults, ...JSON.parse(localStorage.getItem('abogadokonek-a11y') || '{}') }; } catch (_) {}
   const apply = () => {
     root.dataset.a11yText = prefs.text;
-    ['contrast', 'motion', 'links'].forEach((key) => {
+    ['contrast', 'motion', 'links', 'spacing', 'font'].forEach((key) => {
       if (prefs[key]) root.dataset[`a11y${key[0].toUpperCase()}${key.slice(1)}`] = 'true';
       else delete root.dataset[`a11y${key[0].toUpperCase()}${key.slice(1)}`];
     });

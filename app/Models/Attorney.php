@@ -13,11 +13,14 @@ class Attorney extends Model
     protected $fillable = [
         'name', 'photo_path', 'rank', 'practice_area_id', 'specialization_note',
         'sample_rating', 'sample_last_practiced_on', 'years_experience', 'sort_order',
+        'is_available', 'coverage_areas',
     ];
 
     protected $casts = [
         'sample_rating' => 'float',
         'sample_last_practiced_on' => 'date',
+        'is_available' => 'boolean',
+        'coverage_areas' => 'array',
     ];
 
     public function practiceArea(): BelongsTo

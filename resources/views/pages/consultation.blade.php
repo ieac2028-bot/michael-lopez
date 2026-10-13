@@ -3,14 +3,32 @@
 @section('title', 'Request Demo')
 
 @section('content')
-  <div class="eyebrow">SAMPLE REQUEST FLOW</div>
-  <h1 class="page-title">Request a consultation</h1>
-  <p class="lead">Use this sample form to explore how a consultation request could work in the Abogadokonek prototype. Do not enter real or sensitive legal information; submissions are only stored by the demo app.</p>
+  <div class="eyebrow">CLIENT INTAKE</div>
+  <h1 class="page-title">Register a legal inquiry</h1>
+  <p class="lead">Share a non-confidential overview of your legal concern, location, and requirements. This prototype saves the intake locally and suggests attorneys by practice area and stated coverage.</p>
 
   @if(session('status'))
     <div class="glance-card" style="border-left:3px solid var(--green);margin-bottom:24px;max-width:560px;">
       {{ session('status') }}
     </div>
+  @endif
+
+  @if(isset($recommendedAttorneys) && $recommendedAttorneys->isNotEmpty())
+    <section class="glance-card" style="margin:0 0 24px;max-width:760px;">
+      <div class="k">Suggested attorneys</div>
+      <div class="v" style="margin-top:8px;">Suggestions are based on the selected practice area, stated coverage, sample rating, and experience. Availability and rankings are demonstration data and do not constitute a referral.</div>
+      <div class="attorney-grid" style="margin-top:16px;">
+        @foreach($recommendedAttorneys as $attorney)
+          <article class="glance-card">
+            <div class="k">{{ $attorney->rank }} · {{ $attorney->practiceArea?->name }}</div>
+            <div class="v">{{ $attorney->name }}</div>
+            <small>{{ $attorney->years_experience }} years' experience · {{ number_format((float) $attorney->sample_rating, 1) }}/5 sample rating</small>
+          </article>
+        @endforeach
+      </div>
+    </section>
+  @elseif(session()->has('recommended_attorney_ids'))
+    <div class="glance-card" style="margin:0 0 24px;max-width:760px;">No available sample attorney matched that practice area and coverage. The intake is saved for administrative review.</div>
   @endif
 
   <div class="cross-link">
@@ -41,6 +59,21 @@
         @error('phone')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
       </div>
       <div class="form-field">
+        <label>Client type</label>
+        <select name="client_type" required>
+          <option value="">Select a client type</option>
+          <option value="individual" @selected(old('client_type') === 'individual')>Individual</option>
+          <option value="business" @selected(old('client_type') === 'business')>Business</option>
+          <option value="organization" @selected(old('client_type') === 'organization')>Organization</option>
+        </select>
+        @error('client_type')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
+      </div>
+      <div class="form-field">
+        <label>City or area where you need service</label>
+        <input type="text" name="client_location" placeholder="e.g. Makati City" value="{{ old('client_location') }}" required>
+        @error('client_location')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
+      </div>
+      <div class="form-field">
         <label>Practice area</label>
         <select name="practice_area_id" required>
           <option value="">Select a practice area</option>
@@ -66,9 +99,19 @@
         @error('preferred_time')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
       </div>
       <div class="form-field">
-        <label>Briefly describe your matter</label>
-        <textarea name="message" placeholder="Sample summary for the prototype (do not include confidential details).">{{ old('message') }}</textarea>
+        <label>Legal profile</label>
+        <textarea name="legal_profile" placeholder="Briefly describe who is involved and any relevant business or personal context. Do not include confidential details." required>{{ old('legal_profile') }}</textarea>
+        @error('legal_profile')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
+      </div>
+      <div class="form-field">
+        <label>Clarify the case or legal issue</label>
+        <textarea name="message" placeholder="What happened, and what do you need help understanding? Do not include confidential details." required>{{ old('message') }}</textarea>
         @error('message')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
+      </div>
+      <div class="form-field">
+        <label>Client requirements</label>
+        <textarea name="client_requirements" placeholder="List the help, documents, language, or accommodations you may need. Do not upload or include private records." required>{{ old('client_requirements') }}</textarea>
+        @error('client_requirements')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
       </div>
       <button type="submit" class="btn-primary" style="width:100%;">Request consultation</button>
     </form>

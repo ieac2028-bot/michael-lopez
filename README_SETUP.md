@@ -18,6 +18,27 @@ Open `http://127.0.0.1:8000`. The seeded demo client-portal record uses:
 - Email: `demo@client.com`
 - Reference: `ABG-DEMO-0001`
 
+## Local administrative module
+
+The prototype now includes client intake profiling, practice-area and coverage-based sample attorney suggestions, referral assignment, case acceptance timing, case status/outcome tracking, and an admin dashboard. The recorded testimony field is an internal demonstration note and is not shown in the client portal. Attorney ratings and availability are sample data, not real recommendations or appointment confirmations.
+
+Create your own local administrator after migrations:
+
+```bash
+php artisan tinker
+```
+
+At the Tinker prompt, replace the email and password with your own values:
+
+```php
+App\Models\User::updateOrCreate(
+    ['email' => 'admin@example.test'],
+    ['name' => 'SafaLaw Admin', 'password' => Illuminate\Support\Facades\Hash::make('replace-with-a-strong-password'), 'is_admin' => true]
+);
+```
+
+Then visit `http://127.0.0.1:8000/admin/login`. Do not use real client or confidential case information in this prototype.
+
 ## Project notes
 
 - `public/css/app.css` contains the cream, navy, and orange portfolio-inspired styling.
