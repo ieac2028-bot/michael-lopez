@@ -50,6 +50,21 @@ class AbogadokonekSeeder extends Seeder
             ['Atty. Joaquin Flores', 'Associate', PracticeArea::where('slug', 'property')->value('id'), 'Property transactions, land titles, and property disputes', 4.7, '2026-08-14', 4, 7],
             ['Atty. Camille Aquino', 'Associate', PracticeArea::where('slug', 'immigration-law')->value('id'), 'Visa applications, residency, and immigration appeals', 4.8, '2026-09-09', 5, 8],
             ['Atty. Nicolas Dela Cruz', 'Legal Staff', PracticeArea::where('slug', 'litigation')->value('id'), 'Civil and commercial litigation support', 4.6, '2026-08-06', 3, 9],
+            ['Sample Attorney 11', 'Senior Associate', $ip?->id, 'Patent applications, licensing, and intellectual property disputes', 4.7, '2026-09-22', 9, 10],
+            ['Sample Attorney 12', 'Associate', $commercial?->id, 'Commercial contracts, corporate governance, and business transactions', 4.5, '2026-09-19', 4, 11],
+            ['Sample Attorney 13', 'Senior Associate', PracticeArea::where('slug', 'investments')->value('id'), 'Investment structures, regulatory filings, and joint ventures', 4.8, '2026-09-16', 8, 12],
+            ['Sample Attorney 14', 'Senior Partner', PracticeArea::where('slug', 'litigation')->value('id'), 'Civil disputes, mediation, and appellate litigation', 4.9, '2026-09-25', 16, 13],
+            ['Sample Attorney 15', 'Associate', $labor?->id, 'Employment contracts, labor standards, and workplace disputes', 4.6, '2026-09-11', 5, 14],
+            ['Sample Attorney 16', 'Senior Associate', PracticeArea::where('slug', 'family-relations-and-estate-planning')->value('id'), 'Estate planning, succession, and family matters', 4.7, '2026-09-08', 10, 15],
+            ['Sample Attorney 17', 'Associate', PracticeArea::where('slug', 'property')->value('id'), 'Land title review, leases, and property transactions', 4.6, '2026-09-14', 6, 16],
+            ['Sample Attorney 18', 'Senior Associate', PracticeArea::where('slug', 'maritime-law')->value('id'), 'Shipping documentation, cargo claims, and maritime disputes', 4.8, '2026-09-20', 11, 17],
+            ['Sample Attorney 19', 'Associate', $tax?->id, 'Tax compliance, BIR assessments, and refund claims', 4.5, '2026-09-06', 5, 18],
+            ['Sample Attorney 20', 'Senior Associate', PracticeArea::where('slug', 'immigration-law')->value('id'), 'Visa applications, residency matters, and immigration appeals', 4.7, '2026-09-17', 9, 19],
+            ['Sample Attorney 21', 'Associate', PracticeArea::where('slug', 'special-projects')->value('id'), 'Public-private partnerships and emerging business projects', 4.6, '2026-09-10', 6, 20],
+            ['Sample Attorney 22', 'Associate', $ip?->id, 'Trademark registration, copyright, and technology transfer', 4.8, '2026-09-23', 5, 21],
+            ['Sample Attorney 23', 'Senior Associate', $commercial?->id, 'Mergers, shareholder agreements, and corporate transactions', 4.7, '2026-09-21', 12, 22],
+            ['Sample Attorney 24', 'Associate', PracticeArea::where('slug', 'litigation')->value('id'), 'Commercial disputes, contract claims, and case preparation', 4.5, '2026-09-13', 4, 23],
+            ['Sample Attorney 25', 'Senior Associate', PracticeArea::where('slug', 'investments')->value('id'), 'Foreign investment registration and regulatory compliance', 4.8, '2026-09-24', 10, 24],
         ];
 
         $attorneyIds = [];
@@ -81,11 +96,15 @@ class AbogadokonekSeeder extends Seeder
                 'client_email' => 'demo@client.com',
                 'title' => 'Sample consultation request',
                 'attorney_id' => $attorneyIds[4] ?? null,
+                'practice_area_id' => $ip?->id,
+                'status' => 'active',
+                'submitted_at' => '2026-09-12 09:00:00',
+                'accepted_at' => '2026-09-15 14:30:00',
                 'timeline' => [
                     ['label' => 'Sample request submitted', 'date' => '2026-09-12', 'state' => 'done'],
-                    ['label' => 'Demo status reviewed', 'date' => '2026-09-15', 'state' => 'done'],
-                    ['label' => 'Example request in progress', 'date' => null, 'state' => 'current'],
-                    ['label' => 'Example next step', 'date' => null, 'state' => 'pending'],
+                    ['label' => 'Referred to an attorney', 'date' => '2026-09-15', 'state' => 'done'],
+                    ['label' => 'Case review in progress', 'date' => null, 'state' => 'current'],
+                    ['label' => 'Next update from the attorney', 'date' => null, 'state' => 'pending'],
                 ],
             ]
         );

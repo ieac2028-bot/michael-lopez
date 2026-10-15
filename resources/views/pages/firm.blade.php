@@ -20,16 +20,21 @@
         <blockquote>“Professional, responsive, and thoughtful throughout the consultation process.”</blockquote>
         <div class="firm-review__label">Sample review</div>
       </article>
-      <article class="firm-review">
-        <div class="firm-review__stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
-        <blockquote>“We appreciated the clear communication and careful attention to our matter.”</blockquote>
-        <div class="firm-review__label">Sample review</div>
-      </article>
-      <article class="firm-review">
-        <div class="firm-review__stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
-        <blockquote>“The firm made a complicated process easier to understand and navigate.”</blockquote>
-        <div class="firm-review__label">Sample review</div>
-      </article>
     </div>
+    <details class="firm-reviews__more">
+      <summary><span class="firm-reviews__more-open">See all reviews</span><span class="firm-reviews__more-close">Show fewer</span></summary>
+      <div class="firm-review-grid firm-review-grid--more">
+        <article class="firm-review">
+          <div class="firm-review__stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote>“We appreciated the clear communication and careful attention to our matter.”</blockquote>
+          <div class="firm-review__label">Sample review</div>
+        </article>
+        <article class="firm-review">
+          <div class="firm-review__stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>
+          <blockquote>“The firm made a complicated process easier to understand and navigate.”</blockquote>
+          <div class="firm-review__label">Sample review</div>
+        </article>
+      </div>
+    </details>
   </section>
 @endsection

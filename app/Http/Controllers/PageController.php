@@ -25,13 +25,17 @@ class PageController extends Controller
             ->sortBy(fn ($group, $rank) => array_search($rank, $rankOrder) === false
                 ? 99
                 : array_search($rank, $rankOrder));
+        $attorneyCount = $attorneys->sum(fn ($group) => $group->count());
 
-        return view('pages.attorneys', compact('attorneys'));
+        return view('pages.attorneys', compact('attorneys', 'attorneyCount'));
     }
 
     public function practiceAreas()
     {
-        $practiceAreas = PracticeArea::with('attorneys')->orderBy('sort_order')->get();
+        $practiceAreas = PracticeArea::with('attorneys')
+            ->get()
+            ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
 
         return view('pages.practice-areas', compact('practiceAreas'));
     }
@@ -39,6 +43,11 @@ class PageController extends Controller
     public function firm()
     {
         return view('pages.firm');
+    }
+
+    public function legalInsights()
+    {
+        return view('pages.legal-insights');
     }
 
     public function aboutUs()

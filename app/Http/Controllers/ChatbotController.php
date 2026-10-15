@@ -51,22 +51,27 @@ class ChatbotController extends Controller
     ];
 
     private const FAQ = [
-        ['keys' => ['how does matching work', 'how are lawyers matched', 'how do you match', 'matching process', 'how does abogado'], 'reply' => 'AbogadoKonek is designed to clarify a visitor’s general concern, then suggest relevant verified lawyer or legal-aid profiles using practice area, service coverage, and availability. The current prototype has no live provider directory, so it does not make real matches.'],
+        ['keys' => ['what is abogadokonek', 'what is this website', 'what does this site do', 'purpose of this website'], 'reply' => 'Abogadokonek is SAFALAW’s client-discovery and case-management project. This version demonstrates browsing practice areas, sample attorney suggestions, intake, and case-progress screens. Some workflows are prototypes and do not contact or assign real attorneys.'],
+        ['keys' => ['how many attorneys', 'attorney profiles', 'lawyers listed'], 'reply' => 'The site currently shows 25 example attorney profiles. They are demonstration profiles, not confirmation of current staff, credentials, or availability.'],
+        ['keys' => ['how does matching work', 'how are lawyers matched', 'how do you match', 'matching process', 'how does abogado'], 'reply' => 'The consultation demo can suggest sample attorney profiles from the selected practice area and location information entered. Profiles and availability are demonstration data; this is not a live referral or confirmed appointment.'],
+        ['keys' => ['what practice areas', 'practice areas do you handle', 'services does the firm offer', 'legal services'], 'reply' => 'You can browse the practice-area categories and descriptions on the Practice Areas page. The categories are for browsing and do not determine which law applies to a real matter.', 'cta' => 'practice-areas'],
         ['keys' => ['free legal aid', 'legal aid', 'indigent', 'public attorney', 'pao', 'law school clinic', 'ngo'], 'reply' => 'The project concept includes a path to legal-aid providers such as PAO, law-school clinics, and NGOs for people who may need free assistance. Those providers are not connected or verified in this prototype, and only the provider can confirm eligibility.'],
         ['keys' => ['document checklist', 'checklist', 'requirements', 'what documents', 'documents do i need'], 'reply' => 'The planned guided intake can show a checklist based on the selected concern. This prototype cannot determine the documents needed for a real matter; confirm requirements with the lawyer or provider handling it.'],
-        ['keys' => ['referral tracking', 'track a referral', 'track referral', 'case timeline', 'case progress', 'referral status'], 'reply' => 'The project is designed to show referral progress on a timeline and record updates. The current demo is not connected to real referrals, cases, or client records.'],
-        ['keys' => ['verified lawyer', 'verify attorney', 'provider ranking', 'ranked', 'availability and location', 'coverage'], 'reply' => 'The proposed matching considers provider verification, relevant specialization, geographic service coverage, and availability. These are planned criteria; this prototype does not contain live verified profiles or availability.'],
+        ['keys' => ['referral tracking', 'track a referral', 'track referral', 'case timeline', 'case progress', 'referral status', 'track my case', 'case status', 'check my matter'], 'reply' => 'The Client Portal demonstrates case-progress lookup using a verified client account and case reference. Its records are sample project data, not live SAFALAW case records.', 'cta' => 'client-portal'],
+        ['keys' => ['verified lawyer', 'verify attorney', 'provider ranking', 'ranked', 'availability and location', 'coverage', 'how do i choose an attorney', 'can i choose a lawyer'], 'reply' => 'Attorney profiles and matching details on this site are sample data. Confirm an attorney’s identity, qualifications, availability, and engagement terms directly with the office before relying on a profile.'],
         ['keys' => ['is this ai', 'does the bot use ai', 'artificial intelligence', 'how does the assistant work'], 'reply' => 'This assistant uses scripted, keyword-based responses to explain the project and guide browsing. It is not connected to a generative AI model and cannot analyze a real legal problem.'],
-        ['keys' => ['hour', 'open', 'close', 'schedule'], 'reply' => 'This is a student project prototype; real office hours are not configured.'],
-        ['keys' => ['location', 'where are you', 'address', 'located'], 'reply' => 'Abogadokonek is a student project prototype. No office address is configured.'],
-        ['keys' => ['practice area', 'what do you handle', 'what kind of case', 'specializ'], 'reply' => 'Browse the Practice Areas page to see the sample categories in this prototype. Verify any attorney’s qualifications directly before seeking legal services.'],
-        ['keys' => ['need to bring', 'what should i bring', 'prepare for', 'documents for consultation'], 'reply' => 'This prototype does not schedule real consultations. If you meet with a qualified attorney, ask them directly what documents to bring.'],
-        ['keys' => ['how soon', 'next available', 'wait time', 'how long before'], 'reply' => 'This prototype does not have real attorney availability or response times configured.'],
-        ['keys' => ['call', 'phone number', 'contact number', 'landline', 'mobile number'], 'reply' => 'No real contact number is configured in this student project prototype.'],
-        ['keys' => ['case status', 'track my case', 'portal', 'check my matter'], 'reply' => 'The Client Portal page is a demonstration only; it is not connected to real client records.'],
-        ['keys' => ['fee', 'cost', 'how much', 'price', 'rate'], 'reply' => 'This prototype does not provide real legal services or fee information. Confirm any fees directly with a verified attorney.'],
+        ['keys' => ['office hours', 'opening hours', 'business hours', 'what time do you open', 'what time do you close', 'when are you open'], 'reply' => 'The Contact page lists office hours as Monday–Friday, 9 AM–5 PM. Please contact the office directly to confirm holiday availability.'],
+        ['keys' => ['location', 'where are you', 'where is the office', 'address', 'located', 'directions'], 'reply' => 'The office is listed at SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila.', 'cta' => 'contact'],
+        ['keys' => ['practice area', 'what do you handle', 'what kind of case', 'specializ'], 'reply' => 'Browse the Practice Areas page to see the listed categories and descriptions. These help with navigation; they are not an assessment of a real legal matter.', 'cta' => 'practice-areas'],
+        ['keys' => ['need to bring', 'what should i bring', 'prepare for', 'documents for consultation'], 'reply' => 'The website does not publish a document checklist for individual matters. Avoid sending sensitive documents through this prototype; ask the office what to prepare for your specific appointment.'],
+        ['keys' => ['request a consultation', 'make an appointment', 'schedule a consultation', 'consultation appointment'], 'reply' => 'The consultation form demonstrates the intake flow and saves a sample request locally. It is not connected to the firm’s scheduling system, so contact the office directly to request an actual appointment.', 'cta' => 'contact'],
+        ['keys' => ['request a demo', 'see a demo', 'demonstration'], 'reply' => 'The demo request page shows the project’s sample intake flow. Submissions are stored locally and are not sent to the firm.', 'cta' => 'consultation'],
+        ['keys' => ['how soon', 'next available', 'wait time', 'how long before'], 'reply' => 'Attorney availability and response times are not live in this project. Please call or email the office for current availability.', 'cta' => 'contact'],
+        ['keys' => ['call', 'phone number', 'contact number', 'landline', 'mobile number', 'how can i contact', 'contact the firm'], 'reply' => 'You can call +63 2 8897 0527 to 30 or +63 917 164 0184, or email safa@safalaw.com.ph. The Contact page also lists the office address and explains that its message form saves locally rather than emailing the firm.', 'cta' => 'contact'],
+        ['keys' => ['privacy', 'confidential', 'secure', 'protect my information', 'personal information', 'how is my information handled', 'how is data used'], 'reply' => 'This is a project prototype. Its forms save data in the local project database and are not connected to SAFALAW’s live systems. Please do not enter confidential facts, identity numbers, or sensitive documents here.'],
+        ['keys' => ['fee', 'cost', 'how much', 'price', 'rate', 'consultation fee', 'free consultation'], 'reply' => 'Fees and consultation terms are not listed in this project. Please contact the office directly to ask about current rates and payment arrangements.', 'cta' => 'contact'],
         ['keys' => ['recogniz', 'affiliat', 'member of', 'accredit'], 'reply' => 'This project does not claim affiliations or accreditations. Please verify attorney credentials independently.'],
-        ['keys' => ['general question', 'quick question', 'just a question'], 'reply' => 'This prototype has a Contact page for sample questions and a Book a Consultation page to demonstrate the request flow. Neither page currently connects you to a real law office.'],
+        ['keys' => ['general question', 'quick question', 'just a question'], 'reply' => 'You can use the Contact page to view the office’s phone and email details. Its message form saves to the project database but is not connected to the firm’s email.', 'cta' => 'contact'],
     ];
 
     public function respond(Request $request): JsonResponse
@@ -78,7 +83,7 @@ class ChatbotController extends Controller
             return response()->json([
                 'reply' => 'You can view the sample consultation form to see how this project captures a request. It will not book an actual appointment.',
                 'cta' => ['label' => 'View sample request form →', 'route' => route('consultation')],
-                'quickReplies' => ['How does matching work?', 'Help me find a practice area'],
+                'quickReplies' => ['How do I request a consultation?', 'Where is the office?', 'How do I contact the firm?'],
             ]);
         }
 
@@ -86,7 +91,7 @@ class ChatbotController extends Controller
             return response()->json([
                 'reply' => "I can't give legal advice, assess eligibility, or predict how a matter turns out. This prototype does not connect you to an attorney. Use the sample inquiry page only to explore the form flow; for a real concern, speak directly with a qualified lawyer or legal-aid provider.",
                 'cta' => ['label' => 'View sample consultation form →', 'route' => route('consultation')],
-                'quickReplies' => ['Help me find a practice area', 'Can I find free legal aid?'],
+                'quickReplies' => ['Browse practice areas', 'How do I contact the firm?', 'How do I find free legal aid?'],
             ]);
         }
 
@@ -123,8 +128,16 @@ class ChatbotController extends Controller
             if ($this->containsAny($text, $entry['keys'])) {
                 return response()->json([
                     'reply' => $entry['reply'],
-                    'cta' => null,
-                    'quickReplies' => ['Help me find a practice area', 'How does matching work?', 'Can I find free legal aid?'],
+                    'cta' => isset($entry['cta']) ? [
+                        'label' => match ($entry['cta']) {
+                            'contact' => 'View contact information →',
+                            'consultation' => 'View demo request page →',
+                            'client-portal' => 'Open Client Portal →',
+                            default => 'Browse practice areas →',
+                        },
+                        'route' => route($entry['cta']),
+                    ] : null,
+                    'quickReplies' => ['Browse practice areas', 'How do I request a consultation?', 'How do I track my case?', 'What are the office hours?'],
                 ]);
             }
         }
@@ -132,7 +145,7 @@ class ChatbotController extends Controller
         return response()->json([
             'reply' => "I don't have a scripted answer for that. I can guide you to a starting practice-area category and explain the planned matching, legal-aid, checklist, and referral-tracking features. This prototype is not a real law office and cannot provide legal advice.",
             'cta' => ['label' => 'Explore sample practice areas →', 'route' => route('practice-areas')],
-            'quickReplies' => ['Help me find a practice area', 'How does matching work?', 'Can I find free legal aid?'],
+            'quickReplies' => ['Help me find a practice area', 'Browse practice areas', 'How do I request a consultation?', 'How do I contact the firm?'],
         ]);
     }
 

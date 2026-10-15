@@ -48,14 +48,13 @@
     </a>
     <nav class="topnav">
       <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+      <a href="{{ route('firm') }}" class="{{ request()->routeIs('firm') ? 'active' : '' }}">The Firm</a>
       <a href="{{ route('attorneys') }}" class="{{ request()->routeIs('attorneys') ? 'active' : '' }}">Attorneys</a>
       <a href="{{ route('practice-areas') }}" class="{{ request()->routeIs('practice-areas') ? 'active' : '' }}">Practice Areas</a>
-      <a href="{{ route('client-portal') }}" class="{{ request()->routeIs('client-portal*') ? 'active' : '' }}">Client Portal</a>
-      <a href="{{ route('firm') }}" class="{{ request()->routeIs('firm') ? 'active' : '' }}">The Firm</a>
+      <a href="{{ route('legal-insights') }}" class="{{ request()->routeIs('legal-insights') ? 'active' : '' }}" aria-current="{{ request()->routeIs('legal-insights') ? 'page' : 'false' }}">Legal Insights</a>
       <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact*') ? 'active' : '' }}">Contact Us</a>
-      <a href="{{ route('consultation') }}" class="request-demo-link {{ request()->routeIs('consultation*') ? 'active' : '' }}">View Request Demo</a>
+      <a href="{{ route('login') }}" class="consult-btn header-login {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'active' : '' }}" aria-label="Choose login access" aria-current="{{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'page' : 'false' }}">Login</a>
     </nav>
-    <a href="{{ route('admin.login') }}" class="consult-btn" aria-label="Admin sign in">Admin Login</a>
     <button class="theme-toggle theme-toggle--header" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">
       <span class="theme-toggle__icon" data-active-theme="light" aria-hidden="true">
         <svg class="theme-toggle__sun" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
@@ -70,19 +69,18 @@
 <nav class="mobile-nav" id="mobileNav">
   <button class="mn-close" id="mnClose" aria-label="Close menu">✕</button>
   <a class="mn-item {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a>
+  <a class="mn-item {{ request()->routeIs('firm') ? 'active' : '' }}" href="{{ route('firm') }}">The Firm</a>
   <a class="mn-item {{ request()->routeIs('attorneys') ? 'active' : '' }}" href="{{ route('attorneys') }}">Attorneys</a>
   <a class="mn-item {{ request()->routeIs('practice-areas') ? 'active' : '' }}" href="{{ route('practice-areas') }}">Practice Areas</a>
-  <a class="mn-item {{ request()->routeIs('client-portal*') ? 'active' : '' }}" href="{{ route('client-portal') }}">Client Portal</a>
-  <a class="mn-item {{ request()->routeIs('firm') ? 'active' : '' }}" href="{{ route('firm') }}">The Firm</a>
+  <a class="mn-item {{ request()->routeIs('legal-insights') ? 'active' : '' }}" href="{{ route('legal-insights') }}" aria-current="{{ request()->routeIs('legal-insights') ? 'page' : 'false' }}">Legal Insights</a>
   <a class="mn-item {{ request()->routeIs('contact*') ? 'active' : '' }}" href="{{ route('contact') }}">Contact Us</a>
-  <a class="mn-item {{ request()->routeIs('consultation*') ? 'active' : '' }}" href="{{ route('consultation') }}">View Request Demo</a>
   <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">
     <span class="theme-toggle__icon" data-active-theme="light" aria-hidden="true">
       <svg class="theme-toggle__sun" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
       <svg class="theme-toggle__moon" viewBox="0 0 24 24" focusable="false"><path d="M20.3 15.4A8.7 8.7 0 0 1 8.6 3.7 8.8 8.8 0 1 0 20.3 15.4Z"/></svg>
     </span><span class="theme-toggle__label">Dark mode</span>
   </button>
-  <a class="mn-book" href="{{ route('admin.login') }}" style="text-decoration:none;display:block;text-align:center;">Admin Login</a>
+  <a class="mn-book {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'active' : '' }}" href="{{ route('login') }}" aria-label="Choose login access" style="text-decoration:none;display:block;text-align:center;">Login</a>
 </nav>
 
 <main class="page" id="mainContent" tabindex="-1">
@@ -115,6 +113,7 @@
       <a href="{{ route('firm') }}">The Firm</a>
       <a href="{{ route('attorneys') }}">Attorneys</a>
       <a href="{{ route('practice-areas') }}">Practice Areas</a>
+      <a href="{{ route('legal-insights') }}">Legal Insights</a>
       <a href="{{ route('client-portal') }}">Client Portal</a>
       <a href="{{ route('contact') }}">Contact</a>
       <div class="footer-hours">
@@ -167,53 +166,23 @@
   </section>
 </div>
 
-  <button class="launcher" id="launcher" aria-label="Click to open the Abogadokonek assistant" aria-controls="chatPanel" aria-expanded="false">
-  <span class="launcher__prompt" aria-hidden="true">How can we assist you?</span>
-  <svg class="launcher__justice" viewBox="0 0 72 84" aria-hidden="true" focusable="false">
-    <defs>
-      <linearGradient id="justice-bronze" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F4FCFF"/><stop offset=".35" stop-color="#9CB7C8"/><stop offset=".68" stop-color="#536B7C"/><stop offset="1" stop-color="#DFEFF7"/></linearGradient>
-      <linearGradient id="justice-dark-bronze" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#17222C"/><stop offset=".5" stop-color="#607687"/><stop offset="1" stop-color="#121A23"/></linearGradient>
-    </defs>
-    <g class="launcher__justice-figure">
-      <path d="M34 13h4v51h-4zM27 63h18v4H27zM21 69h30v5H21zM16 76h40v4H16z" fill="url(#justice-dark-bronze)" transform="translate(1 1)"/>
-      <path d="M34 13h4v51h-4zM27 63h18v4H27zM21 69h30v5H21zM16 76h40v4H16z" fill="url(#justice-bronze)" stroke="#DDF7FF" stroke-width=".8" stroke-linejoin="round"/>
-      <path d="M35 15v46m-6 5h14m-26 12h40" stroke="#FFF1C7" stroke-width="1" opacity=".7"/>
-      <circle cx="36" cy="10" r="5" fill="url(#justice-dark-bronze)" transform="translate(1 1)"/>
-      <circle cx="36" cy="10" r="5" fill="url(#justice-bronze)" stroke="#DDF7FF" stroke-width="1"/>
-      <circle cx="34.5" cy="8.5" r="1.2" fill="#FFF" opacity=".9"/>
-      <g class="launcher__justice-pan launcher__justice-pan--left">
-        <path d="M10 17v28m-1-27L3 43m7-25 7 25" fill="none" stroke="url(#justice-dark-bronze)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M10 17v28m-1-27L3 43m7-25 7 25" fill="none" stroke="url(#justice-bronze)" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M2 43c1.2 7 14.8 7 16 0" fill="#263744" stroke="url(#justice-bronze)" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M5 44c3 2 8 2 11 0" fill="none" stroke="#EAF9FF" stroke-width=".8"/>
-      </g>
-      <g class="launcher__justice-pan launcher__justice-pan--right">
-        <path d="M62 17v28m-1-27-7 25m7-25 7 25" fill="none" stroke="url(#justice-dark-bronze)" stroke-width="3" stroke-linecap="round"/>
-        <path d="M62 17v28m-1-27-7 25m7-25 7 25" fill="none" stroke="url(#justice-bronze)" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M54 43c1.2 7 14.8 7 16 0" fill="#263744" stroke="url(#justice-bronze)" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M57 44c3 2 8 2 11 0" fill="none" stroke="#EAF9FF" stroke-width=".8"/>
-      </g>
-      <path d="M7 16h58" stroke="url(#justice-dark-bronze)" stroke-width="6" stroke-linecap="round" transform="translate(0 1.5)"/>
-      <path d="M7 16h58" stroke="url(#justice-bronze)" stroke-width="4" stroke-linecap="round"/>
-      <path d="M13 15h46" stroke="#EAF9FF" stroke-width=".8" stroke-linecap="round" opacity=".8"/>
-      <rect x="29" y="19" width="14" height="13" rx="4" fill="#17222C" stroke="url(#justice-bronze)" stroke-width="1.4"/>
-      <path d="M31 22h10" stroke="#718999" stroke-width=".7"/>
-      <circle class="launcher__robot-eye" cx="33" cy="25" r="1.35" fill="#5CE1F1"/>
-      <circle class="launcher__robot-eye" cx="39" cy="25" r="1.35" fill="#5CE1F1"/>
-      <path d="M33 29h6" stroke="#E85A60" stroke-width="1.2" stroke-linecap="round"/>
-      <path d="M31 32v2m10-2v2" stroke="#9CB7C8" stroke-width="1.3" stroke-linecap="round"/>
-      <path class="launcher__scale-glint" d="m63 7 1.4 3.6L68 12l-3.6 1.4L63 17l-1.4-3.6L58 12l3.6-1.4z" fill="#5CE1F1"/>
-    </g>
-  </svg>
-  <span class="launcher__click-label" aria-hidden="true">Click me</span>
+  <button class="launcher" id="launcher" aria-label="Chat with SafaLaw" aria-controls="chatPanel" aria-expanded="false">
+  <span class="launcher__icon" aria-hidden="true">
+    <svg viewBox="0 0 48 48" focusable="false">
+      <path d="M9 10.5A5.5 5.5 0 0 1 14.5 5h19a5.5 5.5 0 0 1 5.5 5.5v15a5.5 5.5 0 0 1-5.5 5.5H22l-9 7v-7.6a5.5 5.5 0 0 1-4-5.3v-14.6Z"/>
+      <circle cx="18" cy="18" r="1.7"/><circle cx="24" cy="18" r="1.7"/><circle cx="30" cy="18" r="1.7"/>
+      <path class="launcher__sparkle" d="m39 28 1.6 4.2L45 34l-4.4 1.7L39 40l-1.7-4.3L33 34l4.3-1.8L39 28Z"/>
+    </svg>
+  </span>
+  <span class="launcher__copy"><span class="launcher__title">Chat with SafaLaw</span><span class="launcher__subtitle">Get help finding a starting point</span></span>
 </button>
 <div class="chat-panel" id="chatPanel" data-endpoint="{{ route('chat.respond') }}">
   <div class="chat-head">
     <div class="dot"></div>
-    <div class="titles"><div class="name">Abogadokonek Assistant</div><div class="sub">Client intake guide</div></div>
+    <div class="titles"><div class="name">SafaLaw Assistant</div><div class="sub">Site and intake guide</div></div>
     <button class="close" id="closeChat" aria-label="Close">✕</button>
   </div>
-  <div class="chat-scope">I can guide you to a practice-area category and explain planned matching, legal-aid, checklist, and referral features. Responses are scripted; this demo gives no legal advice and connects to no real providers.</div>
+  <div class="chat-scope">I provide general information about the firm and this website. I can’t give legal advice or assess an individual case.</div>
   <div class="chat-body" id="chatBody"></div>
   <div class="quick-replies" id="quickReplies"></div>
   <div class="chat-input"><input type="text" id="chatInput" placeholder="Ask something…"><button id="sendBtn">Send</button></div>

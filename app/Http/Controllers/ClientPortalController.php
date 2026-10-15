@@ -15,18 +15,17 @@ class ClientPortalController extends Controller
     public function lookup(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required', 'email'],
             'reference_no' => ['required', 'string', 'max:50'],
         ]);
 
         $caseRecord = CaseRecord::with(['attorney', 'practiceArea'])
-            ->where('client_email', $data['email'])
+            ->whereRaw('LOWER(client_email) = ?', [mb_strtolower($request->user()->email)])
             ->where('reference_no', $data['reference_no'])
             ->first();
 
-        return view('pages.client-portal', [
+        return response()->view('pages.client-portal', [
             'caseRecord' => $caseRecord,
             'notFound' => ! $caseRecord,
-        ]);
+        ], $caseRecord ? 200 : 404);
     }
 }

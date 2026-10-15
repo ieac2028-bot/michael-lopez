@@ -16,8 +16,15 @@ class CaseOwnershipTest extends TestCase
 
     public function test_user_b_cannot_read_update_or_delete_user_a_case(): void
     {
-        $userA = User::factory()->create(['is_admin' => true]);
-        $userB = User::factory()->create(['is_admin' => false]);
+        $userA = User::factory()->create([
+            'email' => 'user-a@example.test',
+            'is_admin' => false,
+        ]);
+        $userB = User::factory()->create([
+            'email' => 'user-b@example.test',
+            'is_admin' => false,
+        ]);
+        $admin = User::factory()->create(['is_admin' => true]);
 
         $area = PracticeArea::create([
             'name' => 'Commercial Law',
@@ -36,7 +43,7 @@ class CaseOwnershipTest extends TestCase
         $this->actingAs($userA)
             ->post(route('consultation.store'), [
                 'full_name' => 'User A',
-                'email' => 'user-a@example.test',
+                'email' => $userA->email,
                 'phone' => '09123456789',
                 'client_type' => 'individual',
                 'client_location' => 'Makati',
@@ -51,29 +58,38 @@ class CaseOwnershipTest extends TestCase
 
         $inquiry = Inquiry::query()->latest('id')->firstOrFail();
 
-        $this->actingAs($userA)
+        $this->actingAs($admin)
             ->post(route('admin.inquiries.accept', $inquiry))
             ->assertRedirect();
 
         $case = CaseRecord::query()->where('inquiry_id', $inquiry->id)->firstOrFail();
 
-        $read = $this->actingAs($userB)->post(route('client-portal.lookup'), [
-            'email' => $case->client_email,
+        $ownerRead = $this->actingAs($userA)->post(route('client-portal.lookup'), [
+            'reference_no' => $case->reference_no,
+        ]);
+        $ownerRead->assertOk()->assertSee('User A test matter');
+
+        $crossUserRead = $this->actingAs($userB)->post(route('client-portal.lookup'), [
+            'reference_no' => $case->reference_no,
+        ]);
+        $forgedEmailRead = $this->actingAs($userB)->post(route('client-portal.lookup'), [
+            'email' => $userA->email,
             'reference_no' => $case->reference_no,
         ]);
 
-        $update = $this->actingAs($userB)->patch(route('admin.cases.update', $case), [
+        $crossUserUpdate = $this->actingAs($userB)->patch(route('admin.cases.update', $case), [
             'status' => 'closed',
         ]);
 
-        $delete = $this->actingAs($userB)->delete('/admin/cases/'.$case->id);
+        $crossUserDelete = $this->actingAs($userB)->delete(route('admin.cases.destroy', $case));
 
-        // Required security contract: every cross-user operation must be hidden
-        // or forbidden. This currently exposes gaps in the app's ownership model.
-        $this->assertSame([403, 403, 404], [
-            $read->getStatusCode(),
-            $update->getStatusCode(),
-            $delete->getStatusCode(),
+        $this->assertSame([404, 403, 403], [
+            $crossUserRead->getStatusCode(),
+            $crossUserUpdate->getStatusCode(),
+            $crossUserDelete->getStatusCode(),
         ]);
+        $forgedEmailRead->assertUnprocessable();
+        $crossUserRead->assertNotFound()->assertSee('No match found')->assertDontSee('User A test matter');
+        $this->assertDatabaseHas('case_records', ['id' => $case->id, 'status' => 'active']);
     }
 }

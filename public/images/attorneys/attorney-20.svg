@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" role="img" aria-label="Illustrated fictional sample attorney portrait">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#48344a"/><stop offset="1" stop-color="#101827"/></linearGradient></defs>
+  <rect width="200" height="240" rx="18" fill="url(#bg)"/><circle cx="100" cy="87" r="69" fill="#fff" opacity=".055"/>
+  <path d="M22 240c5-58 34-83 78-83s73 25 78 83" fill="#d3e0e8"/><path d="m79 163 21 25 21-25 15 77H64z" fill="#f4f1ec"/><path d="m91 182 9 9 9-9-4 58h-10z" fill="#9c2636"/>
+  <rect x="87" y="137" width="26" height="34" rx="10" fill="#d7a783"/><ellipse cx="100" cy="91" rx="47" ry="59" fill="#d7a783"/>
+  <path d="M53 94c-7-22-2-50 14-64 10 21 7 68 2 91l-10 27c-12-12-18-35-17-56zM147 94c7-22 2-50-14-64-10 21-7 68-2 91l10 27c12-12 18-35 17-56z" fill="#251d19"/><path d="M49 91c-4-40 17-68 51-68 37 0 57 27 51 67-20-10-34-26-42-42-14 24-33 38-60 43z" fill="#251d19"/><path d="M78 98c5-3 10-3 14 0m16 0c5-3 10-3 14 0" fill="none" stroke="#211b19" stroke-width="3" stroke-linecap="round"/><circle cx="87" cy="108" r="2.5" fill="#241b1a"/><circle cx="114" cy="108" r="2.5" fill="#241b1a"/><path d="M94 129c4 3 9 3 13 0" fill="none" stroke="#8b3f40" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M52 223h96" stroke="#fff" opacity=".22"/>
+</svg>

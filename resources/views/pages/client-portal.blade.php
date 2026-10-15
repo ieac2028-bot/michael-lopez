@@ -5,23 +5,26 @@
 @section('content')
   <div class="eyebrow">FOR EXISTING CLIENTS</div>
   <h1 class="page-title">Client portal</h1>
-  <p class="lead">Check where your matter stands without having to call the office — see your case status, the attorney assigned, and what's next.</p>
+  <p class="lead">Check where your matter stands. Case lookups are matched to your verified client account email.</p>
+
+  <div class="client-portal-toolbar">
+    <span>Signed in as <strong>{{ auth()->user()->email }}</strong></span>
+    <form method="POST" action="{{ route('client.logout') }}">
+      @csrf
+      <button class="btn-ghost" type="submit">Sign out</button>
+    </form>
+  </div>
 
   <div class="contact-grid">
     <form method="POST" action="{{ route('client-portal.lookup') }}">
       @csrf
       <div class="form-field">
-        <label>Email on file</label>
-        <input type="email" name="email" placeholder="you@email.com" value="{{ old('email') }}" required>
+        <label for="case-reference">Case reference number</label>
+        <input id="case-reference" type="text" name="reference_no" placeholder="e.g. SAFA-2026-ABC123" value="{{ old('reference_no') }}" maxlength="50" required>
       </div>
-      <div class="form-field">
-        <label>Case reference number</label>
-        <input type="text" name="reference_no" placeholder="e.g. SAFA-2026-0147" value="{{ old('reference_no') }}" required>
-      </div>
-      @error('email')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
       @error('reference_no')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
       <button type="submit" class="btn-primary" style="width:100%;">View case status</button>
-      <p style="font-size:0.76rem;color:var(--ink-soft);margin-top:10px;">Try the sample reference <strong>SAFA-2026-0147</strong> with <strong>demo@client.com</strong> to see this working.</p>
+      <p style="font-size:0.76rem;color:var(--ink-soft);margin-top:10px;">For your privacy, results are limited to cases associated with your verified account email.</p>
     </form>
 
     <div>
@@ -30,7 +33,8 @@
           <div class="k">No match found</div>
           <div class="v">Double-check your email and case reference number, or contact the office if you believe this is an error.</div>
         </div>
-      @elseif($caseRecord)
+      @endif
+      @if($caseRecord)
         <div class="glance-card" style="margin-bottom:12px;">
           <div class="k">Case reference</div><div class="v">{{ $caseRecord->reference_no }} — {{ $caseRecord->title }}</div>
         </div>

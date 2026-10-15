@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Attorney extends Model
 {
@@ -26,6 +27,11 @@ class Attorney extends Model
     public function practiceArea(): BelongsTo
     {
         return $this->belongsTo(PracticeArea::class);
+    }
+
+    public function account(): HasOne
+    {
+        return $this->hasOne(User::class);
     }
 
     public function getInitialsAttribute(): string

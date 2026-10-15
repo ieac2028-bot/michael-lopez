@@ -15,13 +15,20 @@ class AdminController extends Controller
 {
     public function index()
     {
+        $inquiries = Inquiry::with(['practiceArea', 'attorney', 'caseRecord'])->latest()->get();
+        $cases = CaseRecord::with(['attorney', 'practiceArea'])->latest()->get();
+        $attorneys = Attorney::with(['practiceArea', 'account'])
+            ->orderByDesc('sample_rating')
+            ->orderByDesc('years_experience')
+            ->get();
+
         return view('admin.dashboard', [
-            'inquiries' => Inquiry::with(['practiceArea', 'attorney', 'caseRecord'])->latest()->get(),
-            'cases' => CaseRecord::with(['attorney', 'practiceArea'])->latest()->get(),
-            'attorneys' => Attorney::with('practiceArea')
-                ->orderByDesc('sample_rating')
-                ->orderByDesc('years_experience')
-                ->get(),
+            'inquiries' => $inquiries,
+            'cases' => $cases,
+            'attorneys' => $attorneys,
+            'pendingInquiryCount' => $inquiries->whereIn('status', ['new', 'reviewing', 'clarifying', 'referred'])->count(),
+            'openCaseCount' => $cases->whereIn('status', ['active', 'on_hold'])->count(),
+            'availableAttorneyCount' => $attorneys->where('is_available', true)->count(),
         ]);
     }
 

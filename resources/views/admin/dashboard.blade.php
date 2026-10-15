@@ -6,24 +6,33 @@
   <div class="admin-page-head">
     <div>
       <div class="eyebrow">SAFALAW STAFF</div>
-      <h1 class="page-title">Intake and case management</h1>
-      <p class="lead">Review client registration, verify practice area and coverage, assign an available attorney, and track referrals through case outcomes.</p>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="lead">A quick view of new inquiries, active matters, and attorney availability.</p>
     </div>
     <form method="POST" action="{{ route('admin.logout') }}">@csrf<button class="btn-ghost" type="submit">Sign out</button></form>
   </div>
 
-  <p class="admin-prototype-note">Prototype workspace. Use sample information only; do not store confidential client records or rely on sample rankings as legal advice.</p>
+  <p class="admin-prototype-note">Prototype only. Use sample information; do not enter confidential client details.</p>
   @if(session('admin_status'))<div class="glance-card admin-flash" role="status">{{ session('admin_status') }}</div>@endif
   @if($errors->any())<div class="glance-card admin-errors" role="alert">{{ $errors->first() }}</div>@endif
 
-  <section class="admin-section" aria-labelledby="admin-inquiries-title">
-    <div class="admin-section-head"><div><div class="eyebrow">CLIENT REGISTRATION · LEGAL PROFILING · CLARIFICATION</div><h2 id="admin-inquiries-title">Intake and referrals</h2></div><span>{{ $inquiries->count() }} total</span></div>
+  <section class="admin-metrics" aria-label="Dashboard overview">
+    <a class="admin-metric" href="#admin-inquiries"><span>Needs review</span><strong>{{ $pendingInquiryCount }}</strong><small>inquiries</small></a>
+    <a class="admin-metric" href="#admin-cases"><span>In progress</span><strong>{{ $openCaseCount }}</strong><small>matters</small></a>
+    <a class="admin-metric" href="#admin-attorneys"><span>Available</span><strong>{{ $availableAttorneyCount }}</strong><small>attorneys</small></a>
+    <a class="admin-metric" href="#admin-cases"><span>Total</span><strong>{{ $cases->count() }}</strong><small>cases</small></a>
+  </section>
+
+  <section class="admin-section" id="admin-inquiries" aria-labelledby="admin-inquiries-title">
+    <div class="admin-section-head"><div><div class="eyebrow">INBOX</div><h2 id="admin-inquiries-title">Recent inquiries</h2></div><span>{{ $inquiries->count() }} total · {{ $pendingInquiryCount }} to review</span></div>
     @forelse($inquiries as $inquiry)
       <article class="admin-card">
         <div class="admin-card-head">
-          <div><h3>{{ $inquiry->full_name }}</h3><p>{{ $inquiry->email }} @if($inquiry->phone) · {{ $inquiry->phone }} @endif</p></div>
+          <div><h3>{{ $inquiry->full_name }}</h3><p>{{ $inquiry->practiceArea?->name ?? 'General inquiry' }} · {{ $inquiry->created_at->format('M j, Y') }} · {{ $inquiry->email }}</p></div>
           <span class="admin-status-pill">{{ ucfirst($inquiry->status) }}</span>
         </div>
+        <details class="admin-record-details">
+          <summary>Review details and manage referral</summary>
         <div class="admin-data-grid">
           <div><strong>Registration</strong><span>{{ ucfirst($inquiry->client_type ?? 'General inquiry') }} · {{ $inquiry->client_location ?? 'Location not provided' }}</span></div>
           <div><strong>Area verification</strong><span>{{ $inquiry->practiceArea?->name ?? 'Unselected' }}</span></div>
@@ -62,17 +71,22 @@
           @endif
           @if($inquiry->caseRecord)<p>Case opened: <strong>{{ $inquiry->caseRecord->reference_no }}</strong></p>@endif
         </div>
+        </details>
       </article>
     @empty
       <div class="admin-empty">No intake records yet.</div>
     @endforelse
   </section>
 
-  <section class="admin-section" aria-labelledby="admin-cases-title">
-    <div class="admin-section-head"><div><div class="eyebrow">SUBMISSION-TO-ACCEPTANCE · CASE SPAN · OUTCOME</div><h2 id="admin-cases-title">Case tracking</h2></div><span>{{ $cases->count() }} total</span></div>
+  <section class="admin-section" id="admin-cases" aria-labelledby="admin-cases-title">
+    <div class="admin-section-head"><div><div class="eyebrow">CASEWORK</div><h2 id="admin-cases-title">Case tracking</h2></div><span>{{ $cases->count() }} total</span></div>
     @forelse($cases as $case)
       <article class="admin-card">
-        <div class="admin-card-head"><div><h3>{{ $case->reference_no }} · {{ $case->title }}</h3><p>{{ $case->client_email }} · {{ $case->practiceArea?->name ?? 'Practice area not set' }} · {{ $case->attorney?->name ?? 'Unassigned' }}</p></div><span class="admin-status-pill">{{ ucfirst(str_replace('_', ' ', $case->status ?? 'active')) }}</span></div>
+        <div class="admin-card-head"><div><h3>{{ $case->reference_no }}</h3><p>{{ $case->practiceArea?->name ?? 'Practice area not set' }} · {{ $case->attorney?->name ?? 'Unassigned' }} · Updated {{ $case->updated_at->format('M j, Y') }}</p></div><span class="admin-status-pill">{{ ucfirst(str_replace('_', ' ', $case->status ?? 'active')) }}</span></div>
+        <details class="admin-record-details">
+          <summary>View case details and update progress</summary>
+          <p class="admin-case-title">{{ $case->title }}</p>
+          <p class="admin-case-email">Client: {{ $case->client_email }}</p>
         <div class="admin-data-grid">
           <div><strong>Submitted</strong><span>{{ $case->submitted_at?->format('M j, Y g:i A') ?? 'Not recorded' }}</span></div>
           <div><strong>Accepted</strong><span>{{ $case->accepted_at?->format('M j, Y g:i A') ?? 'Pending' }}</span></div>
@@ -88,17 +102,20 @@
           <label class="admin-private-note">Private recorded testimony / case note<textarea name="testimony" rows="2" placeholder="Internal sample note only; do not enter confidential testimony.">{{ $case->testimony }}</textarea></label>
           <button type="submit" class="btn-primary">Update case record</button>
         </form>
+        </details>
       </article>
     @empty
       <div class="admin-empty">No accepted referrals have been opened as cases.</div>
     @endforelse
   </section>
 
-  <section class="admin-section" aria-labelledby="admin-attorneys-title">
-    <div class="admin-section-head"><div><div class="eyebrow">LAWYER RECOMMENDATION · AREA COVERAGE · AVAILABILITY</div><h2 id="admin-attorneys-title">Attorney ranking and coverage</h2></div></div>
-    <p class="admin-section-note">Ranked by sample rating, then years of experience. Change availability and comma-separated service areas to affect future suggestions.</p>
+  <section class="admin-section" id="admin-attorneys" aria-labelledby="admin-attorneys-title">
+    <details class="admin-attorney-section">
+    <summary class="admin-section-head"><div><div class="eyebrow">TEAM</div><h2 id="admin-attorneys-title">Attorney availability and accounts</h2></div><span>{{ $attorneys->count() }} profiles · {{ $availableAttorneyCount }} available</span></summary>
+    <p class="admin-section-note">Update service coverage or issue an individual account for a real attorney. Example profiles and ratings are sample data.</p>
     <div class="admin-attorney-list">
       @foreach($attorneys as $index => $attorney)
+        <div class="admin-card">
         <form class="admin-attorney-row" method="POST" action="{{ route('admin.attorneys.update', $attorney) }}">
           @csrf @method('PATCH')
           <strong class="admin-rank">#{{ $index + 1 }}</strong>
@@ -108,7 +125,20 @@
           <label class="admin-coverage">Service areas<input type="text" name="coverage_areas" value="{{ implode(', ', $attorney->coverage_areas ?? []) }}" placeholder="All Philippines or city/region names"></label>
           <button type="submit" class="btn-ghost">Save</button>
         </form>
+        <div class="admin-attorney-account">
+          @if($attorney->account)
+            <p>Attorney login: <strong>{{ $attorney->account->email }}</strong> · {{ $attorney->account->hasVerifiedEmail() ? 'Email verified' : 'Awaiting password setup and email verification' }}</p>
+          @else
+            <form class="admin-inline-form" method="POST" action="{{ route('admin.attorneys.account.store', $attorney) }}">
+              @csrf
+              <label>Attorney account email <input type="email" name="email" value="{{ old('email') }}" autocomplete="email" required maxlength="150"></label>
+              <button type="submit" class="btn-primary">Create login and email setup link</button>
+            </form>
+          @endif
+        </div>
+        </div>
       @endforeach
     </div>
+    </details>
   </section>
 @endsection

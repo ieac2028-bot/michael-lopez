@@ -265,7 +265,7 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
   frame.addEventListener('pointerleave', () => frame.classList.remove('is-zooming'));
 });
 
-// ---- Abogadokonek FAQ assistant ----
+// ---- SafaLaw site assistant ----
 (function () {
   const chatPanel = document.getElementById('chatPanel');
   const launcher = document.getElementById('launcher');
@@ -285,10 +285,25 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
     launcher.setAttribute('aria-expanded', 'true');
     if (chatBody.children.length === 0) startConversation();
   });
-  closeChat.addEventListener('click', () => {
+  function closeAssistant(returnFocus = false) {
     chatPanel.classList.remove('open');
     launcher.setAttribute('aria-expanded', 'false');
-    launcher.focus();
+    if (returnFocus) launcher.focus();
+  }
+
+  closeChat.addEventListener('click', () => closeAssistant(true));
+  document.addEventListener('pointerdown', (event) => {
+    if (!chatPanel.classList.contains('open')) return;
+    if (chatPanel.contains(event.target) || launcher.contains(event.target)) return;
+    closeAssistant();
+  });
+  document.addEventListener('focusin', (event) => {
+    if (!chatPanel.classList.contains('open')) return;
+    if (chatPanel.contains(event.target) || launcher.contains(event.target)) return;
+    closeAssistant();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && chatPanel.classList.contains('open')) closeAssistant(true);
   });
 
   function addMsg(text, who) {
@@ -324,10 +339,19 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
 
   function startConversation() {
     addMsg(
-      "Hi, I'm the Abogadokonek assistant. I can answer basic questions about this project prototype and guide you through its sample consultation flow. I can't provide legal advice.",
+      "Hi, I'm SafaLaw's site assistant. I can answer basic questions about this website and guide you through its sample inquiry flow. I can't provide legal advice.",
       'bot'
     );
-    setQuickReplies(['Help me find a practice area', 'How does matching work?', 'Can I find free legal aid?']);
+    setQuickReplies([
+      'Help me find a practice area',
+      'What practice areas are available?',
+      'How do I request a consultation?',
+      'Where is the office?',
+      'What are the office hours?',
+      'How do I contact the firm?',
+      'How do I track my case?',
+      'How is my information handled?',
+    ]);
   }
 
   async function handleInput(raw) {

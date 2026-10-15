@@ -21,4 +21,5 @@
     <label class="admin-remember"><input type="checkbox" name="remember" value="1"> Keep me signed in</label>
     <button class="btn-primary" type="submit" style="width:100%;">Sign in</button>
   </form>
+  <p class="client-auth-links"><a href="{{ route('password.request') }}">Forgot password?</a><span aria-hidden="true">·</span><a href="{{ route('attorney.login') }}">Attorney login</a></p>
 @endsection
