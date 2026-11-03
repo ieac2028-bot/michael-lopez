@@ -15,8 +15,10 @@
         </div>
         <h2>Law Firm Staff</h2>
         <p>Secure access for administrators and individually assigned attorneys.</p>
-        <a class="access-card__action access-card__action--primary" href="{{ route('admin.login') }}">Admin Login <span aria-hidden="true">→</span></a>
-        <a class="access-card__action access-card__action--secondary" href="{{ route('attorney.login') }}">Attorney Login <span aria-hidden="true">→</span></a>
+        <div class="access-card__actions">
+          <a class="access-card__action access-card__action--primary" href="{{ route('admin.login') }}">Admin Login <span aria-hidden="true">→</span></a>
+          <a class="access-card__action access-card__action--secondary" href="{{ route('attorney.login') }}">Attorney Login <span aria-hidden="true">→</span></a>
+        </div>
       </article>
 
       <article class="access-card">

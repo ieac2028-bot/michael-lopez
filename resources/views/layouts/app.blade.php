@@ -104,7 +104,7 @@
       </address>
       <div class="footer-app-note">Trusted Philippine legal counsel for over 60 years</div>
       <div class="footer-social">
-        <a href="#" aria-label="Facebook" onclick="return false;">f</a>
+        <a href="https://www.facebook.com/SaludoTaleonOcampo" target="_blank" rel="noopener noreferrer" aria-label="Visit Ocampo &amp; Associates on Facebook">f</a>
       </div>
     </div>
 

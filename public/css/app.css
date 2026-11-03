@@ -484,7 +484,7 @@ header { background: var(--paper); border-bottom: 1px solid var(--line); box-sha
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  background: linear-gradient(90deg, #FF7A1A, #FFC078, #FF7A1A);
+  background: linear-gradient(90deg, #327FA9, #8BC9EC, #327FA9);
   content: '';
   transform: scaleX(0);
   transform-origin: left center;
@@ -500,9 +500,9 @@ header { background: var(--paper); border-bottom: 1px solid var(--line); box-sha
 .stat-row--animated.is-visible .stat { opacity: 1; transform: translateY(0) scale(1); }
 .stat-row--animated.is-visible .stat::after { transform: scaleX(1); }
 .stat-row--animated.is-visible .stat .num { transform: scale(1); opacity: 1; }
-.stat-row--animated.is-visible .stat:nth-child(2) { box-shadow: 0 12px 30px -24px rgba(255,122,26,.65); }
-.stat-row--animated.is-visible .stat:nth-child(3) { box-shadow: 0 16px 36px -25px rgba(255,122,26,.72); }
-.stat-row--animated.is-visible .stat:nth-child(4) { box-shadow: 0 18px 40px -26px rgba(255,122,26,.8); }
+.stat-row--animated.is-visible .stat:nth-child(2) { box-shadow: 0 12px 30px -24px rgba(50,127,169,.36); }
+.stat-row--animated.is-visible .stat:nth-child(3) { box-shadow: 0 16px 36px -25px rgba(50,127,169,.42); }
+.stat-row--animated.is-visible .stat:nth-child(4) { box-shadow: 0 18px 40px -26px rgba(50,127,169,.48); }
 .section-label { color: var(--ink); font-family: var(--font-sans); letter-spacing: -.02em; }
 .site-footer { background: var(--ink); color: rgba(244,244,237,.76); }
 .footer-brand .tagline, .footer-brand .addr, .footer-col a { color: rgba(244,244,237,.72); }
@@ -529,7 +529,7 @@ input, select, textarea { border-radius: 12px; }
   inset: 0 auto auto 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FF7A1A 45%, #FFA155 55%, transparent);
+  background: linear-gradient(90deg, transparent, #327FA9 45%, #8BC9EC 55%, transparent);
   content: '';
   transform: translateX(-100%);
   animation: footer-line-pass 7s ease-in-out infinite;
@@ -678,7 +678,7 @@ input, select, textarea { border-radius: 12px; }
   left: 0;
   width: 42%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FFA155, #FF7A1A, transparent);
+  background: linear-gradient(90deg, transparent, #8BC9EC, #327FA9, transparent);
   content: '';
   opacity: .9;
   transform: translateX(-130%);
@@ -1713,6 +1713,51 @@ html[data-theme='dark'] .header-inner > .theme-toggle--header:hover { border-col
 .chat-body { background: linear-gradient(180deg, var(--paper), var(--panel)); }
 .qr-btn { background: var(--panel); color: var(--ink); }
 .qr-btn:hover, .qr-btn:focus-visible { background: var(--red-soft); }
+
+/* Keep the selected page obvious and make Login use the same blue button set. */
+:root {
+  --header-control-bg: #DDF2FC;
+  --header-control-hover: #C4E4F4;
+  --header-control-active: #286D94;
+  --header-control-border: #B3DDF4;
+  --header-control-active-border: #327FA9;
+  --header-control-active-text: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --header-control-bg: #121B2C;
+    --header-control-hover: #1A2940;
+    --header-control-active: #8BC9EC;
+    --header-control-border: #2A3952;
+    --header-control-active-border: #DDF2FC;
+    --header-control-active-text: #17364D;
+  }
+}
+:root[data-theme='dark'] {
+  --header-control-bg: #121B2C;
+  --header-control-hover: #1A2940;
+  --header-control-active: #8BC9EC;
+  --header-control-border: #2A3952;
+  --header-control-active-border: #DDF2FC;
+  --header-control-active-text: #17364D;
+}
+header nav.topnav a.active { color: var(--header-control-active-text, #FFFFFF); font-weight: 800; }
+header nav.topnav a.header-login {
+  background: var(--header-control-bg);
+  color: var(--ink);
+  border: 1px solid var(--header-control-border);
+  box-shadow: inset 0 0 0 1px var(--header-control-border), inset 0 1px 0 rgba(255,255,255,.62), 0 1px 1px rgba(11,30,63,.045);
+}
+header nav.topnav a.header-login:hover:not(.active) {
+  background: var(--header-control-hover);
+  box-shadow: inset 0 0 0 1px var(--header-control-active-border), inset 0 1px 0 rgba(255,255,255,.72), 0 1px 2px rgba(11,30,63,.06);
+}
+header nav.topnav a.header-login.active {
+  background: var(--header-control-active);
+  color: var(--header-control-active-text, #FFFFFF);
+  font-weight: 800;
+  box-shadow: inset 0 0 0 1px var(--header-control-active-border), 0 2px 0 var(--header-cta-edge), 0 5px 14px -8px rgba(11,30,63,.35);
+}
 .chat-input input { background: var(--paper); color: var(--ink); }
 .chat-input input:focus { background: var(--panel); box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 22%, transparent); }
 .chat-input button { background: var(--header-cta-bg); color: var(--header-cta-text); box-shadow: 0 3px 8px rgba(50,127,169,.22); }
@@ -1784,14 +1829,15 @@ html[data-theme='dark'] .header-inner > .theme-toggle--header:hover { border-col
   pointer-events: none;
 }
 .page > .hero h1 {
-  max-width: 12ch;
-  margin: 0 0 24px;
+  max-width: 14ch;
+  margin: 0 0 20px;
   color: #E7F5FD;
-  font-size: clamp(3.5rem, 9vw, 7.2rem);
+  font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 800;
-  letter-spacing: -.075em;
-  line-height: .96;
+  letter-spacing: -.06em;
+  line-height: 1.02;
 }
+.page > .hero h1 .hero-title__accent { color: #9DD6F1; text-shadow: 0 0 28px rgba(139,201,236,.18); }
 .page > .hero > div:first-child { position: relative; z-index: 1; }
 .page > .hero > div:first-child > p {
   max-width: 58ch;
@@ -1840,7 +1886,7 @@ html[data-theme='dark'] .header-inner > .theme-toggle--header:hover { border-col
     gap: 38px;
     padding: 48px 20px 58px;
   }
-  .page > .hero h1 { max-width: 12ch; font-size: clamp(3.4rem, 12vw, 5rem); }
+  .page > .hero h1 { max-width: 14ch; font-size: clamp(2.75rem, 8vw, 4.25rem); }
   .page > .hero > div:first-child > p { font-size: 1rem; }
   .page > .hero .hero-card {
   position: relative;
@@ -1848,7 +1894,7 @@ html[data-theme='dark'] .header-inner > .theme-toggle--header:hover { border-col
 }
 @media (max-width: 420px) {
   .page > .hero { padding-inline: 18px; }
-  .page > .hero h1 { font-size: clamp(3.15rem, 12.5vw, 3.8rem); }
+  .page > .hero h1 { font-size: clamp(2.5rem, 9vw, 3.15rem); }
   .page > .hero .hero-actions { align-items: stretch; flex-direction: column; }
   .page > .hero .hero-actions a { text-align: center; }
 }

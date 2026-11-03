@@ -5,7 +5,7 @@
 @section('content')
   <div class="hero">
     <div>
-      <h1>Find legal support that fits your situation.</h1>
+      <h1>Find legal support that fits <span class="hero-title__accent">your situation.</span></h1>
       <p>With more than 60 years of experience, Ocampo &amp; Associates Law Offices provides trusted legal counsel across a wide range of practice areas. Explore our services or contact our team to discuss your legal needs.</p>
       <div class="hero-actions">
         <a href="{{ route('consultation') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">Request a Consultation</a>
