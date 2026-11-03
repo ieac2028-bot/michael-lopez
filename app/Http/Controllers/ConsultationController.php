@@ -73,7 +73,6 @@ class ConsultationController extends Controller
             ->with('practiceArea')
             ->where('practice_area_id', $practiceAreaId)
             ->where('is_available', true)
-            ->orderByDesc('sample_rating')
             ->orderByDesc('years_experience')
             ->get()
             ->filter(function (Attorney $attorney) use ($location) {

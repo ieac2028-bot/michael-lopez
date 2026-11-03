@@ -6,9 +6,9 @@
   <div class="hero">
     <div>
       <h1>Find legal support that fits your situation.</h1>
-      <p>Abogadokonek is the client discovery app built to support SafaLaw. Explore the firm’s practice areas, learn about its legal services, and send an inquiry directly to its team.</p>
+      <p>With more than 60 years of experience, Ocampo &amp; Associates Law Offices provides trusted legal counsel across a wide range of practice areas. Explore our services or contact our team to discuss your legal needs.</p>
       <div class="hero-actions">
-        <a href="{{ route('consultation') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">View request demo</a>
+        <a href="{{ route('consultation') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">Request a Consultation</a>
         <a href="{{ route('practice-areas') }}" class="btn-ghost" style="text-decoration:none;display:inline-block;">See practice areas</a>
       </div>
     </div>
@@ -27,8 +27,8 @@
         <span class="hero-card__pointer-ring"></span>
       </div>
       <div class="hero-card__content">
-        <p class="hero-card__eyebrow">SAFALAW</p>
-        <h2 class="safalaw-hero-title">Saludo Taleon Ocampo <span>and Associates Law Offices</span></h2>
+        <p class="hero-card__eyebrow">OCAMPO &amp; ASSOCIATES</p>
+        <h2 class="safalaw-hero-title">OCAMPO <span>&amp; Associates Law Offices</span></h2>
         <p class="safalaw-hero-tagline">A Legacy of Excellence in Philippine Law – Trusted for Over 60 Years</p>
         <a href="{{ route('contact') }}" class="safalaw-message-button">MESSAGE US</a>
       </div>
@@ -44,7 +44,7 @@
     <div class="stat"><div class="num">04</div><div class="label">Send an inquiry</div></div>
   </div>
 
-  <div class="section-label">How Abogadokonek helps</div>
+  <div class="section-label">How We Can Help</div>
   <div class="glance">
     <div class="glance-card"><div class="k">Discover</div><div class="v">Browse legal practice areas and attorney profiles in one place.</div></div>
     <div class="glance-card"><div class="k">Compare</div><div class="v">Review available profile details to identify a suitable contact.</div></div>
@@ -61,7 +61,7 @@
 
   <section class="home-about" aria-labelledby="home-about-title">
     <div class="eyebrow">ABOUT US</div>
-    <h2 class="home-about__title" id="home-about-title">SALUDO TALEON OCAMPO AND ASSOCIATES LAW OFFICES</h2>
+    <h2 class="home-about__title" id="home-about-title">OCAMPO &amp; ASSOCIATES LAW OFFICES</h2>
     <p class="home-about__lead"><strong>With over 60 years of experience, the firm brings depth, continuity, and familiarity with both longstanding and emerging legal issues in the Philippines.</strong></p>
     <p>The firm provides legal services designed to meet a wide range of client needs. With coordinated legal divisions, it handles matters across multiple areas of law, offering cohesive legal support through each stage of a case or transaction. Its work focuses on practical results aligned with client objectives, guided by clear strategies and informed assessments.</p>
     <p>The firm also maintains an active litigation practice, with lawyers regularly appearing before courts and administrative bodies in a variety of cases.</p>

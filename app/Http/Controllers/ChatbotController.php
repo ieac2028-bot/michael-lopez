@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\ChatbotTranslationService;
 
 /**
  * Scoped, rule-based Abogadokonek client orientation assistant.
@@ -41,15 +42,18 @@ class ChatbotController extends Controller
     ];
 
     private const AREA_STARTING_POINTS = [
-        ['keys' => ['work or employment', 'labor concern', 'workplace issue'], 'area' => 'Labor Law', 'slug' => 'labor-law'],
-        ['keys' => ['family or inheritance', 'family concern', 'inheritance concern'], 'area' => 'Family Relations and Estate Planning', 'slug' => 'family-relations-and-estate-planning'],
-        ['keys' => ['property or land', 'land concern', 'property concern'], 'area' => 'Property', 'slug' => 'property'],
-        ['keys' => ['business or contracts', 'business concern', 'contract concern'], 'area' => 'Commercial Law', 'slug' => 'commercial-law'],
-        ['keys' => ['tax concern', 'taxation'], 'area' => 'Taxation', 'slug' => 'taxation'],
-        ['keys' => ['immigration concern', 'immigration'], 'area' => 'Immigration Law', 'slug' => 'immigration-law'],
-        ['keys' => ['intellectual property', 'copyright or trademark'], 'area' => 'Intellectual Property', 'slug' => 'intellectual-property'],
+        ['keys' => ['court case', 'lawsuit', 'sued', 'civil dispute', 'breach of contract', 'arbitration', 'mediation'], 'area' => 'Litigation', 'slug' => 'litigation', 'reason' => 'you mentioned a court case or dispute'],
+        ['keys' => ['work or employment', 'labor concern', 'workplace issue', 'unpaid wages', 'unpaid salary', 'salary', 'overtime pay', 'wrongful dismissal', 'fired from work', 'employment contract'], 'area' => 'Labor Law', 'slug' => 'labor-law', 'reason' => 'you mentioned work, wages, or an employment issue'],
+        ['keys' => ['family or inheritance', 'family concern', 'inheritance concern', 'child custody', 'custody', 'divorce', 'adoption', 'will', 'estate planning'], 'area' => 'Family Relations and Estate Planning', 'slug' => 'family-relations-and-estate-planning', 'reason' => 'you mentioned a family or inheritance matter'],
+        ['keys' => ['property or land', 'land concern', 'property concern', 'land title', 'property title', 'boundary dispute', 'real estate', 'lease', 'land ownership'], 'area' => 'Property', 'slug' => 'property', 'reason' => 'you mentioned land, a title, or real estate'],
+        ['keys' => ['business or contracts', 'business concern', 'contract concern', 'business registration', 'register a company', 'company formation', 'shareholder', 'joint venture', 'commercial contract'], 'area' => 'Commercial Law', 'slug' => 'commercial-law', 'reason' => 'you mentioned a business, company, or commercial contract'],
+        ['keys' => ['tax concern', 'taxation', 'bir audit', 'tax assessment', 'tax filing', 'tax refund'], 'area' => 'Taxation', 'slug' => 'taxation', 'reason' => 'you mentioned a tax filing, audit, or assessment'],
+        ['keys' => ['immigration concern', 'immigration', 'visa', 'residency permit', 'citizenship application'], 'area' => 'Immigration Law', 'slug' => 'immigration-law', 'reason' => 'you mentioned a visa, residency, or citizenship matter'],
+        ['keys' => ['intellectual property', 'copyright or trademark', 'trademark', 'copyright', 'patent', 'licensing', 'invention'], 'area' => 'Intellectual Property', 'slug' => 'intellectual-property', 'reason' => 'you mentioned a trademark, copyright, patent, or licensing issue'],
+        ['keys' => ['shipping', 'vessel', 'cargo claim', 'bill of lading', 'marine insurance', 'maritime'], 'area' => 'Maritime Law', 'slug' => 'maritime-law', 'reason' => 'you mentioned shipping, a vessel, or a cargo matter'],
+        ['keys' => ['foreign investment', 'investment registration', 'investment structure', 'boi', 'peza'], 'area' => 'Investments', 'slug' => 'investments', 'reason' => 'you mentioned an investment or investment registration'],
+        ['keys' => ['public private partnership', 'special project', 'innovative project'], 'area' => 'Special Projects', 'slug' => 'special-projects', 'reason' => 'you mentioned a special initiative or project'],
     ];
-
     private const FAQ = [
         ['keys' => ['what is abogadokonek', 'what is this website', 'what does this site do', 'purpose of this website'], 'reply' => 'Abogadokonek is SAFALAW’s client-discovery and case-management project. This version demonstrates browsing practice areas, sample attorney suggestions, intake, and case-progress screens. Some workflows are prototypes and do not contact or assign real attorneys.'],
         ['keys' => ['how many attorneys', 'attorney profiles', 'lawyers listed'], 'reply' => 'The site currently shows 25 example attorney profiles. They are demonstration profiles, not confirmation of current staff, credentials, or availability.'],
@@ -57,18 +61,18 @@ class ChatbotController extends Controller
         ['keys' => ['what practice areas', 'practice areas do you handle', 'services does the firm offer', 'legal services'], 'reply' => 'You can browse the practice-area categories and descriptions on the Practice Areas page. The categories are for browsing and do not determine which law applies to a real matter.', 'cta' => 'practice-areas'],
         ['keys' => ['free legal aid', 'legal aid', 'indigent', 'public attorney', 'pao', 'law school clinic', 'ngo'], 'reply' => 'The project concept includes a path to legal-aid providers such as PAO, law-school clinics, and NGOs for people who may need free assistance. Those providers are not connected or verified in this prototype, and only the provider can confirm eligibility.'],
         ['keys' => ['document checklist', 'checklist', 'requirements', 'what documents', 'documents do i need'], 'reply' => 'The planned guided intake can show a checklist based on the selected concern. This prototype cannot determine the documents needed for a real matter; confirm requirements with the lawyer or provider handling it.'],
-        ['keys' => ['referral tracking', 'track a referral', 'track referral', 'case timeline', 'case progress', 'referral status', 'track my case', 'case status', 'check my matter'], 'reply' => 'The Client Portal demonstrates case-progress lookup using a verified client account and case reference. Its records are sample project data, not live SAFALAW case records.', 'cta' => 'client-portal'],
+        ['keys' => ['referral tracking', 'track a referral', 'track referral', 'case timeline', 'case progress', 'referral status', 'track my case', 'case status', 'check my matter'], 'reply' => 'Sign in to the Client Portal with your verified client account, enter your case reference number, and submit the lookup. It displays a sample case status and timeline only; it does not contain live SAFALAW case records.', 'cta' => 'client-portal'],
         ['keys' => ['verified lawyer', 'verify attorney', 'provider ranking', 'ranked', 'availability and location', 'coverage', 'how do i choose an attorney', 'can i choose a lawyer'], 'reply' => 'Attorney profiles and matching details on this site are sample data. Confirm an attorney’s identity, qualifications, availability, and engagement terms directly with the office before relying on a profile.'],
         ['keys' => ['is this ai', 'does the bot use ai', 'artificial intelligence', 'how does the assistant work'], 'reply' => 'This assistant uses scripted, keyword-based responses to explain the project and guide browsing. It is not connected to a generative AI model and cannot analyze a real legal problem.'],
-        ['keys' => ['office hours', 'opening hours', 'business hours', 'what time do you open', 'what time do you close', 'when are you open'], 'reply' => 'The Contact page lists office hours as Monday–Friday, 9 AM–5 PM. Please contact the office directly to confirm holiday availability.'],
-        ['keys' => ['location', 'where are you', 'where is the office', 'address', 'located', 'directions'], 'reply' => 'The office is listed at SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila.', 'cta' => 'contact'],
+        ['keys' => ['office hours', 'opening hours', 'business hours', 'what time do you open', 'what time do you close', 'when are you open'], 'reply' => 'The Contact page lists office hours as Monday–Friday, 9 AM–5 PM, Philippine time. The office is closed on weekends; call or email to confirm holiday hours before visiting.', 'cta' => 'contact'],
+        ['keys' => ['location', 'where are you', 'where is the office', 'address', 'located', 'directions'], 'reply' => 'The office address shown on the Contact page is SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila, Philippines. The page also has a map and directions link.', 'cta' => 'contact'],
         ['keys' => ['practice area', 'what do you handle', 'what kind of case', 'specializ'], 'reply' => 'Browse the Practice Areas page to see the listed categories and descriptions. These help with navigation; they are not an assessment of a real legal matter.', 'cta' => 'practice-areas'],
         ['keys' => ['need to bring', 'what should i bring', 'prepare for', 'documents for consultation'], 'reply' => 'The website does not publish a document checklist for individual matters. Avoid sending sensitive documents through this prototype; ask the office what to prepare for your specific appointment.'],
-        ['keys' => ['request a consultation', 'make an appointment', 'schedule a consultation', 'consultation appointment'], 'reply' => 'The consultation form demonstrates the intake flow and saves a sample request locally. It is not connected to the firm’s scheduling system, so contact the office directly to request an actual appointment.', 'cta' => 'contact'],
+        ['keys' => ['request a consultation', 'make an appointment', 'schedule a consultation', 'consultation appointment'], 'reply' => 'Open the consultation request form and enter your contact details, client type, service location, practice area, and preferred schedule. It saves a sample request locally and may show sample attorney suggestions; it does not book a real appointment or notify the firm. Use the Contact page to reach the office directly.', 'cta' => 'consultation'],
         ['keys' => ['request a demo', 'see a demo', 'demonstration'], 'reply' => 'The demo request page shows the project’s sample intake flow. Submissions are stored locally and are not sent to the firm.', 'cta' => 'consultation'],
         ['keys' => ['how soon', 'next available', 'wait time', 'how long before'], 'reply' => 'Attorney availability and response times are not live in this project. Please call or email the office for current availability.', 'cta' => 'contact'],
-        ['keys' => ['call', 'phone number', 'contact number', 'landline', 'mobile number', 'how can i contact', 'contact the firm'], 'reply' => 'You can call +63 2 8897 0527 to 30 or +63 917 164 0184, or email safa@safalaw.com.ph. The Contact page also lists the office address and explains that its message form saves locally rather than emailing the firm.', 'cta' => 'contact'],
-        ['keys' => ['privacy', 'confidential', 'secure', 'protect my information', 'personal information', 'how is my information handled', 'how is data used'], 'reply' => 'This is a project prototype. Its forms save data in the local project database and are not connected to SAFALAW’s live systems. Please do not enter confidential facts, identity numbers, or sensitive documents here.'],
+        ['keys' => ['call', 'phone number', 'contact number', 'landline', 'mobile number', 'how can i contact', 'contact the firm'], 'reply' => 'The Contact page lists the Makati office address, map and directions, telephone +63 2 8897 0527 to 30, mobile +63 917 164 0184, email safa@safalaw.com.ph, and office hours Monday–Friday, 9 AM–5 PM. Its message form saves to this project and is not connected to the firm email.', 'cta' => 'contact'],
+        ['keys' => ['privacy', 'confidential', 'secure', 'protect my information', 'personal information', 'how is my information handled', 'how is data used'], 'reply' => 'This prototype stores contact and consultation form submissions in its local project database; the forms are not connected to SAFALAW email or live case systems. Chat replies use fixed website information. Translation may send non-English text to an online service when it is not covered by the local phrase list. Do not enter confidential facts, identity numbers, or sensitive documents.'],
         ['keys' => ['fee', 'cost', 'how much', 'price', 'rate', 'consultation fee', 'free consultation'], 'reply' => 'Fees and consultation terms are not listed in this project. Please contact the office directly to ask about current rates and payment arrangements.', 'cta' => 'contact'],
         ['keys' => ['recogniz', 'affiliat', 'member of', 'accredit'], 'reply' => 'This project does not claim affiliations or accreditations. Please verify attorney credentials independently.'],
         ['keys' => ['general question', 'quick question', 'just a question'], 'reply' => 'You can use the Contact page to view the office’s phone and email details. Its message form saves to the project database but is not connected to the firm’s email.', 'cta' => 'contact'],
@@ -76,7 +80,7 @@ class ChatbotController extends Controller
 
     public function respond(Request $request): JsonResponse
     {
-        $data = $request->validate(['message' => ['required', 'string', 'max:500']]);
+        $data = $request->validate(['message' => ['required', 'string', 'max:500'], 'language' => ['nullable', 'in:en,es,fil,zh-CN,ko,ja']]);
         $text = mb_strtolower(trim($data['message']));
 
         if ($this->containsAny($text, self::BOOKING_KEYS)) {
@@ -97,8 +101,8 @@ class ChatbotController extends Controller
 
         if ($this->containsAny($text, self::AREA_FINDER_KEYS)) {
             return response()->json([
-                'reply' => 'I can help you choose a starting category for browsing, not determine the legal classification of a real case. Pick the general topic that sounds closest:',
-                'cta' => null,
+                'reply' => 'Choose one of the topic buttons below: work or employment, family or inheritance, property or land, business or contracts, tax, immigration, intellectual property, or something else. You can also browse the full Practice Areas page. This is a navigation guide, not a legal classification of your situation.',
+                'cta' => ['label' => 'Browse full practice areas →', 'route' => route('practice-areas')],
                 'quickReplies' => ['Work or employment', 'Family or inheritance', 'Property or land', 'Business or contracts', 'Tax concern', 'Immigration concern', 'Intellectual property', 'Something else'],
             ]);
         }
@@ -109,7 +113,7 @@ class ChatbotController extends Controller
                 $route = route('practice-areas') . ($area ? '#practice-area-' . $area->id : '');
 
                 return response()->json([
-                    'reply' => 'For browsing, ' . $startingPoint['area'] . ' may be a useful starting category. This is only a navigation suggestion, not a legal assessment; a qualified provider would need to review your actual concern.',
+                    'reply' => 'Suggested because ' . $startingPoint['reason'] . ': ' . $startingPoint['area'] . ' may be a useful category to explore. This is only website navigation guidance, not a legal assessment; a qualified provider would need to review your actual concern.',
                     'cta' => ['label' => 'Explore ' . $startingPoint['area'] . ' →', 'route' => $route],
                     'quickReplies' => ['How does matching work?', 'Can I find free legal aid?', 'Show all practice areas'],
                 ]);
@@ -124,6 +128,15 @@ class ChatbotController extends Controller
             ]);
         }
 
+        if ($this->containsAny($text, ['what practice areas', 'practice areas do you handle', 'services does the firm offer', 'legal services'])) {
+            $areas = \App\Models\PracticeArea::orderBy('sort_order')->pluck('name')->all();
+
+            return response()->json([
+                'reply' => 'The Practice Areas page lists: ' . implode(', ', $areas) . '. Open the page to read each full description and browse related sample attorney profiles. These categories are for website navigation only, not legal advice.',
+                'cta' => ['label' => 'Explore all practice areas →', 'route' => route('practice-areas')],
+                'quickReplies' => ['Help me find a practice area', 'How do I request a consultation?', 'How do I track my case?'],
+            ]);
+        }
         foreach (self::FAQ as $entry) {
             if ($this->containsAny($text, $entry['keys'])) {
                 return response()->json([
@@ -131,7 +144,7 @@ class ChatbotController extends Controller
                     'cta' => isset($entry['cta']) ? [
                         'label' => match ($entry['cta']) {
                             'contact' => 'View contact information →',
-                            'consultation' => 'View demo request page →',
+                            'consultation' => 'Open consultation request form →',
                             'client-portal' => 'Open Client Portal →',
                             default => 'Browse practice areas →',
                         },
@@ -143,12 +156,24 @@ class ChatbotController extends Controller
         }
 
         return response()->json([
-            'reply' => "I don't have a scripted answer for that. I can guide you to a starting practice-area category and explain the planned matching, legal-aid, checklist, and referral-tracking features. This prototype is not a real law office and cannot provide legal advice.",
+            'reply' => "I can only answer questions about the topics listed under Suggested questions. I do not have information about that topic. Please choose an available question or ask about SAFALAW's practice areas, consultation requests, office contact details, or Client Portal. This assistant provides general information only, not legal advice.",
             'cta' => ['label' => 'Explore sample practice areas →', 'route' => route('practice-areas')],
             'quickReplies' => ['Help me find a practice area', 'Browse practice areas', 'How do I request a consultation?', 'How do I contact the firm?'],
         ]);
     }
 
+    public function translate(Request $request, ChatbotTranslationService $translator): JsonResponse
+    {
+        $data = $request->validate(['message' => ['required', 'string', 'min:1', 'max:500']]);
+
+        try {
+            return response()->json($translator->translateToEnglish($data['message']));
+        } catch (\RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 503);
+        } catch (\Throwable) {
+            return response()->json(['message' => 'Translation is unavailable. Please try again later.'], 503);
+        }
+    }
     private function containsAny(string $haystack, array $needles): bool
     {
         foreach ($needles as $needle) {

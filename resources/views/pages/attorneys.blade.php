@@ -5,8 +5,8 @@
 @section('content')
   <div class="eyebrow">ATTORNEY DIRECTORY</div>
   <h1 class="page-title">Explore attorney profiles</h1>
-  <p class="lead">Browse example profiles by practice area, including specialties, sample ratings, and recent practice activity.</p>
-  <div class="roster-note">Showing {{ $attorneyCount }} fictional sample profiles. Names, portraits, ratings, practice dates, and case experience are demo content; they do not identify actual SAFALAW attorneys or people in the firm photo, or represent verified credentials, reviews, or case records.</div>
+  <p class="lead">Browse example profiles by practice area, specialties, and experience.</p>
+  <div class="roster-note">Showing {{ $attorneyCount }} fictional sample profiles. Names, portraits, practice dates, and case experience are demo content; they do not identify actual SAFALAW attorneys or represent verified credentials or case records.</div>
 
   @foreach($attorneys as $rank => $group)
     <div class="rank-group">
@@ -18,17 +18,15 @@
             <div class="attorney-info">
               <div class="attorney-name">{{ $attorney->name }}</div>
               <div class="attorney-role">{{ $attorney->rank }} · Sample profile</div>
-              @if($attorney->sample_rating !== null)
-                <div class="attorney-rating" aria-label="Sample rating {{ number_format($attorney->sample_rating, 1) }} out of 5">
-                  <span aria-hidden="true">★★★★★</span> {{ number_format($attorney->sample_rating, 1) }} <small>sample</small>
-                </div>
-              @else
-                <div class="attorney-rating">Not rated</div>
-              @endif
-              <div class="attorney-meta">{{ $attorney->specialization_note }}</div>
-              <div class="attorney-activity">Practice activity date <strong>{{ $attorney->sample_last_practiced_on?->format('M j, Y') ?? 'Not provided' }}</strong> <span>(sample)</span></div>
+              <div class="attorney-specialization-title">Specialization practice areas</div>
+              <ul class="attorney-specializations">
+                @foreach(preg_split('/,\\s*/', $attorney->specialization_note) as $specialization)
+                  <li>{{ trim(preg_replace('/^and\\s+/i', '', $specialization)) }}</li>
+                @endforeach
+              </ul>
               @if($attorney->years_experience)
-                <div class="attorney-meta">{{ $attorney->years_experience }} years practicing <span>(sample)</span></div>
+                <div class="attorney-activity">Started practicing around <strong>{{ now()->subYears((int) $attorney->years_experience)->format('Y') }}</strong></div>
+                <div class="attorney-meta">{{ $attorney->years_experience }} years' experience <span>(sample)</span></div>
               @endif
             </div>
           </div>

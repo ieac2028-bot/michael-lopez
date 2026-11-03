@@ -26,7 +26,8 @@ class RejectUnknownRequestFields
         'login' => [],
         'admin.login' => [],
         'admin.dashboard' => [],
-        'chat.respond' => ['message'],
+        'chat.respond' => ['message', 'language'],
+        'chat.translate' => ['message'],
         'client-portal.lookup' => ['reference_no'],
         'contact.store' => ['first_name', 'last_name', 'email', 'message'],
         'consultation.store' => [

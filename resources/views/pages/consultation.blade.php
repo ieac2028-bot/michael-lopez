@@ -16,13 +16,13 @@
   @if(isset($recommendedAttorneys) && $recommendedAttorneys->isNotEmpty())
     <section class="glance-card" style="margin:0 0 24px;max-width:760px;">
       <div class="k">Suggested attorneys</div>
-      <div class="v" style="margin-top:8px;">Suggestions are based on the selected practice area, stated coverage, sample rating, and experience. Availability and rankings are demonstration data and do not constitute a referral.</div>
+      <div class="v" style="margin-top:8px;">Suggestions are based on the selected practice area, stated coverage, and experience. Availability and rankings are demonstration data and do not constitute a referral.</div>
       <div class="attorney-grid" style="margin-top:16px;">
         @foreach($recommendedAttorneys as $attorney)
           <article class="glance-card">
             <div class="k">{{ $attorney->rank }} · {{ $attorney->practiceArea?->name }}</div>
             <div class="v">{{ $attorney->name }}</div>
-            <small>{{ $attorney->years_experience }} years' experience · {{ number_format((float) $attorney->sample_rating, 1) }}/5 sample rating</small>
+            <small>{{ $attorney->years_experience }} years' experience</small>
           </article>
         @endforeach
       </div>

@@ -18,7 +18,6 @@ class AdminController extends Controller
         $inquiries = Inquiry::with(['practiceArea', 'attorney', 'caseRecord'])->latest()->get();
         $cases = CaseRecord::with(['attorney', 'practiceArea'])->latest()->get();
         $attorneys = Attorney::with(['practiceArea', 'account'])
-            ->orderByDesc('sample_rating')
             ->orderByDesc('years_experience')
             ->get();
 

@@ -112,14 +112,14 @@
   <section class="admin-section" id="admin-attorneys" aria-labelledby="admin-attorneys-title">
     <details class="admin-attorney-section">
     <summary class="admin-section-head"><div><div class="eyebrow">TEAM</div><h2 id="admin-attorneys-title">Attorney availability and accounts</h2></div><span>{{ $attorneys->count() }} profiles · {{ $availableAttorneyCount }} available</span></summary>
-    <p class="admin-section-note">Update service coverage or issue an individual account for a real attorney. Example profiles and ratings are sample data.</p>
+    <p class="admin-section-note">Update service coverage or issue an individual account for a real attorney. Example profiles are sample data.</p>
     <div class="admin-attorney-list">
       @foreach($attorneys as $index => $attorney)
         <div class="admin-card">
         <form class="admin-attorney-row" method="POST" action="{{ route('admin.attorneys.update', $attorney) }}">
           @csrf @method('PATCH')
           <strong class="admin-rank">#{{ $index + 1 }}</strong>
-          <div><strong>{{ $attorney->name }}</strong><small>{{ $attorney->practiceArea?->name ?? 'Unassigned area' }} · {{ number_format((float) $attorney->sample_rating, 1) }}/5 sample rating · {{ $attorney->years_experience }} years</small></div>
+          <div><strong>{{ $attorney->name }}</strong><small>{{ $attorney->practiceArea?->name ?? 'Unassigned area' }} · {{ $attorney->years_experience }} years' experience</small></div>
           <input type="hidden" name="is_available" value="0">
           <label class="admin-available"><input type="checkbox" name="is_available" value="1" @checked($attorney->is_available)> Available</label>
           <label class="admin-coverage">Service areas<input type="text" name="coverage_areas" value="{{ implode(', ', $attorney->coverage_areas ?? []) }}" placeholder="All Philippines or city/region names"></label>

@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B1E3F">
+<meta name="theme-color" content="#72B9E3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>@yield('title', 'Abogadokonek') — Attorney matching platform</title>
+<title>@yield('title', 'Ocampo &amp; Associates Law Offices') | Ocampo &amp; Associates Law Offices</title>
 <script>
   try {
     const savedTheme = localStorage.getItem('abogadokonek-theme');
@@ -44,7 +44,7 @@
 <header>
   <div class="header-inner">
     <a href="{{ route('home') }}" class="brand" style="text-decoration:none;">
-      <img class="brand__safalaw-logo" data-theme-logo data-logo-dark="{{ asset('images/safalaw/safalaw-logo-transparent.png') }}" data-logo-light="{{ asset('images/safalaw/safalaw-logo-light.png') }}" src="{{ asset('images/safalaw/safalaw-logo-transparent.png') }}" alt="SafaLaw — Saludo Taleon Ocampo and Associates Law Offices">
+      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
     </a>
     <nav class="topnav">
       <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
@@ -89,8 +89,8 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <a class="footer-safalaw-logo" href="{{ route('home') }}" aria-label="SafaLaw home">
-      <img src="{{ asset('images/safalaw/safalaw-logo-transparent.png') }}" alt="SafaLaw — Saludo Taleon Ocampo and Associates Law Offices">
+    <a class="footer-ocampo-logo" href="{{ route('home') }}" aria-label="Ocampo &amp; Associates home">
+      <img data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
     </a>
     <div class="footer-brand">
       <div class="tagline">A Legacy of Excellence in Philippine Law</div>
@@ -102,7 +102,7 @@
         <a href="tel:+639171640184">+63 917 164 0184</a><br>
         <a href="mailto:safa@safalaw.com.ph">safa@safalaw.com.ph</a>
       </address>
-      <div class="footer-app-note">Abogadokonek client discovery app</div>
+      <div class="footer-app-note">Trusted Philippine legal counsel for over 60 years</div>
       <div class="footer-social">
         <a href="#" aria-label="Facebook" onclick="return false;">f</a>
       </div>
@@ -143,7 +143,7 @@
   </div>
 
   <div class="footer-bottom">
-    <div class="footer-bottom-inner">© {{ date('Y') }} Abogadokonek</div>
+    <div class="footer-bottom-inner">© {{ date('Y') }} Ocampo &amp; Associates Law Offices</div>
   </div>
 </footer>
 
@@ -176,15 +176,33 @@
   </span>
   <span class="launcher__copy"><span class="launcher__title">Chat with SafaLaw</span><span class="launcher__subtitle">Get help finding a starting point</span></span>
 </button>
-<div class="chat-panel" id="chatPanel" data-endpoint="{{ route('chat.respond') }}">
+<div class="chat-panel" id="chatPanel" data-endpoint="{{ route('chat.respond') }}" data-translate-endpoint="{{ route('chat.translate') }}">
   <div class="chat-head">
-    <div class="dot"></div>
-    <div class="titles"><div class="name">SafaLaw Assistant</div><div class="sub">Site and intake guide</div></div>
+    <div class="titles"><div class="name">SafaLaw Assistant</div></div>
+    <button class="chat-info-toggle" id="chatInfoToggle" type="button" aria-label="Show assistant information and language settings" aria-controls="chatInfo" aria-expanded="false">i</button>
     <button class="close" id="closeChat" aria-label="Close">✕</button>
   </div>
-  <div class="chat-scope">I provide general information about the firm and this website. I can’t give legal advice or assess an individual case.</div>
+  <div class="chat-info" id="chatInfo" hidden>
+    <div class="chat-scope" id="chatScope">I provide general information about the firm and this website. I can’t give legal advice or assess an individual case.</div>
+    <div class="chat-language-setting">
+      <label class="chat-language-label" for="chatLanguage">Detected language</label>
+      <select id="chatLanguage" class="chat-language" aria-label="Choose chat language">
+        <option value="auto">Auto detect</option><option value="en">English</option><option value="fil">Filipino</option><option value="es">Español</option>
+        <option value="zh-CN">中文（普通话）</option><option value="ko">한국어</option><option value="ja">日本語</option>
+      </select>
+    </div>
+    <div class="chat-translation-disclosure">Common phrases translate on this device. Other non-English messages are sent to an online translation service for an English version to appear below. Tap A to retry. Do not send confidential details.</div>
+  </div>
   <div class="chat-body" id="chatBody"></div>
-  <div class="quick-replies" id="quickReplies"></div>
+  <details class="quick-replies-panel" id="quickRepliesPanel" hidden>
+    <summary>
+      <svg viewBox="0 0 20 16" aria-hidden="true" focusable="false"><path d="M1.5 2.5h17v11h-17zM2 3l8 6 8-6" /></svg>
+      <span>Suggested questions</span>
+      <small id="quickReplyCount"></small>
+      <span class="quick-replies-chevron" aria-hidden="true">⌄</span>
+    </summary>
+    <div class="quick-replies" id="quickReplies" role="region" aria-label="Suggested questions"></div>
+  </details>
   <div class="chat-input"><input type="text" id="chatInput" placeholder="Ask something…"><button id="sendBtn">Send</button></div>
 </div>
 

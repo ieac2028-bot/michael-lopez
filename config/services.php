@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'libretranslate' => [
+        'url' => env('LIBRETRANSLATE_URL', 'https://translate.argosopentech.com/translate'),
+        'api_key' => env('LIBRETRANSLATE_API_KEY'),
+    ],
 ];

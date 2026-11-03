@@ -11,6 +11,7 @@ use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PageController;
+use App\Http\Middleware\LocalizeChatbotResponse;
 use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,8 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::get('/book-consultation', [ConsultationController::class, 'show'])->name('consultation');
 Route::post('/book-consultation', [ConsultationController::class, 'store'])->name('consultation.store');
 
-Route::post('/api/chat', [ChatbotController::class, 'respond'])->name('chat.respond');
+Route::post('/api/chat', [ChatbotController::class, 'respond'])->middleware(['throttle:30,1', LocalizeChatbotResponse::class])->name('chat.respond');
+Route::post('/api/chat/translate', [ChatbotController::class, 'translate'])->middleware('throttle:10,1')->name('chat.translate');
 
 Route::get('/login', AccessController::class)->name('login');
 Route::get('/client/login', [ClientAuthController::class, 'showLogin'])->name('client.login');

@@ -76,14 +76,21 @@ themeButtons.forEach((button) => {
       syncThemeButtons();
     };
 
-    if (document.startViewTransition) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (document.startViewTransition && !prefersReducedMotion) {
       const bounds = button.getBoundingClientRect();
       themeRoot.style.setProperty('--theme-origin-x', `${bounds.left + bounds.width / 2}px`);
       themeRoot.style.setProperty('--theme-origin-y', `${bounds.top + bounds.height / 2}px`);
+      const clearTransitionOrigin = () => {
+        themeRoot.style.removeProperty('--theme-origin-x');
+        themeRoot.style.removeProperty('--theme-origin-y');
+      };
       try {
-        document.startViewTransition(applyTheme);
+        const transition = document.startViewTransition(applyTheme);
+        transition.finished.then(clearTransitionOrigin, clearTransitionOrigin);
       } catch (_) {
         applyTheme();
+        clearTransitionOrigin();
       }
     } else {
       applyTheme();
@@ -274,10 +281,60 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
   const chatInput = document.getElementById('chatInput');
   const sendBtn = document.getElementById('sendBtn');
   const quickReplies = document.getElementById('quickReplies');
+  const quickRepliesPanel = document.getElementById('quickRepliesPanel');
+  const quickReplyCount = document.getElementById('quickReplyCount');
+  const languageSelect = document.getElementById('chatLanguage');
+  const chatScope = document.getElementById('chatScope');
+  const chatInfo = document.getElementById('chatInfo');
+  const chatInfoToggle = document.getElementById('chatInfoToggle');
+  const languageLabel = document.querySelector('.chat-language-label');
   if (!chatPanel) return;
 
   const CHAT_ENDPOINT = chatPanel.dataset.endpoint;
+  const TRANSLATE_ENDPOINT = chatPanel.dataset.translateEndpoint;
   const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
+  const LANGUAGES = {
+    en: { greeting: "Hi, I'm SafaLaw's site assistant. I can answer basic questions about this website and guide you through its sample inquiry flow. I can't provide legal advice.", scope: 'I provide general information about the firm and this website. I can’t give legal advice or assess an individual case.', send: 'Send', placeholder: 'Ask something…', prompts: ['Help me find a practice area', 'What practice areas are available?', 'How do I request a consultation?', 'Where is the office?', 'What are the office hours?', 'How do I contact the firm?', 'How do I track my case?', 'How is my information handled?'] },
+    es: { greeting: 'Hola, soy el asistente del sitio de SAFALAW. Puedo responder preguntas básicas sobre este sitio y sus servicios. No puedo ofrecer asesoría legal.', scope: 'Ofrezco información general sobre el bufete y este sitio. No puedo dar asesoría legal ni evaluar un caso individual.', send: 'Enviar', placeholder: 'Escribe tu pregunta…', prompts: ['Ayúdame a encontrar un área legal', '¿Qué áreas legales hay?', '¿Cómo solicito una consulta?', '¿Dónde está la oficina?', '¿Cuál es el horario de atención?', '¿Cómo contacto al bufete?', '¿Cómo consulto el estado de mi caso?', '¿Cómo se maneja mi información?'] },
+    fil: { greeting: 'Kumusta, ako ang site assistant ng SAFALAW. Makakasagot ako sa mga simpleng tanong tungkol sa website. Hindi ako makapagbibigay ng legal na payo.', scope: 'Nagbibigay ako ng pangkalahatang impormasyon tungkol sa law firm at website. Hindi ako makapagbibigay ng legal na payo o susuri ng partikular na kaso.', send: 'Ipadala', placeholder: 'I-type ang iyong tanong…', prompts: ['Tulungan akong humanap ng larangan ng batas', 'Anong mga larangan ng batas ang mayroon?', 'Paano ako hihiling ng konsultasyon?', 'Nasaan ang opisina?', 'Ano ang oras ng opisina?', 'Paano ko makokontak ang law firm?', 'Paano ko masusubaybayan ang kaso ko?', 'Paano pinangangasiwaan ang impormasyon ko?'] },
+    'zh-CN': { greeting: '您好，我是SAFALAW网站助手。我可以回答有关本网站的基本问题，但不能提供法律意见。', scope: '我提供有关律师事务所和本网站的一般信息，不能提供法律意见或评估个案。', send: '发送', placeholder: '请输入问题…', prompts: ['帮我查找法律业务领域', '有哪些法律业务领域？', '如何申请咨询？', '办公室在哪里？', '办公时间是什么？', '如何联系律师事务所？', '如何查询案件进度？', '我的信息会如何处理？'] },
+    ko: { greeting: '안녕하세요. SAFALAW 사이트 도우미입니다. 웹사이트에 관한 기본 질문에 답할 수 있지만 법률 자문은 제공하지 않습니다.', scope: '법률 사무소와 웹사이트에 대한 일반 정보를 제공합니다. 법률 자문이나 개별 사건 평가는 할 수 없습니다.', send: '보내기', placeholder: '질문을 입력하세요…', prompts: ['적합한 법률 분야를 찾아주세요', '어떤 법률 분야가 있나요?', '상담은 어떻게 신청하나요?', '사무실은 어디에 있나요?', '업무 시간이 어떻게 되나요?', '법률 사무소에 어떻게 연락하나요?', '사건 진행 상황은 어떻게 확인하나요?', '개인정보는 어떻게 처리되나요?'] },
+    ja: { greeting: 'こんにちは。SAFALAWのサイトアシスタントです。ウェブサイトについての基本的な質問にお答えします。法律相談はできません。', scope: '法律事務所とウェブサイトに関する一般情報を提供します。法律相談や個別案件の評価はできません。', send: '送信', placeholder: '質問を入力してください…', prompts: ['法律分野を探したい', 'どのような法律分野がありますか？', '相談を申し込むにはどうすればよいですか？', '事務所はどこですか？', '営業時間を教えてください', '事務所への連絡方法を教えてください', '案件の進捗を確認するにはどうすればよいですか？', '個人情報はどのように扱われますか？'] },
+  };
+  const LANGUAGE_NAMES = { en: 'English', fil: 'Filipino', es: 'Spanish', 'zh-CN': 'Mandarin Chinese', ko: 'Korean', ja: 'Japanese' };
+  const LANGUAGE_NOTES = { es: 'Las traducciones son orientativas; confirme la información legal importante con la oficina.', fil: 'Pangkalahatang gabay lamang ang salin; kumpirmahin sa opisina ang mahalagang impormasyong legal.', 'zh-CN': '译文仅供参考；重要法律信息请向办公室确认。', ko: '번역은 참고용입니다. 중요한 법률 정보는 사무실에 확인하세요.', ja: '翻訳は参考情報です。重要な法律情報は事務所にご確認ください。' };
+  function applyChatLanguage() {
+    const activeLanguage = languageSelect.value === 'auto' ? 'en' : languageSelect.value;
+    const pack = LANGUAGES[activeLanguage] || LANGUAGES.en;
+    const note = LANGUAGE_NOTES[activeLanguage];
+    chatScope.textContent = pack.scope + (note ? ' ' + note : '');
+    languageLabel.textContent = ({ es: 'Idioma', fil: 'Wika', 'zh-CN': '语言', ko: '언어', ja: '言語' })[activeLanguage] || (languageSelect.value === 'auto' ? 'Auto detect' : 'Language');
+    chatInput.placeholder = pack.placeholder;
+    sendBtn.textContent = pack.send;
+  }
+  languageSelect.value = 'auto';
+  function detectLanguage(text) {
+    if (/[\uAC00-\uD7AF]/.test(text)) return 'ko';
+    if (/[\u3040-\u30FF]/.test(text)) return 'ja';
+    if (/[\u4E00-\u9FFF]/.test(text)) return 'zh-CN';
+    const lower = text.toLowerCase();
+    if (/[¿¡áéíóúñü]/i.test(text) || /\b(hola|que|como|donde|consulta|familia|trabajo|abogado|gracias)\b/.test(lower)) return 'es';
+    if (/\b(ang|mga|ako|mo|ko|sa|po|opo|kayo|hindi|salamat|paano|ano|saan|kamusta|kumusta|bata|ito|si|ng|ngayon|kailangan|wala|para|pamilya|trabaho|lupa|batas|bakit|pwede|puwede|gusto|mahal|konsultasyon)\b/.test(lower)) return 'fil';
+    return 'en';
+  }
+  function updateDetectedLanguage(text) {
+    if (!text.trim()) { languageSelect.value = 'auto'; applyChatLanguage(); return 'en'; }
+    const detected = detectLanguage(text);
+    languageSelect.value = detected;
+    applyChatLanguage();
+    return detected;
+  }
+  chatInput.addEventListener('input', () => updateDetectedLanguage(chatInput.value));
+  languageSelect.addEventListener('change', () => {
+
+    applyChatLanguage();
+  });
+  applyChatLanguage();
 
   launcher.addEventListener('click', () => {
     launcher.classList.add('has-opened');
@@ -292,6 +349,12 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
   }
 
   closeChat.addEventListener('click', () => closeAssistant(true));
+  chatInfoToggle.addEventListener('click', () => {
+    const expanded = chatInfoToggle.getAttribute('aria-expanded') === 'true';
+    chatInfo.hidden = expanded;
+    chatInfoToggle.setAttribute('aria-expanded', String(!expanded));
+    chatInfoToggle.setAttribute('aria-label', expanded ? 'Show assistant information and language settings' : 'Hide assistant information and language settings');
+  });
   document.addEventListener('pointerdown', (event) => {
     if (!chatPanel.classList.contains('open')) return;
     if (chatPanel.contains(event.target) || launcher.contains(event.target)) return;
@@ -306,60 +369,125 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
     if (event.key === 'Escape' && chatPanel.classList.contains('open')) closeAssistant(true);
   });
 
-  function addMsg(text, who) {
+  function providerLanguage(code) {
+    const normalized = (code || '').toLowerCase();
+    if (normalized === 'tl' || normalized === 'fil') return 'fil';
+    if (normalized === 'zh' || normalized === 'zh-cn') return 'zh-CN';
+    return ['en', 'es', 'ko', 'ja'].includes(normalized) ? normalized : null;
+  }
+
+  function addMsg(text, who, detail = '') {
     const div = document.createElement('div');
     div.className = 'msg ' + who;
     div.textContent = text;
+    let languageNote = null;
+    if (detail) {
+      languageNote = document.createElement('small');
+      languageNote.className = 'msg-translation';
+      languageNote.textContent = detail;
+      div.appendChild(languageNote);
+    }
+
+    let translateButton = null;
+    if (who === 'user') {
+      translateButton = document.createElement('button');
+      translateButton.type = 'button';
+      translateButton.className = 'msg-translate-btn';
+      translateButton.textContent = 'A 文';
+      translateButton.title = 'Translate this message into English';
+      translateButton.setAttribute('aria-label', 'Translate this message into English');
+      translateButton.setAttribute('aria-expanded', 'false');
+
+      const translation = document.createElement('small');
+      translation.className = 'msg-translation msg-translation--result';
+      translation.hidden = true;
+      translateButton.addEventListener('click', async () => {
+        if (translation.dataset.loaded === 'true') {
+          translation.hidden = !translation.hidden;
+          translateButton.setAttribute('aria-expanded', String(!translation.hidden));
+          return;
+        }
+        translateButton.disabled = true;
+        translation.hidden = false;
+        translateButton.setAttribute('aria-expanded', 'true');
+        translation.textContent = 'Translating…';
+        try {
+          const response = await fetch(TRANSLATE_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              'X-CSRF-TOKEN': CSRF_TOKEN,
+            },
+            body: JSON.stringify({ message: text }),
+          });
+          const result = await response.json();
+          if (!response.ok || typeof result.translation !== 'string') {
+            throw new Error(result.message || 'Translation is unavailable. Please try again.');
+          }
+          translation.textContent = 'English: ' + result.translation;
+          translation.dataset.loaded = 'true';
+          const detected = providerLanguage(result.detectedLanguage);
+          if (detected) {
+            languageSelect.value = detected;
+            applyChatLanguage();
+            if (languageNote) languageNote.textContent = 'Detected language: ' + LANGUAGE_NAMES[detected];
+          }
+        } catch (error) {
+          translation.textContent = error.message || 'Translation service is unavailable. Please try again.';
+        } finally {
+          translateButton.disabled = false;
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      });
+      div.append(translateButton, translation);
+    }
+
     chatBody.appendChild(div);
     chatBody.scrollTop = chatBody.scrollHeight;
+    return { div, translateButton, languageNote };
   }
-
-  function addCta(cta) {
-    const div = document.createElement('div');
-    div.className = 'msg bot';
+  function addCta(cta, answerBubble) {
     const link = document.createElement('a');
     link.className = 'cta-inline';
     link.href = cta.route;
     link.textContent = cta.label;
-    div.appendChild(link);
-    chatBody.appendChild(div);
+    answerBubble.appendChild(link);
     chatBody.scrollTop = chatBody.scrollHeight;
   }
 
   function setQuickReplies(options) {
     quickReplies.innerHTML = '';
-    (options || []).forEach((opt) => {
-      const b = document.createElement('button');
-      b.className = 'qr-btn';
-      b.textContent = opt;
-      b.onclick = () => handleInput(opt);
-      quickReplies.appendChild(b);
+    const suggestions = options || [];
+    quickRepliesPanel.hidden = suggestions.length === 0;
+    quickRepliesPanel.open = false;
+
+    quickReplyCount.textContent = suggestions.length ? String(suggestions.length) : '';
+
+    suggestions.forEach((opt) => {
+      const button = document.createElement('button');
+      button.className = 'qr-btn';
+      button.textContent = opt;
+      button.onclick = () => handleInput(opt);
+      quickReplies.appendChild(button);
     });
   }
-
   function startConversation() {
-    addMsg(
-      "Hi, I'm SafaLaw's site assistant. I can answer basic questions about this website and guide you through its sample inquiry flow. I can't provide legal advice.",
-      'bot'
-    );
-    setQuickReplies([
-      'Help me find a practice area',
-      'What practice areas are available?',
-      'How do I request a consultation?',
-      'Where is the office?',
-      'What are the office hours?',
-      'How do I contact the firm?',
-      'How do I track my case?',
-      'How is my information handled?',
-    ]);
+    const activeLanguage = languageSelect.value === 'auto' ? 'en' : languageSelect.value;
+    const pack = LANGUAGES[activeLanguage] || LANGUAGES.en;
+    addMsg(pack.greeting, 'bot');
+    setQuickReplies(pack.prompts);
   }
 
   async function handleInput(raw) {
     const text = (raw || '').trim();
     if (!text) return;
-    addMsg(text, 'user');
+    const detectedLanguage = updateDetectedLanguage(text);
+    const messageUi = addMsg(text, 'user', 'Detected language: ' + LANGUAGE_NAMES[detectedLanguage]);
+    if (detectedLanguage !== 'en') messageUi.translateButton?.click();
     chatInput.value = '';
-    setQuickReplies([]);
+    const pendingReply = addMsg('Looking up the site information…', 'bot');
+    pendingReply.div.dataset.loading = 'true';
 
     try {
       const res = await fetch(CHAT_ENDPOINT, {
@@ -369,17 +497,33 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
           Accept: 'application/json',
           'X-CSRF-TOKEN': CSRF_TOKEN,
         },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: text, language: detectedLanguage }),
       });
-      const data = await res.json();
-
-      addMsg(data.reply, 'bot');
-      if (data.cta) {
-        addCta(data.cta);
+      let data;
+      try {
+        data = await res.json();
+      } catch (_) {
+        throw new Error(`The chat endpoint returned a non-JSON page (HTTP ${res.status}). Check the local app URL and Apache rewrite settings.`);
       }
-      setQuickReplies(data.quickReplies);
-    } catch (e) {
-      addMsg("Sorry, I'm having trouble connecting right now. Please use the Contact page directly.", 'bot');
+      if (res.status === 419) throw new Error('Your chat session expired (HTTP 419). Refresh the page and try again.');
+      if (!res.ok) throw new Error(data.message || `The chat request failed (HTTP ${res.status}).`);
+      if (typeof data.reply !== 'string' || data.reply.trim() === '') {
+        throw new Error('The chat service returned an empty answer. Please refresh and try again.');
+      }
+
+      pendingReply.div.remove();
+      const answerBubble = addMsg(data.reply, 'bot', data.sourceReply && detectedLanguage !== 'en' ? 'English: ' + data.sourceReply : '');
+      if (data.cta) {
+        addCta(data.cta, answerBubble.div);
+      }
+      const persistentPrompts = (LANGUAGES[detectedLanguage] || LANGUAGES.en).prompts;
+      const contextualPrompts = Array.isArray(data.quickReplies) ? data.quickReplies : [];
+      setQuickReplies([...new Set([...persistentPrompts, ...contextualPrompts])]);
+    } catch (error) {
+      pendingReply.div.remove();
+      console.error('SafaLaw chat request failed:', error);
+      addMsg(error.message || 'The chat could not load an answer. Please try again.', 'bot');
+      setQuickReplies((LANGUAGES[detectedLanguage] || LANGUAGES.en).prompts);
     }
   }
 

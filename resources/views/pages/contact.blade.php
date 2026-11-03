@@ -5,7 +5,7 @@
 @section('content')
   <div class="eyebrow">GET IN TOUCH</div>
   <h1 class="page-title">Contact Us</h1>
-  <p class="lead">Contact Saludo Taleon Ocampo and Associates Law Offices by phone, email, or visit the Makati office.</p>
+  <p class="lead">Contact Ocampo &amp; Associates Law Offices by phone, email, or visit the Makati office.</p>
 
   @if(session('status'))
     <div class="contact-status" role="status">{{ session('status') }}</div>
@@ -15,7 +15,7 @@
     <div class="contact-details-card">
       <div class="eyebrow">SAFALAW</div>
       <h2>Contact Information</h2>
-      <p class="contact-firm-name">Saludo Taleon Ocampo and Associates Law Offices</p>
+      <p class="contact-firm-name">Ocampo &amp; Associates Law Offices</p>
       <address class="contact-address">
         <div class="contact-detail">
           <span class="contact-detail__icon" aria-hidden="true">⌖</span>
