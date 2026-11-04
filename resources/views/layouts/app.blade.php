@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>@yield('title', 'Ocampo &amp; Associates Law Offices') | Ocampo &amp; Associates Law Offices</title>
+<title>@yield('title', 'GPMO Law Offices') | GPMO Law Offices</title>
 <script>
   try {
     const savedTheme = localStorage.getItem('abogadokonek-theme');
@@ -104,7 +104,7 @@
       </address>
       <div class="footer-app-note">Trusted Philippine legal counsel for over 60 years</div>
       <div class="footer-social">
-        <a href="https://www.facebook.com/SaludoTaleonOcampo" target="_blank" rel="noopener noreferrer" aria-label="Visit Ocampo &amp; Associates on Facebook">f</a>
+        <a href="https://www.facebook.com/SaludoTaleonOcampo" target="_blank" rel="noopener noreferrer" aria-label="Visit GPMO Law Offices on Facebook">f</a>
       </div>
     </div>
 
@@ -143,7 +143,7 @@
   </div>
 
   <div class="footer-bottom">
-    <div class="footer-bottom-inner">© {{ date('Y') }} Ocampo &amp; Associates Law Offices</div>
+    <div class="footer-bottom-inner">© {{ date('Y') }} GPMO Law Offices</div>
   </div>
 </footer>
 

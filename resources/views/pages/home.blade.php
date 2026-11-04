@@ -6,7 +6,7 @@
   <div class="hero">
     <div>
       <h1>Find legal support that fits <span class="hero-title__accent">your situation.</span></h1>
-      <p>With more than 60 years of experience, Ocampo &amp; Associates Law Offices provides trusted legal counsel across a wide range of practice areas. Explore our services or contact our team to discuss your legal needs.</p>
+      <p>With more than 60 years of experience, GPMO Law Offices provides trusted legal counsel across a wide range of practice areas. Explore our services or contact our team to discuss your legal needs.</p>
       <div class="hero-actions">
         <a href="{{ route('consultation') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">Request a Consultation</a>
         <a href="{{ route('practice-areas') }}" class="btn-ghost" style="text-decoration:none;display:inline-block;">See practice areas</a>
@@ -27,8 +27,8 @@
         <span class="hero-card__pointer-ring"></span>
       </div>
       <div class="hero-card__content">
-        <p class="hero-card__eyebrow">OCAMPO &amp; ASSOCIATES</p>
-        <h2 class="safalaw-hero-title">OCAMPO <span>&amp; Associates Law Offices</span></h2>
+        <p class="hero-card__eyebrow">GPMO LAW OFFICES</p>
+        <h2 class="safalaw-hero-title">GPMO <span>Law Offices</span></h2>
         <p class="safalaw-hero-tagline">A Legacy of Excellence in Philippine Law – Trusted for Over 60 Years</p>
         <a href="{{ route('contact') }}" class="safalaw-message-button">MESSAGE US</a>
       </div>
@@ -61,7 +61,7 @@
 
   <section class="home-about" aria-labelledby="home-about-title">
     <div class="eyebrow">ABOUT US</div>
-    <h2 class="home-about__title" id="home-about-title">OCAMPO &amp; ASSOCIATES LAW OFFICES</h2>
+    <h2 class="home-about__title" id="home-about-title">GPMO LAW OFFICES</h2>
     <p class="home-about__lead"><strong>With over 60 years of experience, the firm brings depth, continuity, and familiarity with both longstanding and emerging legal issues in the Philippines.</strong></p>
     <p>The firm provides legal services designed to meet a wide range of client needs. With coordinated legal divisions, it handles matters across multiple areas of law, offering cohesive legal support through each stage of a case or transaction. Its work focuses on practical results aligned with client objectives, guided by clear strategies and informed assessments.</p>
     <p>The firm also maintains an active litigation practice, with lawyers regularly appearing before courts and administrative bodies in a variety of cases.</p>
