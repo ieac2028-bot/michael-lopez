@@ -896,7 +896,7 @@ header nav.topnav a:hover:not(.active) { color: var(--ink); background: rgba(11,
 }
 
 /* Site-wide flowing line work, kept subtle behind every page. */
-body { position: relative; isolation: isolate; }
+body { position: relative; isolation: isolate; height: auto; min-height: 100vh; }
 .ambient-lines {
   position: fixed;
   inset: 0;
@@ -905,20 +905,20 @@ body { position: relative; isolation: isolate; }
   height: 100%;
   pointer-events: none;
   overflow: visible;
-  opacity: .76;
+  opacity: .9;
 }
 .site-backdrop {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background: url('../images/justice-background.png') center 48% / cover no-repeat;
-  opacity: .105;
+  opacity: .2;
 }
 .stripe-top, .page, .site-footer { position: relative; z-index: 2; }
 .ambient-lines path {
   fill: none;
-  stroke: rgba(75, 97, 143, .5);
+  stroke: rgba(139, 201, 236, .68);
   stroke-width: 1.35;
   vector-effect: non-scaling-stroke;
   stroke-linecap: round;
@@ -930,15 +930,14 @@ body { position: relative; isolation: isolate; }
 .ambient-lines path:nth-child(2) { animation-duration: 5s; animation-delay: -1.8s; }
 .ambient-lines path:nth-child(3) { animation-duration: 5.5s; animation-delay: -2.7s; }
 .ambient-lines path:nth-child(4) { animation-duration: 6.5s; animation-delay: -3.6s; }
-:root[data-theme='dark'] .ambient-lines path { stroke: rgba(151, 169, 211, .48); }
+:root[data-theme='dark'] .ambient-lines path { stroke: rgba(179, 221, 244, .68); }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .ambient-lines path { stroke: rgba(151, 169, 211, .48); }
+  :root:not([data-theme='light']) .ambient-lines path { stroke: rgba(179, 221, 244, .68); }
 }
 @keyframes ambient-flow {
   from { transform: translate(-48px, -38px); }
   to { transform: translate(48px, 38px); }
 }
-
 /* Give the SafaLaw firm/about content a related palette of deep and warm reds. */
 .firm-body {
   position: relative;
@@ -1814,7 +1813,7 @@ header nav.topnav a.header-login.active {
   margin: calc(0px - clamp(36px, 6vw, 76px)) 0 clamp(44px, 6vw, 76px) calc(50% - 50vw);
   padding: clamp(58px, 8vw, 104px) clamp(20px, 7vw, 110px);
   overflow: hidden;
-  background: linear-gradient(112deg, #142838 0%, #192F40 56%, #203C50 100%);
+  background: linear-gradient(112deg, rgba(20,40,56,.88) 0%, rgba(25,47,64,.88) 56%, rgba(32,60,80,.88) 100%);
   color: #E7F5FD;
 }
 .page > .hero::before {
@@ -1822,10 +1821,10 @@ header nav.topnav a.header-login.active {
   z-index: 0;
   inset: 0;
   background:
-    radial-gradient(ellipse 75% 135% at -13% 28%, transparent 77%, rgba(148,201,229,.24) 77.2%, transparent 77.45%),
-    radial-gradient(ellipse 90% 118% at 48% 128%, transparent 78%, rgba(148,201,229,.16) 78.2%, transparent 78.48%),
-    radial-gradient(ellipse 65% 100% at 114% 18%, transparent 81%, rgba(148,201,229,.12) 81.2%, transparent 81.45%);
+    linear-gradient(112deg, rgba(20,40,56,.62) 0%, rgba(20,40,56,.34) 54%, rgba(20,40,56,.16) 100%),
+    url('../images/justice-background.png') center 40% / cover no-repeat;
   content: '';
+  opacity: .58;
   pointer-events: none;
 }
 .page > .hero h1 {
