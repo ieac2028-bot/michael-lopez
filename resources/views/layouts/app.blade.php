@@ -44,7 +44,7 @@
 <header>
   <div class="header-inner">
     <a href="{{ route('home') }}" class="brand" style="text-decoration:none;">
-      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+      <img class="brand__gpmo-logo" src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices">
     </a>
     <nav class="topnav">
       <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
@@ -89,8 +89,8 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <a class="footer-ocampo-logo" href="{{ route('home') }}" aria-label="Ocampo &amp; Associates home">
-      <img data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    <a class="footer-gpmo-logo" href="{{ route('home') }}" aria-label="GPMO Law Offices home">
+      <img src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices">
     </a>
     <div class="footer-brand">
       <div class="tagline">A Legacy of Excellence in Philippine Law</div>

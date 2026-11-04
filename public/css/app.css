@@ -535,7 +535,7 @@ input, select, textarea { border-radius: 12px; }
   animation: footer-line-pass 7s ease-in-out infinite;
 }
 .footer-inner { max-width: 1280px; padding: 52px clamp(20px, 4vw, 64px) 36px; }
-.brand__ocampo-logo {
+.brand__gpmo-logo {
   display: block;
   width: 210px;
   height: 100px;
@@ -546,7 +546,7 @@ input, select, textarea { border-radius: 12px; }
   object-position: center;
   background: transparent;
 }
-.footer-ocampo-logo {
+.footer-gpmo-logo {
   display: block;
   width: min(100%, 360px);
   grid-column: 1 / -1;
@@ -558,7 +558,7 @@ input, select, textarea { border-radius: 12px; }
   background: transparent;
   box-shadow: none;
 }
-.footer-ocampo-logo img { display: block; width: 100%; height: auto; filter: none; }
+.footer-gpmo-logo img { display: block; width: 100%; height: auto; filter: none; }
 .footer-brand .footer-contact { margin: 0; color: #E2E8F0; font-size: .9rem; font-style: normal; line-height: 1.75; }
 .footer-brand .footer-contact a { color: #E2E8F0; text-decoration: none; }
 .footer-brand .footer-contact a:hover { color: #FFA155; }
@@ -628,7 +628,7 @@ input, select, textarea { border-radius: 12px; }
 .footer-brand .footer-contact a { display: inline; margin: 0; }
 @media (max-width: 900px) { .safalaw-recognitions__grid { gap: 8px; } }
 @media (max-width: 600px) {
-  .brand__ocampo-logo { width: 158px; height: 75px; }
+  .brand__gpmo-logo { width: 158px; height: 75px; }
   .safalaw-recognitions { padding: 18px 12px; }
   .firm-profile__image-frame { height: clamp(210px, 58vw, 340px); margin-bottom: 20px; border-radius: 12px; }
   .firm-review-grid { grid-template-columns: 1fr; }
@@ -882,7 +882,7 @@ header nav.topnav a:hover:not(.active) { color: var(--ink); background: rgba(11,
 .pointer-orbit__dot { fill: #FFFFFF; stroke: none; }
 @media (min-width: 761px) and (max-width: 1280px) {
   nav.topnav, .consult-btn, .theme-toggle--header { display: none; }
-  .brand__ocampo-logo { width: 190px; height: 90px; }
+  .brand__gpmo-logo { width: 190px; height: 90px; }
   .hamburger { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: none; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); font-size: 1.1rem; cursor: pointer; }
   .mobile-nav, .mobile-nav-backdrop { display: flex; }
   .mobile-nav-backdrop { display: block; }
@@ -1778,27 +1778,27 @@ header nav.topnav a.header-login.active {
 
 /* Reserve a dedicated logo column so the navigation cannot cover the wordmark. */
 .header-inner > .brand { flex: 0 0 230px; min-width: 0; }
-.brand__ocampo-logo { width: 220px; max-width: 100%; }
+.brand__gpmo-logo { width: 220px; max-width: 100%; }
 @media (min-width: 761px) and (max-width: 1280px) {
   .header-inner > .brand { flex-basis: 200px; }
 }
 @media (max-width: 760px) {
   .header-inner > .brand { flex-basis: 168px; }
-  .brand__ocampo-logo { width: 158px; }
+  .brand__gpmo-logo { width: 158px; }
 }
 
 /* Larger signature mark, with room reserved at each responsive header size. */
 @media (min-width: 1281px) {
   .header-inner > .brand { flex: 0 0 300px; }
-  .brand__ocampo-logo { width: 285px; height: 110px; }
+  .brand__gpmo-logo { width: 285px; height: 110px; }
 }
 @media (min-width: 761px) and (max-width: 1280px) {
   .header-inner > .brand { flex: 0 0 240px; }
-  .brand__ocampo-logo { width: 230px; height: 100px; }
+  .brand__gpmo-logo { width: 230px; height: 100px; }
 }
 @media (max-width: 760px) {
   .header-inner > .brand { flex: 0 0 210px; }
-  .brand__ocampo-logo { width: 200px; height: 90px; }
+  .brand__gpmo-logo { width: 200px; height: 90px; }
 }
 
 /* Homepage hero treatment adapted from the supplied reference. */
@@ -1902,19 +1902,19 @@ header nav.topnav a.header-login.active {
 /* Larger logo with cool-blue contrast against the sky-blue header. */
 @media (min-width: 1281px) {
   .header-inner > .brand { flex: 0 0 350px; }
-  .brand__ocampo-logo { width: 330px; height: 120px; }
+  .brand__gpmo-logo { width: 330px; height: 120px; }
 }
 @media (min-width: 761px) and (max-width: 1280px) {
   .header-inner > .brand { flex: 0 0 280px; }
-  .brand__ocampo-logo { width: 265px; height: 105px; }
+  .brand__gpmo-logo { width: 265px; height: 105px; }
 }
 @media (max-width: 760px) {
   .header-inner > .brand { flex: 0 0 230px; }
-  .brand__ocampo-logo { width: 220px; height: 90px; }
+  .brand__gpmo-logo { width: 220px; height: 90px; }
 }
 @media (max-width: 360px) {
   .header-inner > .brand { flex-basis: 195px; }
-  .brand__ocampo-logo { width: 185px; height: 80px; }
+  .brand__gpmo-logo { width: 185px; height: 80px; }
 }
 
 /* Increase contrast between the short top-bar segments in light mode. */
@@ -1949,4 +1949,15 @@ header nav.topnav a.header-login.active {
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .badge .mark,
   :root:not([data-theme='light']) .avatar { color: #EAF4FB; }
+}
+
+/* GPMO's portrait mark needs its own compact space in the header and footer. */
+.header-inner > .brand { flex: 0 0 82px; min-width: 0; }
+.brand__gpmo-logo { display: block; width: 64px; height: 98px; max-width: 100%; object-fit: contain; object-position: center; }
+.footer-gpmo-logo { display: block; width: 82px; grid-column: 1 / -1; justify-self: start; margin: 0 0 8px 16px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.footer-gpmo-logo img { display: block; width: 100%; height: auto; object-fit: contain; }
+@media (max-width: 600px) {
+  .header-inner > .brand { flex-basis: 56px; }
+  .brand__gpmo-logo { width: 48px; height: 74px; }
+  .footer-gpmo-logo { width: 70px; }
 }
