@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>@yield('title', 'Ocampo &amp; Associates Law Offices') | Ocampo &amp; Associates Law Offices</title>
+<title>@yield('title', 'GPMO Law Offices') | GPMO Law Offices</title>
 <script>
   try {
     const savedTheme = localStorage.getItem('abogadokonek-theme');
@@ -89,7 +89,7 @@
 <header>
   <div class="header-inner">
     <a href="{{ route('home') }}" class="brand" style="text-decoration:none;">
-      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+      <img class="brand__gpmo-logo" src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices">
     </a>
     <nav class="topnav">
       <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
@@ -136,8 +136,8 @@
 @unless($clientWorkflowMode || $attorneyWorkspaceMode || $adminWorkspaceMode)
 <footer class="site-footer">
   <div class="footer-inner">
-    <a class="footer-ocampo-logo" href="{{ route('home') }}" aria-label="Ocampo &amp; Associates home">
-      <img data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    <a class="footer-gpmo-logo" href="{{ route('home') }}" aria-label="GPMO Law Offices home">
+      <img src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices">
     </a>
     <div class="footer-brand">
       <div class="tagline">A Legacy of Excellence in Philippine Law</div>
@@ -151,7 +151,7 @@
       </address>
       <div class="footer-app-note">Trusted Philippine legal counsel for over 60 years</div>
       <div class="footer-social">
-        <a href="https://www.facebook.com/SaludoTaleonOcampo" target="_blank" rel="noopener noreferrer" aria-label="Visit Ocampo &amp; Associates on Facebook">f</a>
+        <a href="https://www.facebook.com/SaludoTaleonOcampo" target="_blank" rel="noopener noreferrer" aria-label="Visit GPMO Law Offices on Facebook">f</a>
       </div>
     </div>
 
@@ -190,7 +190,7 @@
   </div>
 
   <div class="footer-bottom">
-    <div class="footer-bottom-inner">© {{ date('Y') }} Ocampo &amp; Associates Law Offices</div>
+    <div class="footer-bottom-inner">© {{ date('Y') }} GPMO Law Offices</div>
   </div>
 </footer>
 
