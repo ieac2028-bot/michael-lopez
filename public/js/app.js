@@ -182,6 +182,146 @@ document.querySelectorAll('.stat-row').forEach((row) => {
   apply();
 })();
 
+// Translate non-English live chat messages and keep client/staff threads current.
+const liveChatTranslationCache = new Map();
+function isLikelyNonEnglish(text) {
+  if (/[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}]/u.test(text)) return true;
+  if (/[\uAC00-\uD7AF\u1100-\u11FF]/.test(text)) return true;
+  if (/[\u3040-\u30FF\u4E00-\u9FFF]/.test(text)) return true;
+  if (/[¿¡áéíóúñü]/i.test(text) || /\b(hola|gracias|abogado|consulta|familia|trabajo|donde|como)\b/i.test(text)) return true;
+  return /\b(ang|mga|ako|ko|po|opo|hindi|salamat|paano|ano|saan|kailangan|pamilya|trabaho|batas|konsultasyon)\b/i.test(text);
+}
+
+async function translateLiveChatMessage(item, body, thread) {
+  const messageId = item.dataset.messageId || body;
+  if (!thread.dataset.translateUrl || !isLikelyNonEnglish(body)) return;
+
+  const translation = document.createElement('small');
+  translation.className = 'consultation-chat__translation';
+  translation.setAttribute('aria-live', 'polite');
+  item.appendChild(translation);
+
+  if (liveChatTranslationCache.has(messageId)) {
+    translation.textContent = liveChatTranslationCache.get(messageId);
+    return;
+  }
+
+  translation.textContent = 'Translating to English…';
+  try {
+    const response = await fetch(thread.dataset.translateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+      },
+      body: JSON.stringify({ message: body }),
+    });
+    const result = await response.json();
+    if (!response.ok || typeof result.translation !== 'string' || !result.translation.trim()) {
+      throw new Error(result.message || 'English translation is unavailable.');
+    }
+    const translatedText = 'English translation: ' + result.translation;
+    liveChatTranslationCache.set(messageId, translatedText);
+    translation.textContent = translatedText;
+  } catch (_) {
+    const fallback = 'English translation is unavailable right now. The original message is shown above.';
+    liveChatTranslationCache.set(messageId, fallback);
+    translation.textContent = fallback;
+  }
+}
+
+document.querySelectorAll('[data-message-thread][data-poll-url]').forEach((thread) => {
+  thread.querySelectorAll('.consultation-chat__message').forEach((item) => {
+    const body = item.querySelector('p')?.textContent || '';
+    translateLiveChatMessage(item, body, thread);
+  });
+  const poll = async () => {
+    try {
+      const response = await fetch(thread.dataset.pollUrl, { headers: { Accept: 'application/json' } });
+      if (!response.ok) return;
+      const payload = await response.json();
+      if (payload.status && thread.dataset.status && payload.status !== thread.dataset.status) {
+        window.location.reload();
+        return;
+      }
+      if (String(payload.attorney_id || '') !== (thread.dataset.assignedAttorney || '')) {
+        window.location.reload();
+        return;
+      }
+      const messages = Array.isArray(payload) ? payload : payload.messages;
+      const latestMessageId = String(messages.at(-1)?.id || '');
+      if (latestMessageId === String(thread.dataset.latestMessageId || '')) return;
+      thread.dataset.latestMessageId = latestMessageId;
+      thread.replaceChildren();
+      if (!messages.length) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No messages yet.';
+        thread.append(empty);
+        return;
+      }
+      messages.forEach((message) => {
+        const item = document.createElement('article');
+        item.className = 'consultation-chat__message';
+        item.dataset.role = message.sender_role;
+        item.dataset.messageId = String(message.id || '');
+        const sender = document.createElement('strong');
+        sender.textContent = message.sender_role === 'admin'
+          ? 'Firm staff'
+          : (message.sender_role === 'assistant' ? 'SAFALAW Assistant' : (thread.closest('.professional-live-chat') ? 'Client' : 'You'));
+        const body = document.createElement('p');
+        body.textContent = message.body;
+        const time = document.createElement('small');
+        time.textContent = new Date(message.created_at).toLocaleString();
+        item.append(sender, time, body);
+        thread.append(item);
+        translateLiveChatMessage(item, message.body, thread);
+      });
+    } catch (error) {
+      // The existing messages remain visible if a poll is temporarily unavailable.
+    }
+  };
+  poll();
+  window.setInterval(poll, 5000);
+});
+
+document.querySelectorAll('[data-inquiry-inbox][data-poll-url]').forEach((inbox) => {
+  window.setInterval(async () => {
+    try {
+      const response = await fetch(inbox.dataset.pollUrl, { headers: { Accept: 'application/json' } });
+      if (!response.ok) return;
+      const result = await response.json();
+      if (Number(result.latest_id) > Number(inbox.dataset.latestId)) window.location.reload();
+    } catch (error) {
+      // A later poll retries if the inbox endpoint is temporarily unavailable.
+    }
+  }, 7000);
+});
+
+document.querySelectorAll('[data-admin-presence][data-status-url]').forEach((presence) => {
+  const updatePresence = async () => {
+    try {
+      const response = await fetch(presence.dataset.statusUrl, { headers: { Accept: 'application/json' } });
+      if (!response.ok) return;
+      const { online } = await response.json();
+      const dot = presence.querySelector('.consultation-admin-presence__dot');
+      const label = presence.querySelector('[data-presence-label]');
+      const note = presence.querySelector('[data-presence-note]');
+      presence.dataset.online = online ? 'true' : 'false';
+      dot.classList.toggle('is-online', online);
+      dot.classList.toggle('is-offline', !online);
+      label.textContent = online ? 'Admin is online' : 'Admin is offline';
+      note.textContent = online
+        ? 'A staff member can reply here.'
+        : 'The automated assistant will reply until staff are available.';
+    } catch (error) {
+      // Retain the last known admin status while the next poll retries.
+    }
+  };
+  updatePresence();
+  window.setInterval(updatePresence, 7000);
+});
+
 // ---- Pointer-following ring and trailing line artwork ----
 const pointerOrbit = document.querySelector('[data-pointer-orbit]');
 if (pointerOrbit && !themeRoot.hasAttribute('data-a11y-motion') && window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {

@@ -142,7 +142,7 @@ class ChatbotTranslationService
             'privacy' => 'Este es un prototipo de proyecto y no está conectado a los sistemas activos de SAFALAW. No ingrese datos confidenciales, números de identidad ni documentos sensibles.',
             'fees' => 'Este proyecto no publica los honorarios ni las condiciones de consulta. Comuníquese directamente con la oficina para preguntar por las tarifas vigentes.',
             'practice' => 'Puede explorar las categorías y descripciones en la página de Áreas de práctica. La lista sirve para navegar y no determina qué ley se aplica a un caso real.',
-            'prototype' => 'Los perfiles y flujos de este sitio son datos de demostración; no confirman personal, credenciales, disponibilidad, referencias ni citas reales.',
+            'examples' => 'Los perfiles y flujos de este sitio son ejemplos; no confirman personal, credenciales, disponibilidad, referencias ni citas reales.',
             'booking' => 'El formulario de consulta demuestra cómo el proyecto captura una solicitud. No reserva una cita real ni se conecta al sistema de agenda del bufete.',
             'fallback' => 'No tengo una traducción revisada para esta respuesta. Se muestra en inglés a continuación:',
             'languages' => 'Las traducciones son orientativas. Para información legal importante, confirme el significado con la oficina.',
@@ -156,10 +156,10 @@ class ChatbotTranslationService
             'office' => 'Ayon sa Contact page, bukas ang opisina Lunes hanggang Biyernes, 9 AM–5 PM. Direktang kontakin ang opisina para kumpirmahin ang oras kapag holiday.',
             'address' => 'Nakalista ang opisina sa SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila.',
             'contact' => 'Tumawag sa +63 2 8897 0527 hanggang 30 o +63 917 164 0184, o mag-email sa safa@safalaw.com.ph. Tingnan ang Contact page para sa iba pang detalye.',
-            'privacy' => 'Prototype lamang ang proyektong ito at hindi konektado sa live systems ng SAFALAW. Huwag maglagay ng kumpidensyal na detalye, ID number, o sensitibong dokumento.',
+            'privacy' => 'Ang mga isinusumiteng detalye ay iniimbak sa database ng website. Huwag maglagay ng kumpidensyal na impormasyon, ID number, o sensitibong dokumento.',
             'fees' => 'Walang nakalistang bayarin o kondisyon ng konsultasyon sa proyektong ito. Direktang kontakin ang opisina para itanong ang kasalukuyang singil.',
             'practice' => 'Tingnan ang mga kategorya at paglalarawan sa Practice Areas page. Gabay lamang ito sa pag-browse at hindi pagtukoy kung anong batas ang naaangkop sa totoong kaso.',
-            'prototype' => 'Sample data ang mga profile at proseso rito. Hindi nito kinukumpirma ang kasalukuyang kawani, kredensyal, availability, referral, o appointment.',
+            'examples' => 'Mga halimbawang profile at proseso ang ipinapakita rito. Hindi nito kinukumpirma ang kasalukuyang kawani, kredensyal, availability, referral, o appointment.',
             'booking' => 'Ipinapakita ng consultation form kung paano kumukuha ng request ang demo. Hindi ito nagbu-book ng totoong appointment at hindi konektado sa scheduling system ng law firm.',
             'fallback' => 'Wala pang nasuring salin para sa sagot na ito. Ipinapakita ito sa Ingles sa ibaba:',
             'languages' => 'Pangkalahatang gabay lamang ang mga salin. Para sa mahalagang legal na impormasyon, kumpirmahin ito sa opisina.',
@@ -176,7 +176,7 @@ class ChatbotTranslationService
             'privacy' => '这是演示项目，未连接到SAFALAW的正式系统。请勿输入机密事实、身份证号码或敏感文件。',
             'fees' => '本项目没有列出律师费或咨询条件。请直接联系办公室询问当前费用。',
             'practice' => '您可以在“业务领域”页面浏览类别和说明。此列表仅用于浏览，不能确定真实案件适用的法律。',
-            'prototype' => '本网站的律师资料和流程均为演示内容，不代表真实员工、资历、可预约时间、转介或预约确认。',
+            'examples' => '本网站显示的律师资料和流程仅供参考，不代表实际员工、资历、可预约时间、转介或预约确认。',
             'booking' => '咨询表单用于演示项目如何收集请求，不会预约真实会面，也未连接律师事务所的日程系统。',
             'fallback' => '此回答暂无经过审核的中文译文。以下显示英文原文：',
             'languages' => '译文仅供一般参考。重要法律信息请向办公室确认。',
@@ -193,7 +193,7 @@ class ChatbotTranslationService
             'privacy' => '이 사이트는 시범 프로젝트이며 SAFALAW의 실제 시스템과 연결되어 있지 않습니다. 기밀 사실, 신분증 번호 또는 민감한 문서를 입력하지 마세요.',
             'fees' => '이 프로젝트에는 수임료와 상담 조건이 안내되어 있지 않습니다. 현재 요금은 사무실에 직접 문의하세요.',
             'practice' => 'Practice Areas 페이지에서 분야별 설명을 볼 수 있습니다. 이 목록은 탐색용이며 실제 사건에 적용되는 법률을 판단하지 않습니다.',
-            'prototype' => '이 사이트의 프로필과 절차는 예시 데이터입니다. 실제 직원, 자격, 예약 가능 여부, 소개 또는 예약을 확인하지 않습니다.',
+            'examples' => '이 사이트의 프로필과 절차는 참고용 예시이며 실제 직원, 자격, 예약 가능 여부, 소개 또는 예약을 확인하지 않습니다.',
             'booking' => '상담 양식은 프로젝트의 요청 접수 예시입니다. 실제 예약을 만들거나 사무실 일정 시스템에 연결되지 않습니다.',
             'fallback' => '이 답변의 검토된 한국어 번역은 아직 없습니다. 아래에 영어 원문을 표시합니다:',
             'languages' => '번역은 일반적인 참고용입니다. 중요한 법률 정보는 사무실에 확인하세요.',
@@ -210,7 +210,7 @@ class ChatbotTranslationService
             'privacy' => 'これはデモ用プロジェクトで、SAFALAWの実際のシステムには接続されていません。機密情報、身分証番号、重要書類を入力しないでください。',
             'fees' => 'このプロジェクトには報酬や相談条件の記載がありません。現在の料金は事務所に直接お問い合わせください。',
             'practice' => 'Practice Areasページで分野と説明をご覧いただけます。この一覧は閲覧用であり、実際の案件に適用される法律を判断するものではありません。',
-            'prototype' => 'このサイトのプロフィールや手続きはデモデータです。実際の職員、資格、対応状況、紹介、予約を確認するものではありません。',
+            'examples' => 'このサイトのプロフィールや手続きは参考例であり、実際の職員、資格、対応状況、紹介、予約を確認するものではありません。',
             'booking' => '相談フォームはプロジェクトの申込例を示すものです。実際の予約は行われず、事務所の予約システムにも接続されていません。',
             'fallback' => 'この回答には確認済みの日本語訳がありません。以下に英語の原文を表示します：',
             'languages' => '翻訳は一般的な参考情報です。重要な法律情報は事務所にご確認ください。',
@@ -247,9 +247,9 @@ class ChatbotTranslationService
         if (str_contains($text, 'The office is listed at')) return $pack['address'];
         if (str_starts_with($text, 'You can call +63')) return $pack['contact'];
         if (str_starts_with($text, 'Fees and consultation terms')) return $pack['fees'];
-        if (str_starts_with($text, 'This is a project prototype')) return $pack['privacy'];
+        if (str_starts_with($text, 'Contact and consultation submissions')) return $pack['privacy'];
         if (str_contains($text, 'Practice Areas page') || str_contains($text, 'practice-area categories')) return $pack['practice'];
-        if (str_contains($text, 'sample attorney') || str_contains($text, 'sample data') || str_contains($text, 'demonstration profiles')) return $pack['prototype'];
+        if (str_contains($text, 'sample attorney') || str_contains($text, 'sample data') || str_contains($text, 'demonstration profiles')) return $pack['examples'];
         if (str_contains($text, 'consultation form') || str_contains($text, 'consultation page')) return $pack['booking'];
         return $pack['fallback'] . "\n\n" . $text;
     }

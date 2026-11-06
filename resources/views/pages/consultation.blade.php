@@ -1,119 +1,133 @@
 @extends('layouts.app')
 
-@section('title', 'Request Demo')
+@section('title', 'Client and admin consultation chat')
 
 @section('content')
-  <div class="eyebrow">CLIENT INTAKE</div>
-  <h1 class="page-title">Register a legal inquiry</h1>
-  <p class="lead">Share a non-confidential overview of your legal concern, location, and requirements. This prototype saves the intake locally and suggests attorneys by practice area and stated coverage.</p>
+  @php
+    $steps = [
+      'Client login',
+      'Admin live chat',
+      'Admin collects details',
+      'Identify legal category',
+      'Search matching attorneys',
+      'Display recommendations',
+      'System sends best match',
+      'Attorney accepts or declines',
+      'Consultation confirmed',
+    ];
+    $status = $inquiry?->status ?? 'new';
+    $doneThrough = match($status) {
+      'clarifying' => 2,
+      'reviewing' => 5,
+      'referred' => 7,
+      'declined' => 6,
+      'accepted' => 9,
+      default => 1,
+    };
+    $currentStep = $status === 'accepted' ? null : match($status) {
+      'new' => 1,
+      'clarifying' => 3,
+      'reviewing' => 6,
+      'referred' => 8,
+      'declined' => 8,
+      default => 1,
+    };
+    $showMatches = $inquiry && in_array($status, ['reviewing', 'referred', 'declined', 'accepted'], true);
+  @endphp
+
+  <div class="eyebrow">CLIENT CONSULTATION</div>
+  <h1 class="page-title">Talk with the firm and find your attorney</h1>
+  <p class="lead">Start by telling the admin team what you need. Staff will gather the details, and the system will automatically send your request to the best available attorney match.</p>
 
   @if(session('status'))
-    <div class="glance-card" style="border-left:3px solid var(--green);margin-bottom:24px;max-width:560px;">
-      {{ session('status') }}
-    </div>
+    <div class="glance-card" role="status" style="margin-bottom:20px;max-width:760px;">{{ session('status') }}</div>
   @endif
 
-  @if(isset($recommendedAttorneys) && $recommendedAttorneys->isNotEmpty())
-    <section class="glance-card" style="margin:0 0 24px;max-width:760px;">
-      <div class="k">Suggested attorneys</div>
-      <div class="v" style="margin-top:8px;">Suggestions are based on the selected practice area, stated coverage, and experience. Availability and rankings are demonstration data and do not constitute a referral.</div>
-      <div class="attorney-grid" style="margin-top:16px;">
+  @include('partials.consultation-process', ['steps' => $steps, 'doneThrough' => $doneThrough, 'currentStep' => $currentStep, 'ariaLabel' => 'Attorney matching progress'])
+
+  @if($inquiry)
+    <section class="glance-card consultation-chat" aria-labelledby="consultation-chat-title">
+      <div class="consultation-chat__heading">
+        <div><div class="k" id="consultation-chat-title">Conversation with the admin team</div><small>Non-English messages are automatically translated into English. Original messages are kept.</small></div>
+      </div>
+      <div class="consultation-admin-presence" data-admin-presence data-status-url="{{ route('consultation.admin-status') }}" data-online="{{ $adminOnline ? 'true' : 'false' }}" role="status" aria-live="polite">
+        <span class="consultation-admin-presence__dot {{ $adminOnline ? 'is-online' : 'is-offline' }}" aria-hidden="true"></span>
+        <strong data-presence-label>{{ $adminOnline ? 'Admin is online' : 'Admin is offline' }}</strong>
+        <small data-presence-note>{{ $adminOnline ? 'A staff member can reply here.' : 'The automated assistant will reply until staff are available.' }}</small>
+      </div>
+      <p class="v">Your first message started this request. Staff collect the details needed for matching. Please keep sensitive or confidential documents out of chat.</p>
+      <div class="consultation-chat__messages" aria-live="polite" data-message-thread data-status="{{ $inquiry->status }}" data-assigned-attorney="{{ $inquiry->attorney_id ?? '' }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('consultation.messages.poll', $inquiry) }}">
+        @forelse($inquiry->messages as $message)
+          <article class="consultation-chat__message" data-role="{{ $message->sender_role }}" data-message-id="{{ $message->id }}">
+            <strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'SAFALAW Assistant' : 'You') }}</strong>
+            <small>{{ $message->created_at->format('M j, g:i A') }}</small>
+            <p>{{ $message->body }}</p>
+          </article>
+        @empty
+          <p>Your conversation is ready. Send the admin team a message to begin.</p>
+        @endforelse
+      </div>
+      <form class="consultation-chat__composer" method="POST" action="{{ route('consultation.messages.store', $inquiry) }}">
+        @csrf
+        <div class="form-field"><label for="client-reply">Message the admin team</label><textarea id="client-reply" name="body" maxlength="2000" required></textarea></div>
+        @error('body')<p role="alert" style="color:var(--red);">{{ $message }}</p>@enderror
+        <button type="submit" class="btn-primary">Send message</button>
+      </form>
+    </section>
+  @else
+    <section class="glance-card consultation-chat" aria-labelledby="start-chat-title">
+      <div class="consultation-chat__heading">
+        <div><div class="k" id="start-chat-title">Start an admin conversation</div><small>Non-English messages are automatically translated into English. Original messages are kept.</small></div>
+      </div>
+      <div class="consultation-admin-presence" data-admin-presence data-status-url="{{ route('consultation.admin-status') }}" data-online="{{ $adminOnline ? 'true' : 'false' }}" role="status" aria-live="polite">
+        <span class="consultation-admin-presence__dot {{ $adminOnline ? 'is-online' : 'is-offline' }}" aria-hidden="true"></span>
+        <strong data-presence-label>{{ $adminOnline ? 'Admin is online' : 'Admin is offline' }}</strong>
+        <small data-presence-note>{{ $adminOnline ? 'A staff member can reply here.' : 'The automated assistant will reply until staff are available.' }}</small>
+      </div>
+      <p class="v">Briefly explain your legal concern. The admin team will collect your location, budget, and preferred consultation method. Please avoid confidential details.</p>
+      <form class="consultation-chat__composer" method="POST" action="{{ route('consultation.store') }}">
+        @csrf
+        <div class="form-field"><label for="opening-message">Your legal concern</label><textarea id="opening-message" name="body" maxlength="2000" placeholder="Tell the firm what brings you here. Avoid confidential details for now." required>{{ old('body') }}</textarea></div>
+        @error('body')<p role="alert" style="color:var(--red);">{{ $message }}</p>@enderror
+        <button type="submit" class="btn-primary">Start conversation</button>
+      </form>
+    </section>
+  @endif
+
+  @if($showMatches && $recommendedAttorneys->isNotEmpty())
+    <section class="glance-card consultation-recommendations" aria-labelledby="recommendations-title">
+      <div class="consultation-recommendations__heading">
+        <div><div class="eyebrow">YOUR ATTORNEY MATCH</div><h2 id="recommendations-title">A strong match for your matter</h2><p>The firm identified {{ $inquiry->practiceArea?->name }} and automatically routed your request based on practice focus, location, budget, and availability.</p></div>
+      </div>
+      <div class="attorney-grid consultation-recommendations__grid">
         @foreach($recommendedAttorneys as $attorney)
-          <article class="glance-card">
-            <div class="k">{{ $attorney->rank }} · {{ $attorney->practiceArea?->name }}</div>
-            <div class="v">{{ $attorney->name }}</div>
-            <small>{{ $attorney->years_experience }} years' experience</small>
+          <article class="recommended-attorney-card">
+            <div class="recommended-attorney-card__identity">
+              <span class="recommended-attorney-card__avatar" aria-hidden="true">{{ $attorney->initials }}</span>
+              <div><span class="recommended-attorney-card__eyebrow">{{ $attorney->practiceArea?->name }}</span><h3>{{ $attorney->name }}</h3><p>{{ $attorney->specialization_note }}</p></div>
+            </div>
+            <div class="recommended-attorney-card__details">
+              <span>{{ $attorney->years_experience }} years' experience</span>
+              <strong>{{ $attorney->matching_score }}% match</strong>
+            @if($attorney->budget_min !== null && $attorney->budget_max !== null)
+              <small>Indicative budget: ₱{{ number_format($attorney->budget_min) }}–₱{{ number_format($attorney->budget_max) }}</small>
+            @endif
+            @if($inquiry->attorney_id === $attorney->id)
+              <span class="recommended-attorney-card__status {{ $status === 'accepted' ? 'is-confirmed' : '' }}">{{ $status === 'accepted' ? 'Consultation confirmed' : ($status === 'declined' ? 'No match available · firm follow-up' : 'Request sent · awaiting response') }}</span>
+            @endif
+            </div>
           </article>
         @endforeach
       </div>
     </section>
-  @elseif(session()->has('recommended_attorney_ids'))
-    <div class="glance-card" style="margin:0 0 24px;max-width:760px;">No available sample attorney matched that practice area and coverage. The intake is saved for administrative review.</div>
+  @elseif($showMatches)
+    <div class="glance-card" style="margin:0 0 24px;max-width:760px;">
+      We identified {{ $inquiry->practiceArea?->name ?? 'your legal category' }}, but no connected attorney account currently matches this category and intake. The firm will follow up with you.
+    </div>
   @endif
 
-  <div class="cross-link">
-    Exploring a general inquiry instead? <a href="{{ route('contact') }}">View the sample contact form →</a>
-  </div>
-
-  <div class="contact-grid">
-    <div class="contact-info">
-      <div><div class="k">Prototype notice</div><div class="v">Submitting this form demonstrates the planned request flow. It does not schedule a real legal consultation.</div></div>
-      <div><div class="k">Before a real consultation</div><div class="v">Confirm attorney credentials, availability, fees, and secure ways to share documents directly with the attorney.</div></div>
-    </div>
-
-    <form method="POST" action="{{ route('consultation.store') }}">
-      @csrf
-      <div class="form-field">
-        <label>Full name</label>
-        <input type="text" name="full_name" placeholder="Juan Dela Cruz" value="{{ old('full_name') }}" required>
-        @error('full_name')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Email</label>
-        <input type="email" name="email" placeholder="you@email.com" value="{{ old('email') }}" required>
-        @error('email')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Phone number</label>
-        <input type="text" name="phone" placeholder="+63 9XX XXX XXXX" value="{{ old('phone') }}" required>
-        @error('phone')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Client type</label>
-        <select name="client_type" required>
-          <option value="">Select a client type</option>
-          <option value="individual" @selected(old('client_type') === 'individual')>Individual</option>
-          <option value="business" @selected(old('client_type') === 'business')>Business</option>
-          <option value="organization" @selected(old('client_type') === 'organization')>Organization</option>
-        </select>
-        @error('client_type')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>City or area where you need service</label>
-        <input type="text" name="client_location" placeholder="e.g. Makati City" value="{{ old('client_location') }}" required>
-        @error('client_location')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Practice area</label>
-        <select name="practice_area_id" required>
-          <option value="">Select a practice area</option>
-          @foreach($practiceAreas as $area)
-            <option value="{{ $area->id }}" @selected(old('practice_area_id') == $area->id)>{{ $area->name }}</option>
-          @endforeach
-        </select>
-        @error('practice_area_id')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Preferred date</label>
-        <input type="date" name="preferred_date" value="{{ old('preferred_date') }}" required>
-        @error('preferred_date')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Preferred time</label>
-        <select name="preferred_time" required>
-          <option value="">Select a time</option>
-          @foreach($timeSlots as $slot)
-            <option value="{{ $slot }}" @selected(old('preferred_time') == $slot)>{{ $slot }}</option>
-          @endforeach
-        </select>
-        @error('preferred_time')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Legal profile</label>
-        <textarea name="legal_profile" placeholder="Briefly describe who is involved and any relevant business or personal context. Do not include confidential details." required>{{ old('legal_profile') }}</textarea>
-        @error('legal_profile')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Clarify the case or legal issue</label>
-        <textarea name="message" placeholder="What happened, and what do you need help understanding? Do not include confidential details." required>{{ old('message') }}</textarea>
-        @error('message')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <div class="form-field">
-        <label>Client requirements</label>
-        <textarea name="client_requirements" placeholder="List the help, documents, language, or accommodations you may need. Do not upload or include private records." required>{{ old('client_requirements') }}</textarea>
-        @error('client_requirements')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      </div>
-      <button type="submit" class="btn-primary" style="width:100%;">Request consultation</button>
-    </form>
+  <div class="contact-info" style="margin-top:24px;">
+    <div><div class="k">How the process works</div><div class="v">You start the conversation; staff gather intake details; the system identifies the category and automatically sends the request to the best available match.</div></div>
+    <div><div class="k">Consultation confirmation</div><div class="v">The consultation is confirmed after the matched attorney accepts. You can check the progress tracker in your Client Portal.</div></div>
   </div>
 @endsection

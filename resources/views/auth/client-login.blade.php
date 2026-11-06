@@ -5,7 +5,7 @@
 @section('content')
   <div class="eyebrow">CLIENT PORTAL</div>
   <h1 class="page-title">Existing client login</h1>
-  <p class="lead">Sign in with the verified email address associated with your case.</p>
+  <p class="lead">Sign in with the email address and password for your client account.</p>
 
   <form class="client-auth-form" method="POST" action="{{ route('client.login.store') }}">
     @csrf

@@ -14,13 +14,15 @@ class Attorney extends Model
     protected $fillable = [
         'name', 'photo_path', 'rank', 'practice_area_id', 'specialization_note',
         'sample_rating', 'sample_last_practiced_on', 'years_experience', 'sort_order',
-        'is_available', 'coverage_areas',
+        'is_available', 'accepting_matches', 'coverage_areas',
+        'budget_min', 'budget_max',
     ];
 
     protected $casts = [
         'sample_rating' => 'float',
         'sample_last_practiced_on' => 'date',
         'is_available' => 'boolean',
+        'accepting_matches' => 'boolean',
         'coverage_areas' => 'array',
     ];
 

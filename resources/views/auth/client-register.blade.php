@@ -5,7 +5,7 @@
 @section('content')
   <div class="eyebrow">CLIENT PORTAL</div>
   <h1 class="page-title">Register as a new user</h1>
-  <p class="lead">Create a client account. You’ll need to verify your email before viewing case information.</p>
+  <p class="lead">Create a client account to start finding an attorney.</p>
 
   <form class="client-auth-form" method="POST" action="{{ route('client.register.store') }}">
     @csrf

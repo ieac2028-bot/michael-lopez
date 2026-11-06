@@ -8,7 +8,7 @@
   <section class="firm-reviews" aria-labelledby="firm-reviews-title">
     <div class="eyebrow">SAMPLE CLIENT FEEDBACK</div>
     <h2 class="firm-reviews__title" id="firm-reviews-title">What clients say</h2>
-    <p class="firm-reviews__note">These illustrative reviews are sample content for the prototype, not verified client testimonials.</p>
+    <p class="firm-reviews__note">These illustrative reviews are sample content, not verified client testimonials.</p>
     <div class="firm-review-grid">
       <article class="firm-review">
         <div class="firm-review__stars" role="img" aria-label="5 out of 5 stars">★★★★★</div>

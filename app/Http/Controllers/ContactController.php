@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
  * Handles general questions only — "I have a quick question" territory.
  * For an actual consultation booking request, see ConsultationController.
  * The two form types are stored separately to demonstrate the different
- * inquiry flows in the student project prototype.
+ * inquiry flows in the website.
  */
 class ContactController extends Controller
 {

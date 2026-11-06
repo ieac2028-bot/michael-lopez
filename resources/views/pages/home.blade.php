@@ -8,7 +8,7 @@
       <h1>Find legal support that fits <span class="hero-title__accent">your situation.</span></h1>
       <p>With more than 60 years of experience, Ocampo &amp; Associates Law Offices provides trusted legal counsel across a wide range of practice areas. Explore our services or contact our team to discuss your legal needs.</p>
       <div class="hero-actions">
-        <a href="{{ route('consultation') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">Request a Consultation</a>
+        <a href="{{ route('login') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">Client Login to Get Matched</a>
         <a href="{{ route('practice-areas') }}" class="btn-ghost" style="text-decoration:none;display:inline-block;">See practice areas</a>
       </div>
     </div>
@@ -37,12 +37,15 @@
 
   @include('partials.firm-profile', ['headingLevel' => 'h2', 'showDescription' => false, 'showPracticeAreas' => true])
 
-  <div class="stat-row">
-    <div class="stat"><div class="num">01</div><div class="label">Explore your legal need</div></div>
-    <div class="stat"><div class="num">02</div><div class="label">Browse practice areas</div></div>
-    <div class="stat"><div class="num">03</div><div class="label">Find attorney profiles</div></div>
-    <div class="stat"><div class="num">04</div><div class="label">Send an inquiry</div></div>
-  </div>
+  @if(auth()->check())
+  <section class="home-process" aria-labelledby="home-process-title">
+    <div class="section-label">CLIENT MATCHING</div>
+    <h2 id="home-process-title">From legal concern to consultation</h2>
+    <p class="lead">Follow each step of your request, from signing in to attorney confirmation.</p>
+    @include('partials.consultation-process', ['steps' => ['Client login', 'Admin live chat', 'Admin collects details', 'Identify legal category', 'Search attorney matches', 'Display recommendations', 'System sends best match', 'Attorney responds', 'Consultation confirmed'], 'doneThrough' => 0, 'currentStep' => null, 'ariaLabel' => 'Client to attorney matching process', 'flowExample' => true])
+    <a href="{{ route('login') }}" class="btn-primary" style="text-decoration:none;display:inline-block;">Start with Client Login</a>
+  </section>
+  @endif
 
   <div class="section-label">How We Can Help</div>
   <div class="glance">

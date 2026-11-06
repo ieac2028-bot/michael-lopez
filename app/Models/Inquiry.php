@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Inquiry extends Model
 {
@@ -17,13 +18,15 @@ class Inquiry extends Model
     public const TYPE_CONSULTATION = 'consultation';
 
     protected $fillable = [
-        'full_name', 'email', 'phone', 'practice_area_id', 'attorney_id', 'message',
+        'full_name', 'email', 'phone', 'nationality', 'practice_area_id', 'attorney_id', 'message',
         'client_type', 'client_location', 'legal_profile', 'client_requirements',
-        'preferred_date', 'preferred_time', 'status', 'type',
+        'preferred_date', 'preferred_time', 'budget_range', 'consultation_method',
+        'recommended_attorney_ids', 'status', 'type',
     ];
 
     protected $casts = [
         'preferred_date' => 'date',
+        'recommended_attorney_ids' => 'array',
     ];
 
     public function practiceArea(): BelongsTo
@@ -39,5 +42,10 @@ class Inquiry extends Model
     public function caseRecord(): HasOne
     {
         return $this->hasOne(CaseRecord::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(InquiryMessage::class);
     }
 }

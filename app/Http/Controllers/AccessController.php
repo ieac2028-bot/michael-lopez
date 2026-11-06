@@ -16,7 +16,7 @@ class AccessController extends Controller
                 ? route('admin.dashboard')
                 : ($user->isAttorney()
                     ? ($user->hasVerifiedEmail() ? route('attorney.dashboard') : route('verification.notice'))
-                    : ($user->hasVerifiedEmail() ? route('client-portal') : route('verification.notice')));
+                    : route('client-portal'));
 
             return redirect()->intended($destination);
         }

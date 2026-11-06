@@ -28,9 +28,20 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+<link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
 </head>
-<body>
+@php
+  $clientWorkflowMode = auth()->check()
+    && auth()->user()->isClient()
+    && request()->routeIs('client-portal', 'consultation', 'consultation.*');
+  $attorneyWorkspaceMode = auth()->check()
+    && auth()->user()->isAttorney()
+    && request()->routeIs('attorney.*');
+  $adminWorkspaceMode = auth()->check()
+    && auth()->user()->isAdministrator()
+    && request()->routeIs('admin.dashboard');
+@endphp
+<body class="{{ $clientWorkflowMode ? 'client-workflow-mode' : '' }} {{ $attorneyWorkspaceMode ? 'attorney-workspace-mode' : '' }} {{ $adminWorkspaceMode ? 'admin-workspace-mode' : '' }}">
 <a class="skip-link" href="#mainContent">Skip to main content</a>
 <div class="stripe-top"></div>
 <div class="site-backdrop" aria-hidden="true"></div>
@@ -41,6 +52,40 @@
   <path d="M980 -100 C760 180 1160 320 920 540 S880 780 1100 1020"/>
 </svg>
 
+@if($adminWorkspaceMode)
+<header class="client-workflow-header admin-workspace-header">
+  <div class="header-inner">
+    <a href="{{ route('admin.dashboard') }}" class="brand" style="text-decoration:none;">
+      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    </a>
+    <div class="admin-user-chip" aria-label="Signed in as {{ auth()->user()->name }}">
+      <span class="admin-user-chip__initials" aria-hidden="true">{{ collect(explode(' ', auth()->user()->name))->filter()->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}</span>
+      <span>{{ auth()->user()->name }}</span>
+    </div>
+  </div>
+</header>
+@elseif($attorneyWorkspaceMode)
+<header class="client-workflow-header attorney-workspace-header">
+  <div class="header-inner">
+    <a href="{{ route('attorney.dashboard') }}" class="brand" style="text-decoration:none;">
+      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    </a>
+    <div class="attorney-user-chip" aria-label="Signed in as {{ auth()->user()->attorneyProfile->name }}">
+      <span class="attorney-user-chip__initials" aria-hidden="true">{{ auth()->user()->attorneyProfile->initials }}</span>
+      <span class="attorney-user-chip__name">{{ auth()->user()->attorneyProfile->name }}</span>
+    </div>
+  </div>
+</header>
+@elseif($clientWorkflowMode)
+<header class="client-workflow-header">
+  <div class="header-inner">
+    <a href="{{ route('client-portal') }}" class="brand" style="text-decoration:none;">
+      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    </a>
+    <form method="POST" action="{{ route('client.logout') }}">@csrf<button class="btn-secondary" type="submit">Sign out</button></form>
+  </div>
+</header>
+@else
 <header>
   <div class="header-inner">
     <a href="{{ route('home') }}" class="brand" style="text-decoration:none;">
@@ -82,11 +127,13 @@
   </button>
   <a class="mn-book {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'active' : '' }}" href="{{ route('login') }}" aria-label="Choose login access" style="text-decoration:none;display:block;text-align:center;">Login</a>
 </nav>
+@endif
 
 <main class="page" id="mainContent" tabindex="-1">
   @yield('content')
 </main>
 
+@unless($clientWorkflowMode || $attorneyWorkspaceMode || $adminWorkspaceMode)
 <footer class="site-footer">
   <div class="footer-inner">
     <a class="footer-ocampo-logo" href="{{ route('home') }}" aria-label="Ocampo &amp; Associates home">
@@ -148,6 +195,7 @@
 </footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top" onclick="window.scrollTo({top:0, behavior:'smooth'})">▲</button>
+@endunless
 
 <div class="accessibility" data-accessibility>
   <button class="accessibility__trigger" type="button" aria-label="Open accessibility settings" aria-haspopup="dialog" aria-expanded="false" aria-controls="accessibilityPanel" data-a11y-trigger>
@@ -166,6 +214,7 @@
   </section>
 </div>
 
+@unless($clientWorkflowMode || $attorneyWorkspaceMode || $adminWorkspaceMode)
   <button class="launcher" id="launcher" aria-label="Chat with SafaLaw" aria-controls="chatPanel" aria-expanded="false">
   <span class="launcher__icon" aria-hidden="true">
     <svg viewBox="0 0 48 48" focusable="false">
@@ -212,7 +261,8 @@
     <circle class="pointer-orbit__dot" cx="0" cy="0" r="2" />
   </g>
 </svg>
+@endunless
 
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}"></script>
 </body>
 </html>

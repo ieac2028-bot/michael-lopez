@@ -28,12 +28,9 @@ class RejectUnknownRequestFields
         'admin.dashboard' => [],
         'chat.respond' => ['message', 'language'],
         'chat.translate' => ['message'],
-        'client-portal.lookup' => ['reference_no'],
         'contact.store' => ['first_name', 'last_name', 'email', 'message'],
         'consultation.store' => [
-            'full_name', 'email', 'phone', 'client_type', 'client_location',
-            'practice_area_id', 'legal_profile', 'client_requirements',
-            'preferred_date', 'preferred_time', 'message',
+            'body',
         ],
         'admin.login.store' => ['email', 'password', 'remember'],
         'client.login.store' => ['email', 'password', 'remember'],
@@ -42,14 +39,25 @@ class RejectUnknownRequestFields
         'password.email' => ['email'],
         'password.update' => ['token', 'email', 'password', 'password_confirmation'],
         'attorney.cases.update' => ['status'],
+        'attorney.matching-availability.update' => ['accepting_matches'],
+        'attorney.inquiries.respond' => ['decision'],
+        'consultation.messages.store' => ['body'],
+        'admin.inquiries.messages.store' => ['body'],
+        'admin.inquiries.intake.update' => [
+            'phone', 'client_type', 'client_location', 'nationality', 'practice_area_id', 'legal_profile',
+            'client_requirements', 'budget_range', 'consultation_method', 'preferred_date', 'preferred_time',
+        ],
+        'admin.inquiries.match' => [
+            'phone', 'client_type', 'client_location', 'nationality', 'practice_area_id', 'legal_profile',
+            'client_requirements', 'budget_range', 'consultation_method', 'preferred_date', 'preferred_time',
+        ],
         'admin.attorneys.account.store' => ['email'],
         'admin.logout' => [],
         'client.logout' => [],
         'verification.send' => [],
         'admin.inquiries.update' => ['status', 'attorney_id'],
-        'admin.inquiries.accept' => [],
         'admin.cases.update' => ['status', 'outcome', 'testimony'],
-        'admin.attorneys.update' => ['is_available', 'coverage_areas'],
+        'admin.attorneys.update' => ['is_available', 'coverage_areas', 'budget_min', 'budget_max'],
     ];
 
     private const FRAMEWORK_FIELDS = ['_token', '_method'];

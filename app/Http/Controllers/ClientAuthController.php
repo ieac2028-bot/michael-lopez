@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -89,12 +88,10 @@ class ClientAuthController extends Controller
             'is_admin' => false,
         ]);
 
-        event(new Registered($user));
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('verification.notice')
-            ->with('status', 'Check your email for a verification link before opening the Client Portal.');
+        return redirect()->route('client-portal');
     }
 
     public function verifyEmail(EmailVerificationRequest $request): RedirectResponse
@@ -135,7 +132,7 @@ class ClientAuthController extends Controller
             ? route('admin.dashboard')
             : ($user->isAttorney()
                 ? ($user->hasVerifiedEmail() ? route('attorney.dashboard') : route('verification.notice'))
-                : ($user->hasVerifiedEmail() ? route('client-portal') : route('verification.notice')));
+                : route('client-portal'));
 
         return redirect()->intended($destination);
     }

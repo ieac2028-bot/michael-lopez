@@ -15,6 +15,44 @@
     </form>
   </div>
 
+  <section class="admin-section" aria-labelledby="client-requests-title">
+    <div class="admin-section-head"><div><div class="eyebrow">REQUEST TRACKER</div><h2 id="client-requests-title">Your consultation requests</h2></div><a class="btn-primary" href="{{ route('consultation') }}">Start a request</a></div>
+    @forelse($inquiries as $inquiry)
+      @php
+        $flow = [
+          'Client login', 'Admin live chat', 'Admin collects client information',
+          'Legal category identified', 'Search matching attorneys', 'Recommendations displayed',
+          'System sends best match', 'Attorney accepts or declines', 'Consultation confirmed',
+        ];
+        $doneThrough = match($inquiry->status) {
+          'clarifying' => 2,
+          'reviewing' => 5,
+          'referred' => 7,
+          'declined' => 6,
+          'accepted' => 9,
+          default => 1,
+        };
+        $active = $inquiry->status === 'accepted' ? null : match($inquiry->status) {
+          'new' => 2,
+          'clarifying' => 3,
+          'reviewing' => 6,
+          'referred' => 8,
+          'declined' => 8,
+          default => 2,
+        };
+      @endphp
+      <article class="admin-card client-request-card">
+        <div class="admin-card-head"><div><h3>{{ $inquiry->practiceArea?->name }} · {{ $inquiry->created_at->format('M j, Y') }}</h3><p>{{ $inquiry->attorney?->name ? 'Automatically matched: '.$inquiry->attorney->name : 'Finding an available match' }}</p></div><span class="admin-status-pill">{{ ucfirst($inquiry->status) }}</span></div>
+        @include('partials.consultation-process', ['steps' => $flow, 'doneThrough' => $doneThrough, 'currentStep' => $active, 'ariaLabel' => 'Consultation progress'])
+        @if($inquiry->caseRecord)<p>Case reference <strong>{{ $inquiry->caseRecord->reference_no }}</strong> · {{ ucfirst(str_replace('_', ' ', $inquiry->caseRecord->status)) }}</p>@endif
+        @if($inquiry->status === 'declined')<p>The matched attorney could not accept, and no other connected match is available. The firm will follow up.</p>@endif
+        <a href="{{ route('consultation.open', $inquiry) }}">Open request and firm conversation →</a>
+      </article>
+    @empty
+      <div class="admin-empty">You haven’t sent a consultation request yet. Start one to find a matching attorney.</div>
+    @endforelse
+  </section>
+
   <div class="contact-grid">
     <form method="POST" action="{{ route('client-portal.lookup') }}">
       @csrf

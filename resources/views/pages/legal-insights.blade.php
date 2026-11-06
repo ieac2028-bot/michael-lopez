@@ -69,7 +69,7 @@
   </section>
 
   <aside class="glance-card" style="max-width:1040px;border-left:3px solid var(--red);" aria-label="Legal information notice">
-    <strong>General information only.</strong> These sample guides are educational and are not legal advice. For advice about a specific situation, contact a qualified lawyer. Do not submit confidential or time-sensitive information through this prototype.
+    <strong>General information only.</strong> These sample guides are educational and are not legal advice. For advice about a specific situation, contact a qualified lawyer. Do not submit confidential or time-sensitive information through this website.
   </aside>
 </section>
 @endsection

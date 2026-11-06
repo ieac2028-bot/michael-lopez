@@ -12,16 +12,8 @@ class AdminAuthController extends Controller
 {
     public function show(): View|RedirectResponse
     {
-        if (Auth::check()) {
-            if (Auth::user()->isAdministrator()) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            if (Auth::user()->isAttorney()) {
-                return redirect()->route('attorney.dashboard');
-            }
-
-            return redirect()->route(Auth::user()->hasVerifiedEmail() ? 'client-portal' : 'verification.notice');
+        if (Auth::check() && Auth::user()->isAdministrator()) {
+            return redirect()->route('admin.dashboard');
         }
 
         return view('admin.login');
@@ -49,7 +41,7 @@ class AdminAuthController extends Controller
             return back()->withErrors(['email' => 'These credentials do not match an admin account.'])->onlyInput('email');
         }
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->route('admin.dashboard');
     }
 
     public function logout(Request $request): RedirectResponse

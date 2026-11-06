@@ -23,22 +23,24 @@ Route::get('/legal-insights', [PageController::class, 'legalInsights'])->name('l
 Route::get('/about-us', [PageController::class, 'aboutUs'])->name('about-us');
 
 Route::get('/client-portal', [ClientPortalController::class, 'show'])
-    ->middleware(['auth', 'can:access-client-portal', 'verified'])
+    ->middleware(['auth', 'can:access-client-portal'])
     ->name('client-portal');
-Route::post('/client-portal/lookup', [ClientPortalController::class, 'lookup'])
-    ->middleware(['auth', 'can:access-client-portal', 'verified', 'throttle:client-portal-lookup'])
-    ->name('client-portal.lookup');
-
 // General questions — low commitment, no practice area required.
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Actual consultation booking — practice area, phone, preferred date/time required.
-Route::get('/book-consultation', [ConsultationController::class, 'show'])->name('consultation');
-Route::post('/book-consultation', [ConsultationController::class, 'store'])->name('consultation.store');
+Route::middleware(['auth', 'can:access-client-portal'])->group(function () {
+    Route::get('/book-consultation', [ConsultationController::class, 'show'])->name('consultation');
+    Route::get('/book-consultation/admin-status', [ConsultationController::class, 'adminStatus'])->name('consultation.admin-status');
+    Route::get('/book-consultation/{inquiry}', [ConsultationController::class, 'open'])->name('consultation.open');
+    Route::post('/book-consultation', [ConsultationController::class, 'store'])->name('consultation.store');
+    Route::post('/book-consultation/{inquiry}/messages', [ConsultationController::class, 'sendMessage'])->name('consultation.messages.store');
+    Route::get('/book-consultation/{inquiry}/messages/poll', [ConsultationController::class, 'pollMessages'])->name('consultation.messages.poll');
+});
 
 Route::post('/api/chat', [ChatbotController::class, 'respond'])->middleware(['throttle:30,1', LocalizeChatbotResponse::class])->name('chat.respond');
-Route::post('/api/chat/translate', [ChatbotController::class, 'translate'])->middleware('throttle:10,1')->name('chat.translate');
+Route::post('/api/chat/translate', [ChatbotController::class, 'translate'])->middleware('throttle:30,1')->name('chat.translate');
 
 Route::get('/login', AccessController::class)->name('login');
 Route::get('/client/login', [ClientAuthController::class, 'showLogin'])->name('client.login');
@@ -69,7 +71,9 @@ Route::post('/attorney/login', [AttorneyAuthController::class, 'login'])
     ->name('attorney.login.store');
 Route::middleware(['auth', 'can:access-attorney-portal'])->prefix('attorney-portal')->name('attorney.')->group(function () {
     Route::get('/', [AttorneyAuthController::class, 'dashboard'])->middleware('verified')->name('dashboard');
+    Route::post('/matching-availability', [AttorneyAuthController::class, 'updateMatchingAvailability'])->middleware('verified')->name('matching-availability.update');
     Route::patch('/cases/{caseRecord}', [AttorneyAuthController::class, 'updateCase'])->middleware('verified')->name('cases.update');
+    Route::post('/inquiries/{inquiry}/respond', [AttorneyAuthController::class, 'respondToInquiry'])->middleware('verified')->name('inquiries.respond');
     Route::post('/logout', [AttorneyAuthController::class, 'logout'])->name('logout');
 });
 
@@ -90,8 +94,12 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])
 
 Route::middleware(['auth', 'can:manage-safalaw'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/inquiries/poll', [AdminController::class, 'pollInquiryInbox'])->name('inquiries.poll');
     Route::patch('/inquiries/{inquiry}', [AdminController::class, 'updateInquiry'])->name('inquiries.update');
-    Route::post('/inquiries/{inquiry}/accept', [AdminController::class, 'acceptInquiry'])->name('inquiries.accept');
+    Route::post('/inquiries/{inquiry}/messages', [AdminController::class, 'sendInquiryMessage'])->name('inquiries.messages.store');
+    Route::get('/inquiries/{inquiry}/messages/poll', [AdminController::class, 'pollInquiryMessages'])->name('inquiries.messages.poll');
+    Route::post('/inquiries/{inquiry}/intake', [AdminController::class, 'updateIntake'])->name('inquiries.intake.update');
+    Route::post('/inquiries/{inquiry}/match', [AdminController::class, 'prepareMatches'])->name('inquiries.match');
     Route::patch('/cases/{caseRecord}', [AdminController::class, 'updateCase'])->name('cases.update');
     Route::delete('/cases/{caseRecord}', fn (string $caseRecord) => abort(404))->name('cases.destroy');
     Route::patch('/attorneys/{attorney}', [AdminController::class, 'updateAttorney'])->name('attorneys.update');

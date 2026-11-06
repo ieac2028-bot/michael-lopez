@@ -193,6 +193,15 @@ p.lead { color: var(--ink-soft); font-size: 1rem; line-height: 1.65; max-width: 
 .attorney-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .attorney-card { display: flex; align-items: flex-start; gap: 14px; background: var(--panel); border: 1px solid var(--line); padding: 16px; min-width: 0; }
 .avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--black-stripe); color: var(--red); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-weight: 600; font-size: 1rem; flex-shrink: 0; }
+
+.attorney-user-chip { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; }
+.attorney-user-chip__initials { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--black-stripe); color: var(--red); font-family: var(--font-serif); font-weight: 700; }
+.attorney-user-chip__name { font-size: .88rem; }
+.attorney-workspace-mode .hamburger,
+.attorney-workspace-mode .topnav,
+.attorney-workspace-mode .mobile-nav,
+.attorney-workspace-mode .mobile-nav-backdrop { display: none !important; }
+@media (max-width: 620px) { .attorney-user-chip__name { max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
 .attorney-photo { width: 76px; height: 90px; border-radius: 10px; object-fit: cover; flex: 0 0 auto; background: var(--red-soft); border: 1px solid var(--line); }
 .attorney-info { min-width: 0; }
 .attorney-name { font-family: var(--font-serif); font-weight: 600; font-size: 1rem; }
@@ -1182,6 +1191,82 @@ header .header-login:active { transform: translateY(1px); box-shadow: inset 0 2p
 .client-portal-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: -8px 0 22px; color: var(--ink-soft); font-size: .84rem; }
 .client-portal-toolbar form { margin: 0; }
 .client-portal-toolbar strong { color: var(--ink); }
+.home-process { margin:40px 0; padding:28px; border:1px solid var(--line); border-radius:16px; background:var(--panel); }
+.home-process h2 { margin:4px 0 8px; color:var(--ink); }
+.home-process .lead { margin:0; }
+.home-process .consultation-process { margin:28px 0; }
+.consultation-process { display:grid; grid-template-columns:repeat(9,minmax(112px,1fr)); min-width:1008px; gap:0; overflow-x:auto; list-style:none; padding:8px 0 16px; margin:24px 0 30px; scrollbar-color:var(--header-cta-bg) var(--panel); scrollbar-width:thin; }
+.consultation-process li { position:relative; display:flex; min-width:0; flex-direction:column; align-items:center; gap:10px; padding:0 6px; color:var(--ink-soft); text-align:center; }
+.consultation-process li::before,
+.consultation-process li::after { position:absolute; z-index:0; top:21px; height:3px; content:''; background:#d7e0e6; }
+.consultation-process li::before { inset-inline-start:0; inset-inline-end:50%; }
+.consultation-process li::after { inset-inline-start:50%; inset-inline-end:0; }
+.consultation-process li:first-child::before,
+.consultation-process li:last-child::after { display:none; }
+.consultation-process__node { position:relative; z-index:1; display:grid; place-items:center; flex:0 0 44px; width:44px; height:44px; border:2px solid #cbd5df; border-radius:50%; background:var(--paper); color:#83919c; }
+.consultation-process__node svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.consultation-process__copy { display:grid; justify-items:center; gap:5px; max-width:112px; }
+.consultation-process__copy strong { color:var(--ink); font-size:.74rem; line-height:1.35; }
+.consultation-process__copy small { color:var(--ink-soft); font-size:.66rem; line-height:1.2; }
+.consultation-process li.is-done { color:#169447; }
+.consultation-process li.is-done::before,
+.consultation-process li.is-done::after,
+.consultation-process li.is-current::before { background:#20a45b; }
+.consultation-process li.is-done .consultation-process__node { border-color:#20a45b; background:#20a45b; color:#fff; }
+.consultation-process li.is-current .consultation-process__node { border-color:#20a45b; background:var(--paper); color:#168c49; box-shadow:0 0 0 5px rgb(32 164 91 / 14%); }
+.consultation-process li.is-current .consultation-process__copy small { color:#168c49; font-weight:700; }
+.consultation-process.is-flow-example li::before,
+.consultation-process.is-flow-example li::after { background:#20a45b; }
+.consultation-process.is-flow-example .consultation-process__node { border-color:#20a45b; color:#168c49; }
+.admin-intake-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; width:100%; }
+.admin-intake-form h3, .admin-intake-form .admin-workflow-actions { grid-column:1 / -1; }
+.admin-intake-form label { display:grid; min-width:0; gap:5px; color:var(--ink-soft); font-size:.78rem; }
+.admin-intake-form input, .admin-intake-form select, .admin-intake-form textarea { width:100%; min-height:40px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); font:inherit; }
+.admin-intake-form textarea { min-height:76px; resize:vertical; }
+@media (max-width:760px) { .admin-intake-form { grid-template-columns:1fr; } }
+.consultation-process li.is-done { border-color:#9bd6b0; background:linear-gradient(145deg,var(--paper),#f0faf3); color:var(--ink); }
+.consultation-process li.is-done .consultation-process__node { border-color:#169447; background:#169447; }
+.consultation-process li.is-current { border-color:var(--header-cta-bg); background:linear-gradient(145deg,var(--paper),#eff8ff); color:var(--ink); box-shadow:0 10px 26px rgb(70 151 198 / 14%); }
+.consultation-process li.is-current .consultation-process__node { border-color:var(--header-cta-bg); background:var(--header-cta-bg); box-shadow:0 0 0 5px rgb(114 185 227 / 17%); }
+.consultation-process li.is-current .consultation-process__copy small { color:var(--header-cta-bg); font-weight:700; }
+.consultation-chat { max-width:760px; margin:0 0 24px; }
+.consultation-chat__messages { display:grid; gap:8px; max-height:280px; overflow:auto; margin:16px 0; }
+.consultation-chat__message { padding:12px; border-radius:9px; background:var(--panel); }
+.consultation-chat__message small { float:right; color:var(--ink-soft); }
+.consultation-chat__message p { margin:8px 0 0; }
+.consultation-chat { max-width:860px; padding:24px; border:1px solid var(--line); border-radius:18px; box-shadow:0 16px 42px rgb(16 41 61 / 8%); }
+.consultation-chat__heading { display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; border-bottom:1px solid var(--line); }
+.consultation-chat__heading .k { color:var(--ink); font-size:1rem; font-weight:700; }
+.consultation-chat__heading small { color:var(--ink-soft); font-size:.8rem; }
+.consultation-admin-presence { display:flex; flex-wrap:wrap; align-items:center; gap:7px 10px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--panel); }
+.consultation-admin-presence small { flex-basis:100%; margin-left:21px; }
+.consultation-chat__messages, .professional-chat-thread { display:grid; gap:12px; max-height:390px; overflow:auto; margin:18px 0; padding:16px; border:1px solid var(--line); border-radius:14px; background:color-mix(in srgb, var(--panel) 72%, transparent); scroll-behavior:smooth; }
+.consultation-chat__message { width:fit-content; max-width:min(82%, 620px); padding:12px 15px; border:1px solid var(--line); border-radius:14px 14px 14px 4px; background:var(--panel); box-shadow:0 3px 10px rgb(16 41 61 / 4%); }
+.consultation-chat__message[data-role="client"] { justify-self:end; border-color:transparent; border-radius:14px 14px 4px 14px; background:#173b58; color:#fff; }
+.consultation-chat__message[data-role="client"] small { color:rgb(255 255 255 / 72%); }
+.consultation-chat__message[data-role="assistant"] { border-left:3px solid #b58c48; }
+.consultation-chat__translation { display:block; float:none !important; margin-top:9px; padding-top:8px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:.77rem; line-height:1.45; }
+.consultation-chat__message[data-role="client"] .consultation-chat__translation { border-color:rgb(255 255 255 / 22%); color:rgb(255 255 255 / 84%); }
+.live-chat-translation-note { display:block; margin-top:5px; color:var(--ink-soft); font-size:.76rem; }
+.consultation-chat__message strong { font-size:.78rem; }
+.consultation-chat__message small { float:none; display:block; margin-top:3px; color:var(--ink-soft); font-size:.68rem; }
+.consultation-chat__message p { margin:7px 0 0; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+.consultation-chat__composer { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:12px; padding-top:14px; border-top:1px solid var(--line); }
+.consultation-chat__composer .form-field { margin:0; }
+.consultation-chat__composer textarea { min-height:84px; resize:vertical; border-radius:12px; }
+.consultation-chat__composer .btn-primary { min-height:46px; }
+.professional-live-chat { width:min(100%, 760px); padding:18px; border:1px solid var(--line); border-radius:16px; background:var(--panel); }
+.professional-live-chat .professional-chat-thread { max-height:340px; margin:12px 0 16px; }
+.attorney-conversation-summary { margin-top:16px; padding:16px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+.attorney-conversation-summary h4 { margin:0 0 10px; }
+.attorney-conversation-summary p { margin:8px 0; line-height:1.55; }
+.attorney-conversation-transcript { margin-top:12px; }
+.attorney-conversation-transcript summary { color:var(--ink-soft); cursor:pointer; font-size:.84rem; font-weight:600; }
+.attorney-conversation-transcript .professional-chat-thread { max-height:320px; }
+@media (max-width:620px) { .consultation-chat { padding:16px; } .consultation-chat__composer { grid-template-columns:1fr; } .consultation-chat__message { max-width:94%; } }
+.admin-inquiry-chat { flex:1 1 100%; padding:12px; border:1px solid var(--line); border-radius:10px; }
+.admin-inquiry-chat p { margin:8px 0; }
+.admin-inquiry-chat small { color:var(--ink-soft); }
 .form-error { margin: 5px 0 0; color: var(--red); font-size: .82rem; }
 .admin-remember { display: flex; align-items: center; gap: 8px; margin: 4px 0 18px; color: var(--ink-soft); font-size: .86rem; }
 .admin-page-head, .admin-section-head, .admin-card-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -1942,11 +2027,256 @@ header nav.topnav a.header-login.active {
   :root:not([data-theme='light']) .mobile-nav .mn-book,
   :root:not([data-theme='light']) .back-to-top { color: #183247; }
 }
+
+/* Client sign-in opens a focused attorney-matching workflow. */
+.client-workflow-mode .site-backdrop,
+.client-workflow-mode .ambient-lines { display: none; }
+.client-workflow-mode .client-workflow-header .header-inner {
+  min-height: 86px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.client-workflow-mode .client-workflow-header .brand { flex: 0 1 auto; }
+.client-workflow-mode .client-workflow-header .brand__ocampo-logo { width: 240px; height: 76px; }
+.client-workflow-mode .page { max-width: 1120px; min-height: calc(100vh - 110px); padding-top: 32px; }
+.client-workflow-mode .consultation-process { margin-block: 24px 32px; }
+.client-workflow-mode .consultation-chat,
+.client-workflow-mode .consultation-recommendations { max-width: 900px; }
+.consultation-admin-presence { display:flex; align-items:center; gap:8px; margin:12px 0; color:var(--ink); }
+.consultation-admin-presence__dot { width:11px; height:11px; flex:0 0 11px; border-radius:50%; }
+.consultation-admin-presence__dot.is-online { background:#169447; box-shadow:0 0 0 3px rgb(22 148 71 / 15%); }
+.consultation-admin-presence__dot.is-offline { background:#171717; box-shadow:0 0 0 3px rgb(23 23 23 / 12%); }
+.consultation-admin-presence small { color:var(--ink-soft); }
+@media (max-width: 560px) {
+  .client-workflow-mode .client-workflow-header .header-inner { min-height: 70px; padding-inline: 16px; }
+  .client-workflow-mode .client-workflow-header .brand__ocampo-logo { width: 190px; height: 62px; }
+  .client-workflow-mode .page { padding-top: 22px; }
+}
 .badge .mark,
 .avatar { color: #10293D; }
 :root[data-theme='dark'] .badge .mark,
 :root[data-theme='dark'] .avatar { color: #EAF4FB; }
+
+/* Clear, responsive intake form and a focused single-attorney match card. */
+.admin-inline-form.admin-intake-form {
+  display: grid;
+  flex: 1 1 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+  width: 100%;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+}
+.admin-inline-form.admin-intake-form h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  color: var(--ink);
+  font-size: clamp(1.1rem, 1.7vw, 1.42rem);
+  line-height: 1.35;
+}
+.admin-inline-form.admin-intake-form label {
+  display: grid;
+  flex: initial;
+  min-width: 0;
+  gap: 7px;
+  color: var(--ink-soft);
+  font-size: .82rem;
+  font-weight: 600;
+}
+.admin-inline-form.admin-intake-form input,
+.admin-inline-form.admin-intake-form select,
+.admin-inline-form.admin-intake-form textarea {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.admin-inline-form.admin-intake-form textarea { min-height: 96px; }
+.admin-inline-form.admin-intake-form .admin-workflow-actions {
+  grid-column: 1 / -1;
+  width: 100%;
+  justify-content: flex-end;
+  margin: 2px 0 0;
+  padding-top: 16px;
+}
+.consultation-recommendations {
+  max-width: 900px;
+  padding: clamp(20px, 3vw, 32px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 16px 42px rgb(16 41 61 / 8%);
+}
+.consultation-recommendations__heading h2 {
+  margin: 5px 0 8px;
+  color: var(--ink);
+  font-size: clamp(1.35rem, 2.7vw, 1.8rem);
+  line-height: 1.25;
+}
+.consultation-recommendations__heading p {
+  max-width: 690px;
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.consultation-recommendations__grid {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 760px;
+  margin-top: 22px;
+}
+.recommended-attorney-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 230px);
+  align-items: center;
+  gap: 24px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+}
+.recommended-attorney-card__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+}
+.recommended-attorney-card__avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+}
+.recommended-attorney-card__eyebrow {
+  color: var(--ink-soft);
+  font-size: .76rem;
+  font-weight: 600;
+}
+.recommended-attorney-card h3 {
+  margin: 5px 0;
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+.recommended-attorney-card__identity p {
+  margin: 7px 0 0;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+.recommended-attorney-card__details {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding-left: 22px;
+  border-left: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: .85rem;
+}
+.recommended-attorney-card__details > strong {
+  color: var(--ink);
+  font-size: 1.15rem;
+}
+.recommended-attorney-card__details small { line-height: 1.45; }
+.recommended-attorney-card__status {
+  margin-top: 3px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #dcf4e5 80%, var(--paper));
+  color: #176b39;
+  font-size: .75rem;
+  font-weight: 700;
+}
+.recommended-attorney-card__status.is-confirmed { background:#dcf4e5; color:#176b39; }
+@media (max-width: 900px) {
+  .admin-inline-form.admin-intake-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .admin-inline-form.admin-intake-form { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+  .recommended-attorney-card { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 18px; }
+  .recommended-attorney-card__details { padding: 16px 0 0; border-top: 1px solid var(--line); border-left: 0; }
+}
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .badge .mark,
   :root:not([data-theme='light']) .avatar { color: #EAF4FB; }
+}
+
+/* Admin pages use a focused workspace shell with no public site navigation. */
+.admin-workspace-mode .site-backdrop,
+.admin-workspace-mode .ambient-lines { display: none; }
+.admin-workspace-mode .client-workflow-header .header-inner {
+  min-height: 86px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 8px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admin-workspace-mode .client-workflow-header .brand__ocampo-logo { width: 240px; height: 76px; }
+.admin-user-chip { display:flex; align-items:center; gap:10px; color:var(--ink); font-size:.87rem; font-weight:600; }
+.admin-user-chip__initials { display:grid; place-items:center; width:38px; height:38px; border:1px solid var(--line); border-radius:50%; background:var(--panel); color:var(--ink); font-size:.76rem; font-weight:700; }
+.admin-workspace-mode .page { max-width:1320px; min-height:calc(100vh - 110px); padding-top:34px; padding-bottom:56px; }
+.admin-workspace-mode .admin-page-head {
+  margin-bottom:28px;
+  padding:26px 30px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:linear-gradient(125deg, var(--panel), color-mix(in srgb, var(--panel) 72%, var(--paper)));
+  box-shadow:0 14px 38px rgb(16 41 61 / 7%);
+}
+.admin-workspace-mode .admin-page-head .eyebrow { letter-spacing:.13em; font-size:.71rem; font-weight:700; }
+.admin-workspace-mode .admin-page-head .page-title { margin:5px 0 7px; font-size:clamp(2rem, 4vw, 2.8rem); letter-spacing:-.035em; }
+.admin-workspace-mode .admin-page-head .lead { max-width:680px; color:var(--ink-soft); line-height:1.6; }
+.admin-workspace-mode .admin-metrics { gap:16px; margin:0 0 42px; }
+.admin-workspace-mode .admin-metric {
+  min-height:126px;
+  padding:20px 22px;
+  border-radius:16px;
+  border-top:3px solid var(--header-cta-bg);
+  box-shadow:0 10px 28px rgb(16 41 61 / 5%);
+}
+.admin-workspace-mode .admin-metric span { font-size:.82rem; font-weight:600; }
+.admin-workspace-mode .admin-metric strong { font-size:2.15rem; letter-spacing:-.035em; }
+.admin-workspace-mode .admin-section { margin-top:48px; }
+.admin-workspace-mode .admin-section-head {
+  align-items:flex-end;
+  margin-bottom:20px;
+  padding-bottom:15px;
+  border-bottom:1px solid var(--line);
+}
+.admin-workspace-mode .admin-section-head h2 { font-size:clamp(1.45rem, 2.6vw, 1.9rem); letter-spacing:-.025em; }
+.admin-workspace-mode .admin-section-head > span,
+.admin-workspace-mode .admin-status-pill { padding:7px 12px; background:var(--panel); color:var(--ink-soft); border:1px solid var(--line); }
+.admin-workspace-mode .admin-card {
+  margin:14px 0;
+  padding:22px 24px;
+  border-radius:17px;
+  background:var(--panel);
+  box-shadow:0 12px 30px rgb(16 41 61 / 5%);
+}
+.admin-workspace-mode .admin-card-head { margin-bottom:18px; }
+.admin-workspace-mode .admin-card-head h3 { font-size:1.12rem; letter-spacing:-.01em; }
+.admin-workspace-mode .admin-card-head p { line-height:1.55; }
+.admin-workspace-mode .admin-record-details { margin-top:16px; padding-top:15px; }
+.admin-workspace-mode .admin-record-details > summary { color:var(--ink); font-weight:700; }
+.admin-workspace-mode .admin-record-details[open] > summary { margin-bottom:20px; }
+.admin-workspace-mode .admin-data-grid { gap:16px 26px; }
+.admin-workspace-mode .admin-attorney-section { padding:24px; border:1px solid var(--line); border-radius:18px; background:var(--panel); }
+@media (max-width:700px) {
+  .admin-workspace-mode .client-workflow-header .header-inner { min-height:70px; padding-inline:16px; }
+  .admin-workspace-mode .client-workflow-header .brand__ocampo-logo { width:190px; height:62px; }
+  .admin-workspace-mode .page { padding:22px 16px 42px; }
+  .admin-workspace-mode .admin-page-head { align-items:flex-start; padding:20px; }
+  .admin-workspace-mode .admin-metrics { margin-bottom:32px; }
+  .admin-workspace-mode .admin-metric { min-height:108px; padding:14px; }
+  .admin-workspace-mode .admin-card { padding:17px; }
 }
