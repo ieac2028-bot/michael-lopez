@@ -2290,4 +2290,225 @@ header nav.topnav a.header-login.active {
   .header-inner > .brand { flex-basis: 56px; }
   .brand__gpmo-logo { width: 48px; height: 74px; }
   .footer-gpmo-logo { width: 70px; }
-}}
+}
+
+
+
+
+/* ---------- GPMO minimal bento design system with restrained glass ---------- */
+:root {
+  --minimal-surface: #FFFFFF;
+  --minimal-surface-soft: #F8FAFC;
+  --minimal-border: rgba(11, 30, 63, .10);
+  --minimal-shadow: 0 10px 30px rgba(11, 30, 63, .055);
+}
+:root[data-theme="dark"] {
+  --minimal-surface: #202B38;
+  --minimal-surface-soft: #263545;
+  --minimal-border: rgba(221, 235, 245, .12);
+  --minimal-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --minimal-surface: #202B38;
+    --minimal-surface-soft: #263545;
+    --minimal-border: rgba(221, 235, 245, .12);
+    --minimal-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+  }
+}
+body {
+  background: radial-gradient(ellipse at 8% 2%, rgba(125,198,231,.10), transparent 32rem), var(--paper);
+}
+header {
+  background: rgba(11, 30, 63, .91);
+  border-bottom: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 8px 26px rgba(11,30,63,.11);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  backdrop-filter: blur(16px) saturate(130%);
+}
+.mini-card, .glance-card, .attorney-card, .area-card, .testi, .badge,
+.roster-note, .contact-details-card, .contact-map-card, .contact-message-section,
+.practice-contact-cta, .contact-status, .recommended-attorney-card,
+.admin-workspace-mode .admin-page-head, .admin-workspace-mode .admin-metric,
+.admin-workspace-mode .admin-card, .admin-workspace-mode .admin-attorney-section {
+  background: var(--minimal-surface);
+  border: 1px solid var(--minimal-border);
+  box-shadow: var(--minimal-shadow);
+}
+.mini-card, .glance-card, .attorney-card, .area-card, .testi, .badge,
+.contact-details-card, .contact-message-section, .practice-contact-cta,
+.recommended-attorney-card, .admin-workspace-mode .admin-card { border-radius: 18px; }
+.area-card { border-left: 3px solid var(--red); }
+.roster-note { border-style: solid; border-radius: 12px; }
+.hero-card {
+  border: 1px solid rgba(255,255,255,.18);
+  border-top: 3px solid var(--red);
+  border-radius: 24px;
+  box-shadow: 0 22px 50px rgba(11,30,63,.18);
+}
+.form-field input, .form-field textarea, .form-field select {
+  background: var(--minimal-surface);
+  border: 1px solid var(--minimal-border);
+  border-radius: 10px;
+  box-shadow: none;
+}
+.form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+  outline: 3px solid rgba(125,198,231,.22);
+  border-color: rgba(71,157,198,.65);
+}
+.firm-profile__practice-preview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(178px, auto);
+  gap: 14px;
+  align-items: stretch;
+}
+.firm-profile__practice-preview .mini-card {
+  display: flex;
+  min-height: 178px;
+  flex-direction: column;
+  padding: 21px;
+  border-radius: 20px;
+}
+.firm-profile__practice-preview .mini-card:nth-child(6n + 1) {
+  grid-column: span 2;
+  grid-row: span 2;
+  background: linear-gradient(145deg, var(--minimal-surface), var(--minimal-surface-soft));
+}
+.firm-profile__practice-preview .mini-card:nth-child(6n + 4) { grid-column: span 2; }
+.firm-profile__practice-preview .mini-card .t { font-size: 1.12rem; letter-spacing: -.02em; }
+.firm-profile__practice-preview .mini-card .d { line-height: 1.65; }
+.firm-profile__practice-preview .mini-card__more { margin-top: auto; padding-top: 16px; }
+.glance { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.glance-card { min-height: 150px; padding: 22px; }
+.glance-card .k { color: var(--red-deep); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.glance-card .v { font-size: 1rem; line-height: 1.6; }
+.badge-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.badge { min-height: 150px; padding: 18px; border-radius: 18px; }
+.badge .mark { border-radius: 12px; }
+.admin-workspace-mode .admin-page-head { background: var(--minimal-surface); box-shadow: var(--minimal-shadow); }
+.admin-workspace-mode .admin-card { background: var(--minimal-surface); box-shadow: var(--minimal-shadow); }
+@media (hover: hover) {
+  .mini-card, .attorney-card, .testi, .contact-details-card, .practice-contact-cta,
+  .admin-workspace-mode .admin-card { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+  .mini-card:hover, .attorney-card:hover, .testi:hover, .contact-details-card:hover,
+  .practice-contact-cta:hover, .admin-workspace-mode .admin-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(71,157,198,.32);
+    box-shadow: 0 16px 36px rgba(11,30,63,.10);
+  }
+}
+@media (max-width: 900px) {
+  .firm-profile__practice-preview { grid-template-columns: repeat(2, minmax(0,1fr)); grid-auto-rows: minmax(160px,auto); }
+  .firm-profile__practice-preview .mini-card:nth-child(6n + 1) { grid-row: span 1; }
+}
+@media (max-width: 620px) {
+  .firm-profile__practice-preview { grid-template-columns: 1fr; grid-auto-rows: auto; }
+  .firm-profile__practice-preview .mini-card,
+  .firm-profile__practice-preview .mini-card:nth-child(6n + 1),
+  .firm-profile__practice-preview .mini-card:nth-child(6n + 4) { grid-column: auto; grid-row: auto; min-height: 150px; }
+  .glance, .badge-grid { grid-template-columns: 1fr; }
+  .glance-card, .badge { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mini-card, .attorney-card, .testi, .contact-details-card, .practice-contact-cta,
+  .admin-workspace-mode .admin-card { transition: none; }
+  .mini-card:hover, .attorney-card:hover, .testi:hover, .contact-details-card:hover,
+  .practice-contact-cta:hover, .admin-workspace-mode .admin-card:hover { transform: none; }
+}
+
+
+/* ---------- Neumorphic contact message form ---------- */
+.contact-message-section {
+  --neo-face: #EDF2F6;
+  --neo-raised-shadow: rgba(104, 123, 143, .20);
+  --neo-highlight: rgba(255, 255, 255, .96);
+  --neo-inset-shadow: rgba(104, 123, 143, .16);
+  background: var(--neo-face);
+  border: 1px solid rgba(255,255,255,.88);
+  border-radius: 24px;
+  padding: clamp(24px, 4vw, 44px);
+  box-shadow: 14px 14px 32px var(--neo-raised-shadow),
+              -14px -14px 32px var(--neo-highlight);
+}
+.contact-message-section > div > .eyebrow { color: #5BA9D5; letter-spacing: .08em; }
+.contact-message-section h2 { font-size: clamp(1.55rem, 2.8vw, 2rem); letter-spacing: -.025em; }
+.contact-message-section > div > p { font-size: .95rem; line-height: 1.75; }
+.contact-message-section form { min-width: 0; }
+.contact-message-section .contact-name-title,
+.contact-message-section .form-field label { color: var(--ink-soft); font-size: .8rem; }
+.contact-message-section .contact-name-title span,
+.contact-message-section label span { color: #67B7E3; }
+.contact-message-section .form-field { margin-bottom: 15px; }
+.contact-message-section .form-field input,
+.contact-message-section .form-field textarea,
+.contact-message-section .form-field select {
+  background: #F7F9FB;
+  border: 1px solid rgba(255,255,255,.95);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: inset 5px 5px 11px var(--neo-inset-shadow),
+              inset -5px -5px 11px var(--neo-highlight);
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+.contact-message-section .form-field input:focus,
+.contact-message-section .form-field textarea:focus,
+.contact-message-section .form-field select:focus {
+  outline: 2px solid rgba(96,180,224,.24);
+  border-color: rgba(96,180,224,.55);
+  box-shadow: inset 3px 3px 7px var(--neo-inset-shadow),
+              inset -3px -3px 7px var(--neo-highlight);
+}
+.contact-message-section .form-field textarea { min-height: 90px; }
+.contact-message-section .contact-submit {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: #69B8E2;
+  color: #12344B;
+  font-weight: 700;
+  box-shadow: 7px 7px 16px rgba(93,145,174,.24),
+              -7px -7px 16px rgba(255,255,255,.92);
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.contact-message-section .contact-submit:hover {
+  background: #78C2E9;
+  box-shadow: 9px 9px 19px rgba(93,145,174,.27),
+              -9px -9px 19px rgba(255,255,255,.96);
+}
+.contact-message-section .contact-submit:active {
+  transform: translateY(1px);
+  box-shadow: inset 4px 4px 8px rgba(48,114,151,.24),
+              inset -4px -4px 8px rgba(255,255,255,.55);
+}
+:root[data-theme="dark"] .contact-message-section {
+  --neo-face: #263545;
+  --neo-raised-shadow: rgba(0,0,0,.30);
+  --neo-highlight: rgba(255,255,255,.055);
+  --neo-inset-shadow: rgba(0,0,0,.26);
+  border-color: rgba(255,255,255,.08);
+}
+:root[data-theme="dark"] .contact-message-section .form-field input,
+:root[data-theme="dark"] .contact-message-section .form-field textarea,
+:root[data-theme="dark"] .contact-message-section .form-field select { background: #202D3B; border-color: rgba(255,255,255,.08); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .contact-message-section {
+    --neo-face: #263545;
+    --neo-raised-shadow: rgba(0,0,0,.30);
+    --neo-highlight: rgba(255,255,255,.055);
+    --neo-inset-shadow: rgba(0,0,0,.26);
+    border-color: rgba(255,255,255,.08);
+  }
+  :root:not([data-theme="light"]) .contact-message-section .form-field input,
+  :root:not([data-theme="light"]) .contact-message-section .form-field textarea,
+  :root:not([data-theme="light"]) .contact-message-section .form-field select { background: #202D3B; border-color: rgba(255,255,255,.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-message-section .form-field input,
+  .contact-message-section .form-field textarea,
+  .contact-message-section .form-field select,
+  .contact-message-section .contact-submit { transition: none; }
+}
