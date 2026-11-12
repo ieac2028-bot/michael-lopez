@@ -268,7 +268,7 @@ document.querySelectorAll('[data-message-thread][data-poll-url]').forEach((threa
         const sender = document.createElement('strong');
         sender.textContent = message.sender_role === 'admin'
           ? 'Firm staff'
-          : (message.sender_role === 'assistant' ? 'SAFALAW Assistant' : (thread.closest('.professional-live-chat') ? 'Client' : 'You'));
+          : (message.sender_role === 'assistant' ? 'GPMO Assistant' : (thread.closest('.professional-live-chat') ? 'Client' : 'You'));
         const body = document.createElement('p');
         body.textContent = message.body;
         const time = document.createElement('small');
@@ -412,7 +412,7 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
   frame.addEventListener('pointerleave', () => frame.classList.remove('is-zooming'));
 });
 
-// ---- SafaLaw site assistant ----
+// ---- GPMO site assistant ----
 (function () {
   const chatPanel = document.getElementById('chatPanel');
   const launcher = document.getElementById('launcher');
@@ -434,12 +434,12 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
   const TRANSLATE_ENDPOINT = chatPanel.dataset.translateEndpoint;
   const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
   const LANGUAGES = {
-    en: { greeting: "Hi, I'm SafaLaw's site assistant. I can answer basic questions about this website and guide you through its sample inquiry flow. I can't provide legal advice.", scope: 'I provide general information about the firm and this website. I can’t give legal advice or assess an individual case.', send: 'Send', placeholder: 'Ask something…', prompts: ['Help me find a practice area', 'What practice areas are available?', 'How do I request a consultation?', 'Where is the office?', 'What are the office hours?', 'How do I contact the firm?', 'How do I track my case?', 'How is my information handled?'] },
-    es: { greeting: 'Hola, soy el asistente del sitio de SAFALAW. Puedo responder preguntas básicas sobre este sitio y sus servicios. No puedo ofrecer asesoría legal.', scope: 'Ofrezco información general sobre el bufete y este sitio. No puedo dar asesoría legal ni evaluar un caso individual.', send: 'Enviar', placeholder: 'Escribe tu pregunta…', prompts: ['Ayúdame a encontrar un área legal', '¿Qué áreas legales hay?', '¿Cómo solicito una consulta?', '¿Dónde está la oficina?', '¿Cuál es el horario de atención?', '¿Cómo contacto al bufete?', '¿Cómo consulto el estado de mi caso?', '¿Cómo se maneja mi información?'] },
-    fil: { greeting: 'Kumusta, ako ang site assistant ng SAFALAW. Makakasagot ako sa mga simpleng tanong tungkol sa website. Hindi ako makapagbibigay ng legal na payo.', scope: 'Nagbibigay ako ng pangkalahatang impormasyon tungkol sa law firm at website. Hindi ako makapagbibigay ng legal na payo o susuri ng partikular na kaso.', send: 'Ipadala', placeholder: 'I-type ang iyong tanong…', prompts: ['Tulungan akong humanap ng larangan ng batas', 'Anong mga larangan ng batas ang mayroon?', 'Paano ako hihiling ng konsultasyon?', 'Nasaan ang opisina?', 'Ano ang oras ng opisina?', 'Paano ko makokontak ang law firm?', 'Paano ko masusubaybayan ang kaso ko?', 'Paano pinangangasiwaan ang impormasyon ko?'] },
-    'zh-CN': { greeting: '您好，我是SAFALAW网站助手。我可以回答有关本网站的基本问题，但不能提供法律意见。', scope: '我提供有关律师事务所和本网站的一般信息，不能提供法律意见或评估个案。', send: '发送', placeholder: '请输入问题…', prompts: ['帮我查找法律业务领域', '有哪些法律业务领域？', '如何申请咨询？', '办公室在哪里？', '办公时间是什么？', '如何联系律师事务所？', '如何查询案件进度？', '我的信息会如何处理？'] },
-    ko: { greeting: '안녕하세요. SAFALAW 사이트 도우미입니다. 웹사이트에 관한 기본 질문에 답할 수 있지만 법률 자문은 제공하지 않습니다.', scope: '법률 사무소와 웹사이트에 대한 일반 정보를 제공합니다. 법률 자문이나 개별 사건 평가는 할 수 없습니다.', send: '보내기', placeholder: '질문을 입력하세요…', prompts: ['적합한 법률 분야를 찾아주세요', '어떤 법률 분야가 있나요?', '상담은 어떻게 신청하나요?', '사무실은 어디에 있나요?', '업무 시간이 어떻게 되나요?', '법률 사무소에 어떻게 연락하나요?', '사건 진행 상황은 어떻게 확인하나요?', '개인정보는 어떻게 처리되나요?'] },
-    ja: { greeting: 'こんにちは。SAFALAWのサイトアシスタントです。ウェブサイトについての基本的な質問にお答えします。法律相談はできません。', scope: '法律事務所とウェブサイトに関する一般情報を提供します。法律相談や個別案件の評価はできません。', send: '送信', placeholder: '質問を入力してください…', prompts: ['法律分野を探したい', 'どのような法律分野がありますか？', '相談を申し込むにはどうすればよいですか？', '事務所はどこですか？', '営業時間を教えてください', '事務所への連絡方法を教えてください', '案件の進捗を確認するにはどうすればよいですか？', '個人情報はどのように扱われますか？'] },
+    en: { greeting: "Hi, I'm GPMO's site assistant. I can answer basic questions about this website and guide you through its sample inquiry flow. I can't provide legal advice.", scope: 'I provide general information about the firm and this website. I can’t give legal advice or assess an individual case.', send: 'Send', placeholder: 'Ask something…', prompts: ['Help me find a practice area', 'What practice areas are available?', 'How do I request a consultation?', 'Where is the office?', 'What are the office hours?', 'How do I contact the firm?', 'How do I track my case?', 'How is my information handled?'] },
+    es: { greeting: 'Hola, soy el asistente del sitio de GPMO. Puedo responder preguntas básicas sobre este sitio y sus servicios. No puedo ofrecer asesoría legal.', scope: 'Ofrezco información general sobre el bufete y este sitio. No puedo dar asesoría legal ni evaluar un caso individual.', send: 'Enviar', placeholder: 'Escribe tu pregunta…', prompts: ['Ayúdame a encontrar un área legal', '¿Qué áreas legales hay?', '¿Cómo solicito una consulta?', '¿Dónde está la oficina?', '¿Cuál es el horario de atención?', '¿Cómo contacto al bufete?', '¿Cómo consulto el estado de mi caso?', '¿Cómo se maneja mi información?'] },
+    fil: { greeting: 'Kumusta, ako ang site assistant ng GPMO. Makakasagot ako sa mga simpleng tanong tungkol sa website. Hindi ako makapagbibigay ng legal na payo.', scope: 'Nagbibigay ako ng pangkalahatang impormasyon tungkol sa law firm at website. Hindi ako makapagbibigay ng legal na payo o susuri ng partikular na kaso.', send: 'Ipadala', placeholder: 'I-type ang iyong tanong…', prompts: ['Tulungan akong humanap ng larangan ng batas', 'Anong mga larangan ng batas ang mayroon?', 'Paano ako hihiling ng konsultasyon?', 'Nasaan ang opisina?', 'Ano ang oras ng opisina?', 'Paano ko makokontak ang law firm?', 'Paano ko masusubaybayan ang kaso ko?', 'Paano pinangangasiwaan ang impormasyon ko?'] },
+    'zh-CN': { greeting: '您好，我是GPMO网站助手。我可以回答有关本网站的基本问题，但不能提供法律意见。', scope: '我提供有关律师事务所和本网站的一般信息，不能提供法律意见或评估个案。', send: '发送', placeholder: '请输入问题…', prompts: ['帮我查找法律业务领域', '有哪些法律业务领域？', '如何申请咨询？', '办公室在哪里？', '办公时间是什么？', '如何联系律师事务所？', '如何查询案件进度？', '我的信息会如何处理？'] },
+    ko: { greeting: '안녕하세요. GPMO 사이트 도우미입니다. 웹사이트에 관한 기본 질문에 답할 수 있지만 법률 자문은 제공하지 않습니다.', scope: '법률 사무소와 웹사이트에 대한 일반 정보를 제공합니다. 법률 자문이나 개별 사건 평가는 할 수 없습니다.', send: '보내기', placeholder: '질문을 입력하세요…', prompts: ['적합한 법률 분야를 찾아주세요', '어떤 법률 분야가 있나요?', '상담은 어떻게 신청하나요?', '사무실은 어디에 있나요?', '업무 시간이 어떻게 되나요?', '법률 사무소에 어떻게 연락하나요?', '사건 진행 상황은 어떻게 확인하나요?', '개인정보는 어떻게 처리되나요?'] },
+    ja: { greeting: 'こんにちは。GPMOのサイトアシスタントです。ウェブサイトについての基本的な質問にお答えします。法律相談はできません。', scope: '法律事務所とウェブサイトに関する一般情報を提供します。法律相談や個別案件の評価はできません。', send: '送信', placeholder: '質問を入力してください…', prompts: ['法律分野を探したい', 'どのような法律分野がありますか？', '相談を申し込むにはどうすればよいですか？', '事務所はどこですか？', '営業時間を教えてください', '事務所への連絡方法を教えてください', '案件の進捗を確認するにはどうすればよいですか？', '個人情報はどのように扱われますか？'] },
   };
   const LANGUAGE_NAMES = { en: 'English', fil: 'Filipino', es: 'Spanish', 'zh-CN': 'Mandarin Chinese', ko: 'Korean', ja: 'Japanese' };
   const LANGUAGE_NOTES = { es: 'Las traducciones son orientativas; confirme la información legal importante con la oficina.', fil: 'Pangkalahatang gabay lamang ang salin; kumpirmahin sa opisina ang mahalagang impormasyong legal.', 'zh-CN': '译文仅供参考；重要法律信息请向办公室确认。', ko: '번역은 참고용입니다. 중요한 법률 정보는 사무실에 확인하세요.', ja: '翻訳は参考情報です。重要な法律情報は事務所にご確認ください。' };
@@ -661,7 +661,7 @@ document.querySelectorAll('[data-pointer-zoom]').forEach((frame) => {
       setQuickReplies([...new Set([...persistentPrompts, ...contextualPrompts])]);
     } catch (error) {
       pendingReply.div.remove();
-      console.error('SafaLaw chat request failed:', error);
+      console.error('GPMO chat request failed:', error);
       addMsg(error.message || 'The chat could not load an answer. Please try again.', 'bot');
       setQuickReplies((LANGUAGES[detectedLanguage] || LANGUAGES.en).prompts);
     }

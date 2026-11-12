@@ -43,6 +43,6 @@ class ContactController extends Controller
 
         return redirect()
             ->route('contact')
-            ->with('status', 'Your message was saved by this project. The form is not yet connected to the firm’s email, so for a direct response please call or email SAFALAW below.');
+            ->with('status', 'Your message was saved by this project. The form is not yet connected to the firm’s email, so for a direct response please call or email GPMO below.');
     }
 }

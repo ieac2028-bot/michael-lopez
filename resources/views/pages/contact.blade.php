@@ -11,9 +11,9 @@
     <div class="contact-status" role="status">{{ session('status') }}</div>
   @endif
 
-  <section class="contact-us-grid" aria-label="SAFALAW contact information and location">
+  <section class="contact-us-grid" aria-label="GPMO contact information and location">
     <div class="contact-details-card">
-      <div class="eyebrow">SAFALAW</div>
+      <div class="eyebrow">GPMO</div>
       <h2>Contact Information</h2>
       <p class="contact-firm-name">GPMO Law Offices</p>
       <address class="contact-address">
@@ -43,7 +43,7 @@
 
     <div class="contact-map-card">
       <iframe
-        title="Map showing the SAFALAW office at SAFA Building in Makati City"
+        title="Map showing the GPMO office at SAFA Building in Makati City"
         src="https://maps.google.com/maps?q=Safa%20Bldg%2C%205858%20Alfonso%20Cor%20Fermina%2C%20Makati%2C%201210%20Metro%20Manila%2C%20Philippines&amp;t=m&amp;z=15&amp;output=embed&amp;iwloc=near"
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"
@@ -56,7 +56,7 @@
     <div>
       <div class="eyebrow">SEND US A MESSAGE</div>
       <h2 id="contact-message-title">Send Us a Message</h2>
-      <p>This form saves your message in the project. It is not yet connected to SAFALAW’s email. For a direct response, call or email the office using the details above.</p>
+      <p>This form saves your message in the project. It is not yet connected to GPMO’s email. For a direct response, call or email the office using the details above.</p>
     </div>
     <form method="POST" action="{{ route('contact.store') }}">
       @csrf

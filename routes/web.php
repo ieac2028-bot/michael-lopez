@@ -56,13 +56,13 @@ Route::post('/client/logout', [ClientAuthController::class, 'logout'])
     ->name('client.logout');
 
 Route::get('/email/verify', fn () => view('auth.verify-email'))
-    ->middleware(['auth', 'can:verify-safalaw-account'])
+    ->middleware(['auth', 'can:verify-gpmo-account'])
     ->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', [ClientAuthController::class, 'verifyEmail'])
-    ->middleware(['auth', 'can:verify-safalaw-account', 'signed', 'throttle:6,1'])
+    ->middleware(['auth', 'can:verify-gpmo-account', 'signed', 'throttle:6,1'])
     ->name('verification.verify');
 Route::post('/email/verification-notification', [ClientAuthController::class, 'resendVerification'])
-    ->middleware(['auth', 'can:verify-safalaw-account', 'throttle:6,1'])
+    ->middleware(['auth', 'can:verify-gpmo-account', 'throttle:6,1'])
     ->name('verification.send');
 
 Route::get('/attorney/login', [AttorneyAuthController::class, 'showLogin'])->name('attorney.login');
@@ -89,10 +89,10 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])
 Route::get('/admin/login', [AdminAuthController::class, 'show'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login')->name('admin.login.store');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])
-    ->middleware(['auth', 'can:manage-safalaw'])
+    ->middleware(['auth', 'can:manage-gpmo'])
     ->name('admin.logout');
 
-Route::middleware(['auth', 'can:manage-safalaw'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'can:manage-gpmo'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/inquiries/poll', [AdminController::class, 'pollInquiryInbox'])->name('inquiries.poll');
     Route::patch('/inquiries/{inquiry}', [AdminController::class, 'updateInquiry'])->name('inquiries.update');

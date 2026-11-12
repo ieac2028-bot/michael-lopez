@@ -1,6 +1,6 @@
 <section class="firm-profile__recognitions" aria-labelledby="firm-recognitions-title">
   <h2 id="firm-recognitions-title">Recognized by</h2>
-  <div class="safalaw-recognitions__grid">
+  <div class="gpmo-recognitions__grid">
     <figure><img src="{{ asset('images/safalaw/aea.png') }}" alt="Association of European Attorneys logo"><figcaption>Association of European Attorneys</figcaption></figure>
     <figure><img src="{{ asset('images/safalaw/inta.png') }}" alt="International Trademark Association logo"><figcaption>International Trademark Association</figcaption></figure>
     <figure><img src="{{ asset('images/safalaw/les.png') }}" alt="Licensing Executives Society USA and Canada logo"><figcaption>Licensing Executives Society</figcaption></figure>

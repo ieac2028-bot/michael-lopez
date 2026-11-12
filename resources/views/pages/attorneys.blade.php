@@ -6,7 +6,7 @@
   <div class="eyebrow">ATTORNEY DIRECTORY</div>
   <h1 class="page-title">Explore attorney profiles</h1>
   <p class="lead">Browse example profiles by practice area, specialties, and experience.</p>
-  <div class="roster-note">Showing {{ $attorneyCount }} fictional sample profiles. Names, portraits, practice dates, and case experience are demo content; they do not identify actual SAFALAW attorneys or represent verified credentials or case records.</div>
+  <div class="roster-note">Showing {{ $attorneyCount }} fictional sample profiles. Names, portraits, practice dates, and case experience are demo content; they do not identify actual GPMO attorneys or represent verified credentials or case records.</div>
 
   @foreach($attorneys as $rank => $group)
     <div class="rank-group">

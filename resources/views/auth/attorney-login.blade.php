@@ -3,7 +3,7 @@
 @section('title', 'Attorney Login')
 
 @section('content')
-  <div class="eyebrow">SAFALAW ATTORNEY ACCESS</div>
+  <div class="eyebrow">GPMO ATTORNEY ACCESS</div>
   <h1 class="page-title">Attorney sign in</h1>
   <p class="lead">Use the individual account issued by the firm. Your workspace only shows matters assigned to your attorney profile.</p>
 

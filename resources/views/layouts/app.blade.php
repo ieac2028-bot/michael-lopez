@@ -215,7 +215,7 @@
 </div>
 
 @unless($clientWorkflowMode || $attorneyWorkspaceMode || $adminWorkspaceMode)
-  <button class="launcher" id="launcher" aria-label="Chat with SafaLaw" aria-controls="chatPanel" aria-expanded="false">
+  <button class="launcher" id="launcher" aria-label="Chat with GPMO" aria-controls="chatPanel" aria-expanded="false">
   <span class="launcher__icon" aria-hidden="true">
     <svg viewBox="0 0 48 48" focusable="false">
       <path d="M9 10.5A5.5 5.5 0 0 1 14.5 5h19a5.5 5.5 0 0 1 5.5 5.5v15a5.5 5.5 0 0 1-5.5 5.5H22l-9 7v-7.6a5.5 5.5 0 0 1-4-5.3v-14.6Z"/>
@@ -223,11 +223,11 @@
       <path class="launcher__sparkle" d="m39 28 1.6 4.2L45 34l-4.4 1.7L39 40l-1.7-4.3L33 34l4.3-1.8L39 28Z"/>
     </svg>
   </span>
-  <span class="launcher__copy"><span class="launcher__title">Chat with SafaLaw</span><span class="launcher__subtitle">Get help finding a starting point</span></span>
+  <span class="launcher__copy"><span class="launcher__title">Chat with GPMO</span><span class="launcher__subtitle">Get help finding a starting point</span></span>
 </button>
 <div class="chat-panel" id="chatPanel" data-endpoint="{{ route('chat.respond') }}" data-translate-endpoint="{{ route('chat.translate') }}">
   <div class="chat-head">
-    <div class="titles"><div class="name">SafaLaw Assistant</div></div>
+    <div class="titles"><div class="name">GPMO Assistant</div></div>
     <button class="chat-info-toggle" id="chatInfoToggle" type="button" aria-label="Show assistant information and language settings" aria-controls="chatInfo" aria-expanded="false">i</button>
     <button class="close" id="closeChat" aria-label="Close">✕</button>
   </div>

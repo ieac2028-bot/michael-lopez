@@ -3,7 +3,7 @@
 @section('title', 'Staff sign in')
 
 @section('content')
-  <div class="eyebrow">SAFALAW STAFF</div>
+  <div class="eyebrow">GPMO STAFF</div>
   <h1 class="page-title">Administrative sign in</h1>
   <p class="lead">Use an administrator account to review intake, manage referrals, and update case tracking.</p>
   <form class="admin-login-form" method="POST" action="{{ route('admin.login.store') }}">

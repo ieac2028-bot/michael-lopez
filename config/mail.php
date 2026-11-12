@@ -110,7 +110,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS') ?: env('MAIL_USERNAME') ?: 'hello@example.com',
-        'name' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'SafaLaw'),
+        'name' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'GPMO'),
     ],
 
 ];

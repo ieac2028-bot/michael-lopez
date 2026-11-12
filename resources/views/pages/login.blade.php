@@ -4,7 +4,7 @@
 
 @section('content')
   <section class="access-gateway" aria-labelledby="access-title">
-    <div class="eyebrow">SAFALAW ACCESS</div>
+    <div class="eyebrow">GPMO ACCESS</div>
     <h1 class="page-title" id="access-title">How would you like to continue?</h1>
     <p class="lead">Choose the access that fits your role. Staff, attorney, and client accounts have separate permissions.</p>
 

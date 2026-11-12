@@ -20,7 +20,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        Cache::put('safalaw-admin-presence:'.auth()->id(), true, now()->addSeconds(45));
+        Cache::put('gpmo-admin-presence:'.auth()->id(), true, now()->addSeconds(45));
         $inquiries = Inquiry::with(['practiceArea', 'attorney', 'caseRecord', 'messages'])->latest()->get();
         $cases = CaseRecord::with(['attorney', 'practiceArea'])->latest()->get();
         $attorneys = Attorney::with(['practiceArea', 'account'])
@@ -41,7 +41,7 @@ class AdminController extends Controller
 
     public function pollInquiryInbox()
     {
-        Cache::put('safalaw-admin-presence:'.auth()->id(), true, now()->addSeconds(45));
+        Cache::put('gpmo-admin-presence:'.auth()->id(), true, now()->addSeconds(45));
         return response()->json(['latest_id' => Inquiry::max('id') ?? 0]);
     }
 
@@ -156,7 +156,7 @@ class AdminController extends Controller
         InquiryMessage::create([
             'inquiry_id' => $inquiry->id,
             'sender_role' => 'assistant',
-            'sender_name' => 'SAFALAW Matching Assistant',
+            'sender_name' => 'GPMO Matching Assistant',
             'body' => $message,
         ]);
 
@@ -197,7 +197,7 @@ class AdminController extends Controller
         InquiryMessage::create([
             'inquiry_id' => $inquiry->id,
             'sender_role' => 'admin',
-            'sender_name' => 'SAFALAW Matching Team',
+            'sender_name' => 'GPMO Matching Team',
             'body' => 'We identified ' . PracticeArea::find($data['practice_area_id'])->name
                 . ' as the legal category and prepared ' . $recommendations->count()
                 . ($selected ? '. The best match, ' . $selected->name . ', received the request automatically.' : ', but no connected attorney account is available.'),

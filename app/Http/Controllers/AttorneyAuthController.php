@@ -128,7 +128,7 @@ class AttorneyAuthController extends Controller
             InquiryMessage::create([
                 'inquiry_id' => $inquiry->id,
                 'sender_role' => 'assistant',
-                'sender_name' => 'SAFALAW Matching Assistant',
+                'sender_name' => 'GPMO Matching Assistant',
                 'body' => $next
                     ? 'The first attorney was unavailable. Your request was automatically sent to the next best match, ' . $next->name . '.'
                     : 'The attorney could not accept and no other connected attorney matches this request. The firm will follow up with you.',

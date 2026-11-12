@@ -4,7 +4,7 @@
 
 @section('content')
 <section class="container" aria-labelledby="insights-title">
-  <div class="eyebrow">SAFALAW KNOWLEDGE CENTER</div>
+  <div class="eyebrow">GPMO KNOWLEDGE CENTER</div>
   <h1 class="page-title" id="insights-title">Legal Insights</h1>
   <p class="lead" style="max-width:760px;">
     Browse general legal education, practical resources, and answers to common questions.

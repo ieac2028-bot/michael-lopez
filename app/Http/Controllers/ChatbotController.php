@@ -55,7 +55,7 @@ class ChatbotController extends Controller
         ['keys' => ['public private partnership', 'special project', 'innovative project'], 'area' => 'Special Projects', 'slug' => 'special-projects', 'reason' => 'you mentioned a special initiative or project'],
     ];
     private const FAQ = [
-        ['keys' => ['what is abogadokonek', 'what is this website', 'what does this site do', 'purpose of this website'], 'reply' => 'Abogadokonek is SAFALAW’s client-discovery and case-management website. You can browse practice areas, submit a consultation request, and track its progress. Attorney referrals depend on account availability and staff intake review.'],
+        ['keys' => ['what is abogadokonek', 'what is this website', 'what does this site do', 'purpose of this website'], 'reply' => 'Abogadokonek is GPMO’s client-discovery and case-management website. You can browse practice areas, submit a consultation request, and track its progress. Attorney referrals depend on account availability and staff intake review.'],
         ['keys' => ['how many attorneys', 'attorney profiles', 'lawyers listed'], 'reply' => 'The site currently shows 25 example attorney profiles. They are demonstration profiles, not confirmation of current staff, credentials, or availability.'],
         ['keys' => ['how does matching work', 'how are lawyers matched', 'how do you match', 'matching process', 'how does abogado'], 'reply' => 'The consultation demo can suggest sample attorney profiles from the selected practice area and location information entered. Profiles and availability are demonstration data; this is not a live referral or confirmed appointment.'],
         ['keys' => ['what practice areas', 'practice areas do you handle', 'services does the firm offer', 'legal services'], 'reply' => 'You can browse the practice-area categories and descriptions on the Practice Areas page. The categories are for browsing and do not determine which law applies to a real matter.', 'cta' => 'practice-areas'],
@@ -179,7 +179,7 @@ class ChatbotController extends Controller
         }
 
         return response()->json([
-            'reply' => "I can only answer questions about the topics listed under Suggested questions. I do not have information about that topic. Please choose an available question or ask about SAFALAW's practice areas, consultation requests, office contact details, or Client Portal. This assistant provides general information only, not legal advice.",
+            'reply' => "I can only answer questions about the topics listed under Suggested questions. I do not have information about that topic. Please choose an available question or ask about GPMO's practice areas, consultation requests, office contact details, or Client Portal. This assistant provides general information only, not legal advice.",
             'cta' => ['label' => 'Explore sample practice areas →', 'route' => route('practice-areas')],
             'quickReplies' => ['Help me find a practice area', 'Browse practice areas', 'How do I request a consultation?', 'How do I contact the firm?'],
         ]);

@@ -5,7 +5,7 @@
 @section('content')
   <div class="admin-page-head">
     <div>
-      <div class="eyebrow">SAFALAW STAFF</div>
+      <div class="eyebrow">GPMO STAFF</div>
       <h1 class="page-title">Dashboard</h1>
       <p class="lead">A quick view of new inquiries, active matters, and attorney availability.</p>
     </div>
@@ -49,7 +49,7 @@
             <div class="professional-chat-thread" data-message-thread data-status="{{ $inquiry->status }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('admin.inquiries.messages.poll', $inquiry) }}">
             @if($inquiry->messages->isNotEmpty())
             @foreach($inquiry->messages as $message)
-              <article class="consultation-chat__message" data-role="{{ $message->sender_role }}" data-message-id="{{ $message->id }}"><strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'SAFALAW Assistant' : 'Client') }}</strong><small>{{ $message->created_at->format('M j, g:i A') }}</small><p>{{ $message->body }}</p></article>
+              <article class="consultation-chat__message" data-role="{{ $message->sender_role }}" data-message-id="{{ $message->id }}"><strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'GPMO Assistant' : 'Client') }}</strong><small>{{ $message->created_at->format('M j, g:i A') }}</small><p>{{ $message->body }}</p></article>
             @endforeach
             @else <p>No follow-up messages.</p> @endif
             </div>

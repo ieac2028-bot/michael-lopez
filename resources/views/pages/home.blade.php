@@ -28,9 +28,9 @@
       </div>
       <div class="hero-card__content">
         <p class="hero-card__eyebrow">GPMO LAW OFFICES</p>
-        <h2 class="safalaw-hero-title">GPMO <span>Law Offices</span></h2>
-        <p class="safalaw-hero-tagline">A Legacy of Excellence in Philippine Law – Trusted for Over 60 Years</p>
-        <a href="{{ route('contact') }}" class="safalaw-message-button">MESSAGE US</a>
+        <h2 class="gpmo-hero-title">GPMO <span>Law Offices</span></h2>
+        <p class="gpmo-hero-tagline">A Legacy of Excellence in Philippine Law – Trusted for Over 60 Years</p>
+        <a href="{{ route('contact') }}" class="gpmo-message-button">MESSAGE US</a>
       </div>
     </div>
   </div>

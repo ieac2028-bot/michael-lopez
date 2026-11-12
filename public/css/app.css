@@ -572,20 +572,20 @@ input, select, textarea { border-radius: 12px; }
 .footer-brand .footer-contact a { color: #E2E8F0; text-decoration: none; }
 .footer-brand .footer-contact a:hover { color: #FFA155; }
 .footer-app-note { margin-top: 12px; color: #BAC5D8; font-size: .78rem; }
-.safalaw-hero-title { margin: 0 0 11px; color: var(--hero-card-text); font: 600 clamp(1.35rem, 2.3vw, 1.8rem)/1.2 Georgia, 'Times New Roman', serif; }
-.safalaw-hero-title span { display: block; margin-top: 4px; font-size: .78em; }
-.safalaw-hero-tagline { margin: 0 0 18px; color: var(--hero-card-muted); font: italic .95rem/1.55 Georgia, 'Times New Roman', serif; }
-.safalaw-message-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; padding: 0 22px; border: 1px solid #B52A36; border-radius: 3px; background: #A21F2B; color: #FFF; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-decoration: none; transition: background-color 180ms ease, transform 180ms ease; }
-.safalaw-message-button:hover { transform: translateY(-2px); background: #831923; }
-.safalaw-recognitions { margin: 34px 0 40px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); }
-.safalaw-recognitions h2 { margin: 0 0 22px; color: var(--ink); text-align: center; font: 600 clamp(1.1rem, 2vw, 1.5rem)/1.35 Georgia, 'Times New Roman', serif; text-shadow: none; }
-.safalaw-recognitions__grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); align-items: center; gap: 16px; }
-.safalaw-recognitions__grid figure { grid-column: span 2; min-width: 0; min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin: 0; padding: 8px; text-align: center; }
-.safalaw-recognitions__grid figure:nth-child(5) { grid-column: 2 / span 2; }
-.safalaw-recognitions__grid figure:nth-child(6) { grid-column: 4 / span 2; }
-.safalaw-recognitions__grid figure:nth-child(7) { grid-column: 6 / span 2; }
-.safalaw-recognitions__grid img { display: block; width: auto; max-width: 100%; height: 66px; object-fit: contain; }
-.safalaw-recognitions__grid figcaption { color: var(--ink-soft); font-size: .73rem; line-height: 1.35; }
+.gpmo-hero-title { margin: 0 0 11px; color: var(--hero-card-text); font: 600 clamp(1.35rem, 2.3vw, 1.8rem)/1.2 Georgia, 'Times New Roman', serif; }
+.gpmo-hero-title span { display: block; margin-top: 4px; font-size: .78em; }
+.gpmo-hero-tagline { margin: 0 0 18px; color: var(--hero-card-muted); font: italic .95rem/1.55 Georgia, 'Times New Roman', serif; }
+.gpmo-message-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; padding: 0 22px; border: 1px solid #B52A36; border-radius: 3px; background: #A21F2B; color: #FFF; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-decoration: none; transition: background-color 180ms ease, transform 180ms ease; }
+.gpmo-message-button:hover { transform: translateY(-2px); background: #831923; }
+.gpmo-recognitions { margin: 34px 0 40px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); }
+.gpmo-recognitions h2 { margin: 0 0 22px; color: var(--ink); text-align: center; font: 600 clamp(1.1rem, 2vw, 1.5rem)/1.35 Georgia, 'Times New Roman', serif; text-shadow: none; }
+.gpmo-recognitions__grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); align-items: center; gap: 16px; }
+.gpmo-recognitions__grid figure { grid-column: span 2; min-width: 0; min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin: 0; padding: 8px; text-align: center; }
+.gpmo-recognitions__grid figure:nth-child(5) { grid-column: 2 / span 2; }
+.gpmo-recognitions__grid figure:nth-child(6) { grid-column: 4 / span 2; }
+.gpmo-recognitions__grid figure:nth-child(7) { grid-column: 6 / span 2; }
+.gpmo-recognitions__grid img { display: block; width: auto; max-width: 100%; height: 66px; object-fit: contain; }
+.gpmo-recognitions__grid figcaption { color: var(--ink-soft); font-size: .73rem; line-height: 1.35; }
 .firm-profile { margin: 10px 0 40px; }
 .firm-profile__image-frame { width: 100%; height: clamp(230px, 38vw, 480px); margin: 0 0 28px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; }
 .firm-profile__image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 43%; transform: scale(1); transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%); transition: transform 220ms ease-out; }
@@ -635,19 +635,19 @@ input, select, textarea { border-radius: 12px; }
 .firm-reviews__more[open] .firm-reviews__more-close { display: inline; }
 .firm-review-grid--more { margin-top: 16px; }
 .footer-brand .footer-contact a { display: inline; margin: 0; }
-@media (max-width: 900px) { .safalaw-recognitions__grid { gap: 8px; } }
+@media (max-width: 900px) { .gpmo-recognitions__grid { gap: 8px; } }
 @media (max-width: 600px) {
   .brand__gpmo-logo { width: 158px; height: 75px; }
-  .safalaw-recognitions { padding: 18px 12px; }
+  .gpmo-recognitions { padding: 18px 12px; }
   .firm-profile__image-frame { height: clamp(210px, 58vw, 340px); margin-bottom: 20px; border-radius: 12px; }
   .firm-review-grid { grid-template-columns: 1fr; }
   .firm-profile__practice-heading { align-items: flex-start; }
   .firm-profile__recognitions { padding: 18px 12px; }
-  .safalaw-recognitions__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-  .safalaw-recognitions__grid figure { grid-column: span 2; }
-  .safalaw-recognitions__grid figure:nth-child(5), .safalaw-recognitions__grid figure:nth-child(6) { grid-column: auto / span 2; }
-  .safalaw-recognitions__grid figure:nth-child(7) { grid-column: 2 / span 2; }
-  .safalaw-recognitions__grid img { max-width: 100%; }
+  .gpmo-recognitions__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .gpmo-recognitions__grid figure { grid-column: span 2; }
+  .gpmo-recognitions__grid figure:nth-child(5), .gpmo-recognitions__grid figure:nth-child(6) { grid-column: auto / span 2; }
+  .gpmo-recognitions__grid figure:nth-child(7) { grid-column: 2 / span 2; }
+  .gpmo-recognitions__grid img { max-width: 100%; }
 }
 .footer-brand .word .big { color: #FFFFFF; font-size: 1.15rem; }
 .footer-brand .word .sub { color: #D8DFEC; font-size: .68rem; }
@@ -947,7 +947,7 @@ body { position: relative; isolation: isolate; height: auto; min-height: 100vh; 
   from { transform: translate(-48px, -38px); }
   to { transform: translate(48px, 38px); }
 }
-/* Give the SafaLaw firm/about content a related palette of deep and warm reds. */
+/* Give the GPMO firm/about content a related palette of deep and warm reds. */
 .firm-body {
   position: relative;
   overflow: hidden;
@@ -1403,7 +1403,7 @@ html[data-theme="dark"] .header-inner > .theme-toggle--header:hover {
   .header-inner > .theme-toggle--header, .theme-toggle__icon svg { transition: none; }
 }
 
-/* Friendly, clearly interactive SafaLaw chat launcher. */
+/* Friendly, clearly interactive GPMO chat launcher. */
 .launcher {
   width: min(240px, calc(100vw - 28px));
   height: auto;
@@ -1423,7 +1423,7 @@ html[data-theme="dark"] .header-inner > .theme-toggle--header:hover {
 }
 .launcher:hover { transform: translateY(-2px); border-color: var(--red); background: var(--panel); box-shadow: 0 10px 24px rgba(6,12,26,.2), inset 0 1px 0 rgba(255,255,255,.72); }
 .launcher:focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }
-.launcher__icon { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border: 1px solid rgba(11,30,63,.12); border-radius: 13px; background: var(--red-soft); color: var(--red-deep); transform-origin: center; animation: safalaw-chat-pop 5s ease-in-out infinite; }
+.launcher__icon { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border: 1px solid rgba(11,30,63,.12); border-radius: 13px; background: var(--red-soft); color: var(--red-deep); transform-origin: center; animation: gpmo-chat-pop 5s ease-in-out infinite; }
 .launcher__icon svg { display: block; width: 31px; height: 31px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .launcher__icon svg circle { fill: currentColor; stroke: none; }
 .launcher__icon .launcher__sparkle { fill: var(--red); stroke: none; }
@@ -1431,7 +1431,7 @@ html[data-theme="dark"] .header-inner > .theme-toggle--header:hover {
 .launcher__title { color: var(--ink); font-size: .84rem; font-weight: 700; line-height: 1.2; }
 .launcher__subtitle { color: var(--ink-soft); font-size: .66rem; font-weight: 500; line-height: 1.3; }
 .launcher.has-opened .launcher__icon { animation: none; }
-@keyframes safalaw-chat-pop { 0%, 88%, 100% { transform: scale(1); } 91% { transform: scale(.96); } 95% { transform: scale(1.06); } 98% { transform: scale(1); } }
+@keyframes gpmo-chat-pop { 0%, 88%, 100% { transform: scale(1); } 91% { transform: scale(.96); } 95% { transform: scale(1.06); } 98% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) {
   .launcher { transition: none; }
   .launcher__icon { animation: none; }
@@ -1607,10 +1607,10 @@ html[data-theme="dark"] .header-inner > .theme-toggle--header:hover {
   border-color: rgba(255,255,255,.3);
   color: #fff;
   box-shadow: 0 4px 12px rgba(194,65,12,.28), inset 0 1px 0 rgba(255,255,255,.2);
-  animation: safalaw-chat-heartbeat 1.8s ease-in-out infinite;
+  animation: gpmo-chat-heartbeat 1.8s ease-in-out infinite;
 }
 .launcher__icon .launcher__sparkle { fill: #FFE5D2; }
-@keyframes safalaw-chat-heartbeat {
+@keyframes gpmo-chat-heartbeat {
   0%, 58%, 100% { transform: scale(1); }
   8% { transform: scale(1.12); }
   16% { transform: scale(1); }
@@ -1789,8 +1789,8 @@ html[data-theme='dark'] .header-inner > .theme-toggle--header {
   color: #B3DDF4;
 }
 html[data-theme='dark'] .header-inner > .theme-toggle--header:hover { border-color: #B3DDF4; }
-.safalaw-message-button { border-color: #327FA9; background: #327FA9; }
-.safalaw-message-button:hover { background: #286D94; }
+.gpmo-message-button { border-color: #327FA9; background: #327FA9; }
+.gpmo-message-button:hover { background: #286D94; }
 .chat-head { background: linear-gradient(120deg, #4D91B9, #6FAED4); border-bottom-color: #9BCFEA; }
 .chat-info { background: var(--paper); }
 .chat-language-setting, .chat-input { background: var(--panel); }
@@ -1958,11 +1958,11 @@ header nav.topnav a.header-login.active {
 }
 .page > .hero .hero-card__art { opacity: .45; }
 .page > .hero .hero-card__art::before { background: linear-gradient(100deg, rgba(20,40,56,.36), rgba(20,40,56,.08)); }
-.page > .hero .safalaw-hero-title { color: #F0F8FC; font-family: var(--font-sans); font-weight: 800; letter-spacing: -.04em; }
-.page > .hero .safalaw-hero-title span { color: #9DD6F1; font-size: .72em; letter-spacing: -.015em; }
-.page > .hero .safalaw-hero-tagline { color: #B8CDDB; font-family: var(--font-sans); font-style: normal; }
-.page > .hero .safalaw-message-button { min-height: 46px; border: 0; border-radius: 999px; background: #83C9ED; color: #17364D; }
-.page > .hero .safalaw-message-button:hover { background: #A5DDF6; }
+.page > .hero .gpmo-hero-title { color: #F0F8FC; font-family: var(--font-sans); font-weight: 800; letter-spacing: -.04em; }
+.page > .hero .gpmo-hero-title span { color: #9DD6F1; font-size: .72em; letter-spacing: -.015em; }
+.page > .hero .gpmo-hero-tagline { color: #B8CDDB; font-family: var(--font-sans); font-style: normal; }
+.page > .hero .gpmo-message-button { min-height: 46px; border: 0; border-radius: 999px; background: #83C9ED; color: #17364D; }
+.page > .hero .gpmo-message-button:hover { background: #A5DDF6; }
 @media (max-width: 760px) {
   .page > .hero {
     min-height: 0;

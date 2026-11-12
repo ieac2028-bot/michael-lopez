@@ -131,7 +131,7 @@ class ChatbotTranslationService
 
     private const STRINGS = [
         'es' => [
-            'greeting' => 'Hola, soy el asistente del sitio de SAFALAW. Puedo responder preguntas básicas sobre este sitio y sus servicios. No puedo ofrecer asesoría legal.',
+            'greeting' => 'Hola, soy el asistente del sitio de GPMO. Puedo responder preguntas básicas sobre este sitio y sus servicios. No puedo ofrecer asesoría legal.',
             'scope' => 'Ofrezco información general sobre el bufete y este sitio. No puedo dar asesoría legal ni evaluar un caso individual.',
             'advice' => 'No puedo ofrecer asesoría legal, evaluar elegibilidad ni predecir el resultado de un asunto. Para un caso real, consulte directamente con un abogado calificado o un proveedor de asistencia legal.',
             'finder' => 'Puedo ayudarle a elegir una categoría inicial para explorar, pero no a determinar la clasificación legal de un caso real. Elija el tema general que más se aproxime:',
@@ -139,7 +139,7 @@ class ChatbotTranslationService
             'office' => 'La página de Contacto indica que el horario es de lunes a viernes, de 9:00 a 17:00. Comuníquese directamente con la oficina para confirmar los días festivos.',
             'address' => 'La dirección indicada es SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila.',
             'contact' => 'Puede llamar al +63 2 8897 0527 al 30 o al +63 917 164 0184, o escribir a safa@safalaw.com.ph. La página de Contacto ofrece más detalles.',
-            'privacy' => 'Este es un prototipo de proyecto y no está conectado a los sistemas activos de SAFALAW. No ingrese datos confidenciales, números de identidad ni documentos sensibles.',
+            'privacy' => 'Este es un prototipo de proyecto y no está conectado a los sistemas activos de GPMO. No ingrese datos confidenciales, números de identidad ni documentos sensibles.',
             'fees' => 'Este proyecto no publica los honorarios ni las condiciones de consulta. Comuníquese directamente con la oficina para preguntar por las tarifas vigentes.',
             'practice' => 'Puede explorar las categorías y descripciones en la página de Áreas de práctica. La lista sirve para navegar y no determina qué ley se aplica a un caso real.',
             'examples' => 'Los perfiles y flujos de este sitio son ejemplos; no confirman personal, credenciales, disponibilidad, referencias ni citas reales.',
@@ -148,7 +148,7 @@ class ChatbotTranslationService
             'languages' => 'Las traducciones son orientativas. Para información legal importante, confirme el significado con la oficina.',
         ],
         'fil' => [
-            'greeting' => 'Kumusta, ako ang site assistant ng SAFALAW. Makakasagot ako sa mga simpleng tanong tungkol sa website. Hindi ako makapagbibigay ng legal na payo.',
+            'greeting' => 'Kumusta, ako ang site assistant ng GPMO. Makakasagot ako sa mga simpleng tanong tungkol sa website. Hindi ako makapagbibigay ng legal na payo.',
             'scope' => 'Nagbibigay ako ng pangkalahatang impormasyon tungkol sa law firm at website. Hindi ako makapagbibigay ng legal na payo o susuri ng partikular na kaso.',
             'advice' => 'Hindi ako makapagbibigay ng legal na payo, susuri ng pagiging kwalipikado, o huhula sa magiging resulta ng kaso. Para sa totoong usapin, direktang kumonsulta sa kwalipikadong abogado o legal-aid provider.',
             'finder' => 'Matutulungan kitang pumili ng panimulang kategorya para mag-browse, pero hindi matutukoy ang legal na pag-uuri ng totoong kaso. Piliin ang pinakamalapit na paksa:',
@@ -165,7 +165,7 @@ class ChatbotTranslationService
             'languages' => 'Pangkalahatang gabay lamang ang mga salin. Para sa mahalagang legal na impormasyon, kumpirmahin ito sa opisina.',
         ],
         'zh-CN' => [
-            'greeting' => '您好，我是SAFALAW网站助手。我可以回答有关本网站的基本问题，但不能提供法律意见。',
+            'greeting' => '您好，我是GPMO网站助手。我可以回答有关本网站的基本问题，但不能提供法律意见。',
             'scope' => '我提供有关律师事务所和本网站的一般信息，不能提供法律意见或评估个案。',
             'advice' => '我不能提供法律意见、判断资格或预测案件结果。如有实际法律问题，请直接咨询合格律师或法律援助机构。',
             'finder' => '我可以帮助您选择浏览网站时的起始类别，但不能判断真实案件的法律分类。请选择最接近的主题：',
@@ -173,7 +173,7 @@ class ChatbotTranslationService
             'office' => '联系页面列出的办公时间为周一至周五上午9点至下午5点。节假日时间请直接向办公室确认。',
             'address' => '网站列出的地址：SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila。',
             'contact' => '电话：+63 2 8897 0527 至 30 或 +63 917 164 0184；电子邮件：safa@safalaw.com.ph。联系页面也提供其他信息。',
-            'privacy' => '这是演示项目，未连接到SAFALAW的正式系统。请勿输入机密事实、身份证号码或敏感文件。',
+            'privacy' => '这是演示项目，未连接到GPMO的正式系统。请勿输入机密事实、身份证号码或敏感文件。',
             'fees' => '本项目没有列出律师费或咨询条件。请直接联系办公室询问当前费用。',
             'practice' => '您可以在“业务领域”页面浏览类别和说明。此列表仅用于浏览，不能确定真实案件适用的法律。',
             'examples' => '本网站显示的律师资料和流程仅供参考，不代表实际员工、资历、可预约时间、转介或预约确认。',
@@ -182,7 +182,7 @@ class ChatbotTranslationService
             'languages' => '译文仅供一般参考。重要法律信息请向办公室确认。',
         ],
         'ko' => [
-            'greeting' => '안녕하세요. SAFALAW 사이트 도우미입니다. 웹사이트에 관한 기본 질문에 답할 수 있지만 법률 자문은 제공하지 않습니다.',
+            'greeting' => '안녕하세요. GPMO 사이트 도우미입니다. 웹사이트에 관한 기본 질문에 답할 수 있지만 법률 자문은 제공하지 않습니다.',
             'scope' => '법률 사무소와 웹사이트에 대한 일반 정보를 제공합니다. 법률 자문이나 개별 사건 평가는 할 수 없습니다.',
             'advice' => '법률 자문, 자격 여부 판단 또는 사건 결과 예측은 제공할 수 없습니다. 실제 문제는 자격을 갖춘 변호사나 법률 지원 기관에 직접 문의하세요.',
             'finder' => '사이트 탐색을 위한 시작 분야를 고르는 데 도움을 드릴 수 있지만 실제 사건의 법적 분류를 판단하지는 않습니다. 가장 가까운 주제를 선택하세요:',
@@ -190,7 +190,7 @@ class ChatbotTranslationService
             'office' => 'Contact 페이지의 안내에 따르면 업무 시간은 월요일부터 금요일, 오전 9시부터 오후 5시까지입니다. 공휴일 운영 여부는 사무실에 확인하세요.',
             'address' => '사이트에 기재된 주소: SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila.',
             'contact' => '전화: +63 2 8897 0527~30 또는 +63 917 164 0184, 이메일: safa@safalaw.com.ph. Contact 페이지에서 추가 정보를 확인할 수 있습니다.',
-            'privacy' => '이 사이트는 시범 프로젝트이며 SAFALAW의 실제 시스템과 연결되어 있지 않습니다. 기밀 사실, 신분증 번호 또는 민감한 문서를 입력하지 마세요.',
+            'privacy' => '이 사이트는 시범 프로젝트이며 GPMO의 실제 시스템과 연결되어 있지 않습니다. 기밀 사실, 신분증 번호 또는 민감한 문서를 입력하지 마세요.',
             'fees' => '이 프로젝트에는 수임료와 상담 조건이 안내되어 있지 않습니다. 현재 요금은 사무실에 직접 문의하세요.',
             'practice' => 'Practice Areas 페이지에서 분야별 설명을 볼 수 있습니다. 이 목록은 탐색용이며 실제 사건에 적용되는 법률을 판단하지 않습니다.',
             'examples' => '이 사이트의 프로필과 절차는 참고용 예시이며 실제 직원, 자격, 예약 가능 여부, 소개 또는 예약을 확인하지 않습니다.',
@@ -199,7 +199,7 @@ class ChatbotTranslationService
             'languages' => '번역은 일반적인 참고용입니다. 중요한 법률 정보는 사무실에 확인하세요.',
         ],
         'ja' => [
-            'greeting' => 'こんにちは。SAFALAWのサイトアシスタントです。ウェブサイトについての基本的な質問にお答えします。法律相談はできません。',
+            'greeting' => 'こんにちは。GPMOのサイトアシスタントです。ウェブサイトについての基本的な質問にお答えします。法律相談はできません。',
             'scope' => '法律事務所とウェブサイトに関する一般情報を提供します。法律相談や個別案件の評価はできません。',
             'advice' => '法律相談、資格の判断、案件の結果予測はできません。実際の問題については、資格のある弁護士または法律支援機関に直接ご相談ください。',
             'finder' => 'サイトを閲覧するための最初のカテゴリ選びをお手伝いできますが、実際の案件の法的分類は判断できません。最も近いテーマを選んでください：',
@@ -207,7 +207,7 @@ class ChatbotTranslationService
             'office' => 'Contactページによると、営業時間は月曜日から金曜日の午前9時から午後5時です。祝日の営業は事務所に直接ご確認ください。',
             'address' => '掲載住所：SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila。',
             'contact' => '電話：+63 2 8897 0527～30 または +63 917 164 0184、メール：safa@safalaw.com.ph。Contactページにも詳細があります。',
-            'privacy' => 'これはデモ用プロジェクトで、SAFALAWの実際のシステムには接続されていません。機密情報、身分証番号、重要書類を入力しないでください。',
+            'privacy' => 'これはデモ用プロジェクトで、GPMOの実際のシステムには接続されていません。機密情報、身分証番号、重要書類を入力しないでください。',
             'fees' => 'このプロジェクトには報酬や相談条件の記載がありません。現在の料金は事務所に直接お問い合わせください。',
             'practice' => 'Practice Areasページで分野と説明をご覧いただけます。この一覧は閲覧用であり、実際の案件に適用される法律を判断するものではありません。',
             'examples' => 'このサイトのプロフィールや手続きは参考例であり、実際の職員、資格、対応状況、紹介、予約を確認するものではありません。',

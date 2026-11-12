@@ -59,7 +59,7 @@
       <div class="consultation-chat__messages" aria-live="polite" data-message-thread data-status="{{ $inquiry->status }}" data-assigned-attorney="{{ $inquiry->attorney_id ?? '' }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('consultation.messages.poll', $inquiry) }}">
         @forelse($inquiry->messages as $message)
           <article class="consultation-chat__message" data-role="{{ $message->sender_role }}" data-message-id="{{ $message->id }}">
-            <strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'SAFALAW Assistant' : 'You') }}</strong>
+            <strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'GPMO Assistant' : 'You') }}</strong>
             <small>{{ $message->created_at->format('M j, g:i A') }}</small>
             <p>{{ $message->body }}</p>
           </article>

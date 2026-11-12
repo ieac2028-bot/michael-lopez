@@ -19,13 +19,12 @@ class ClientAuthenticationTest extends TestCase
             ->assertOk()
             ->assertSee(route('admin.login'))
             ->assertSee(route('client.login'))
-            ->assertSee(route('client.register'))
-            ->assertSee(route('consultation'));
+            ->assertSee(route('client.register'));
 
         $this->get(route('client.login'))->assertOk()->assertSee('Existing client login');
         $this->get(route('client.register'))->assertOk()->assertSee('Register as a new user');
         $this->get(route('admin.login'))->assertOk()->assertSee('Administrative sign in');
-        $this->get(route('consultation'))->assertOk();
+        $this->get(route('consultation'))->assertRedirect(route('login'));
         $this->get(route('client-portal'))->assertRedirect(route('login'));
     }
 

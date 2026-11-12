@@ -35,7 +35,7 @@ At the Tinker prompt, replace the email and password with your own values:
 ```php
 $admin = App\Models\User::updateOrCreate(
     ['email' => 'admin@example.test'],
-    ['name' => 'SafaLaw Admin', 'password' => Illuminate\Support\Facades\Hash::make('replace-with-a-strong-password'), 'is_admin' => true]
+    ['name' => 'GPMO Admin', 'password' => Illuminate\Support\Facades\Hash::make('replace-with-a-strong-password'), 'is_admin' => true]
 );
 $admin->forceFill(['role' => 'admin'])->save();
 ```

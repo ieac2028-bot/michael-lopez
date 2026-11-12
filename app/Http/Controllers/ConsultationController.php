@@ -112,7 +112,7 @@ class ConsultationController extends Controller
         return User::query()
             ->where(fn ($query) => $query->where('role', 'admin')->orWhere('is_admin', true))
             ->pluck('id')
-            ->contains(fn ($id) => Cache::has('safalaw-admin-presence:'.$id));
+            ->contains(fn ($id) => Cache::has('gpmo-admin-presence:'.$id));
     }
 
     private function appendOfflineAssistantReply(Inquiry $inquiry, string $clientMessage): void
@@ -124,7 +124,7 @@ class ConsultationController extends Controller
         InquiryMessage::create([
             'inquiry_id' => $inquiry->id,
             'sender_role' => 'assistant',
-            'sender_name' => 'SAFALAW Assistant',
+            'sender_name' => 'GPMO Assistant',
             'body' => app(ChatbotController::class)->consultationFallbackReply($clientMessage),
         ]);
     }
