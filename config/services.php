@@ -28,6 +28,13 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    'gmail_api' => [
+        'client_id' => env('GMAIL_API_CLIENT_ID'),
+        'client_secret' => env('GMAIL_API_CLIENT_SECRET'),
+        'refresh_token' => env('GMAIL_API_REFRESH_TOKEN'),
+        'sender_address' => env('GMAIL_API_SENDER_ADDRESS'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

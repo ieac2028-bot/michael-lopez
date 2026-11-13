@@ -15,5 +15,5 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', RejectUnknownRequestFields::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->dontFlash(['recovery_code']);
     })->create();

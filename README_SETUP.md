@@ -18,7 +18,7 @@ Open `http://127.0.0.1:8000`. The seeded demo client-portal record uses:
 - Email: `demo@client.com`
 - Reference: `ABG-DEMO-0001`
 
-To view the demo case, register a client account using `demo@client.com`. Client registration and sign-in do not require email verification.
+To view the demo case, register a client account using `demo@client.com`. Client registration and sign-in do not require email verification. After registering, save the one-time recovery codes shown on screen; you need a code to reset the password without email.
 
 ## Local administrative module
 
@@ -52,9 +52,37 @@ email and an initial password beside the actual profile to create an individual 
 Share the password with the attorney through a secure channel. Attorneys
 can view and update progress only for matters assigned to their linked profile.
 
-Password reset and administrator setup links require an outgoing mail provider.
-Require unique credentials; do not share staff accounts. Multi-factor
-authentication is not configured yet.
+Client password resets use one-time recovery codes. To email a temporary reset
+code without SMTP, configure the Gmail API OAuth values in `.env`:
+
+```dotenv
+GMAIL_API_CLIENT_ID=your-oauth-client-id
+GMAIL_API_CLIENT_SECRET=your-oauth-client-secret
+GMAIL_API_REFRESH_TOKEN=your-offline-refresh-token
+GMAIL_API_SENDER_ADDRESS=your-authorized-gmail-address@gmail.com
+```
+
+Enable the Gmail API in Google Cloud, create OAuth credentials, and authorize
+the `https://www.googleapis.com/auth/gmail.send` scope with offline access so
+Google issues a refresh token. The sender address must be the authorized Gmail
+account or one of its configured send-as aliases. The app uses HTTPS requests
+to refresh the access token and call Gmail's `users.messages.send` endpoint;
+it does not connect to an SMTP server. After setting `.env`, run
+`php artisan config:clear`. Keep all OAuth secrets in `.env`, never in source
+control. Saved backup codes continue to work when Gmail API is not configured.
+
+Each attorney account gets recovery codes displayed to the administrator when
+it is created. For an existing account, an administrator can issue a new set
+after verifying the account holder through a trusted channel:
+
+```bash
+php artisan account:recovery-codes client@example.com
+```
+
+This command replaces any unused backup codes and prints the new codes once. Other
+email-based features, such as administrator invitations, still require a
+separately configured outgoing mail provider. Require unique credentials; do not share staff
+accounts. Multi-factor authentication is not configured yet.
 
 ## Project notes
 

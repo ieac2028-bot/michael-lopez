@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\RecoveryCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -61,7 +63,7 @@ class ClientAuthController extends Controller
         return view('auth.client-register');
     }
 
-    public function register(Request $request): RedirectResponse
+    public function register(Request $request, RecoveryCodeService $recoveryCodes): RedirectResponse
     {
         if (Auth::check()) {
             return $this->redirectAuthenticatedUser();
@@ -80,16 +82,26 @@ class ClientAuthController extends Controller
             'password' => ['required', 'confirmed', Password::min(12)->mixedCase()->numbers()->symbols()],
         ]);
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => Str::lower($data['email']),
-            'password' => $data['password'],
-            'is_admin' => false,
-        ]);
+        [$user, $codes] = DB::transaction(function () use ($data, $recoveryCodes): array {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => Str::lower($data['email']),
+                'password' => $data['password'],
+                'is_admin' => false,
+            ]);
+
+            return [$user, $recoveryCodes->issue($user)];
+        });
 
         Auth::login($user);
         $request->session()->regenerate();
-        return redirect()->route('client-portal');
+
+        return redirect()->route('client.recovery-codes')->with('recovery_codes', $codes);
+    }
+
+    public function showRecoveryCodes(): View
+    {
+        return view('auth.recovery-codes');
     }
 
     public function logout(Request $request): RedirectResponse

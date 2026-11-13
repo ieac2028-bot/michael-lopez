@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attorney;
 use App\Models\User;
+use App\Services\RecoveryCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
@@ -11,10 +12,11 @@ use Illuminate\Support\Str;
 
 class AttorneyAccountController extends Controller
 {
-    public function store(Request $request, Attorney $attorney): RedirectResponse
+    public function store(Request $request, Attorney $attorney, RecoveryCodeService $recoveryCodes): RedirectResponse
     {
         $data = $request->validate([
-            'email' => [
+            'display_name' => ['required', 'string', 'max:150'],
+            'attorney_email' => [
                 'required', 'email', 'max:150',
                 function (string $attribute, mixed $value, \Closure $fail): void {
                     if (User::query()->whereRaw('LOWER(email) = ?', [Str::lower($value)])->exists()) {
@@ -30,14 +32,18 @@ class AttorneyAccountController extends Controller
         }
 
         $user = new User([
-            'name' => $attorney->name,
-            'email' => Str::lower($data['email']),
+            'name' => trim($data['display_name']),
+            'email' => Str::lower($data['attorney_email']),
             'password' => $data['password'],
             'is_admin' => false,
         ]);
         $user->forceFill(['role' => 'attorney', 'attorney_id' => $attorney->id]);
         $user->save();
+        $codes = $recoveryCodes->issue($user);
 
-        return back()->with('admin_status', 'Attorney login account created. Share the initial password securely with the attorney.');
+        return back()
+            ->with('admin_status', 'Attorney login created. Share the initial password and recovery codes securely with the attorney.')
+            ->with('attorney_recovery_email', $user->email)
+            ->with('attorney_recovery_codes', $codes);
     }
 }

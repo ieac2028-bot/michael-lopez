@@ -7,8 +7,8 @@
 | `POST /client/register` (`client.register.store`) | 5 attempts per hour per client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
 | `POST /client-portal/lookup` (`client-portal.lookup`) | 10 attempts per minute per authenticated user and client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
 | `POST /attorney/login` (`attorney.login.store`) | 5 attempts per minute per client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
-| `POST /forgot-password` (`password.email`) | 5 attempts per minute per client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
-| `POST /reset-password` (`password.update`) | 5 attempts per minute per client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
+| `POST /forgot-password` (`password.email`) | 5 attempts per minute per client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. Sends a 15-minute recovery code when the account exists and Gmail API is configured. |
+| `POST /reset-password` (`password.update`) | 5 attempts per minute per client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. Each request attempts a single-use emailed or backup code. |
 | `POST /email/verification-notification` (`verification.send`) | 6 attempts per minute per authenticated user and client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
 | `GET /email/verify/{id}/{hash}` (`verification.verify`) | 6 attempts per minute per authenticated user and client IP | Laravel HTTP `429 Too Many Requests` response with `Retry-After`. |
 

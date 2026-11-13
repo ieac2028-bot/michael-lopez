@@ -80,7 +80,7 @@
 
 /* ---------- Stepper (replaces the legacy 9-column / 1008px-wide layout) ---------- */
 .client-workflow-mode .consultation-process {
-  display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); min-width: 0; margin: 14px 0 0; padding: 6px 0 4px;
+  display: grid; grid-template-columns: repeat(var(--process-step-count, 7), minmax(0, 1fr)); min-width: 0; margin: 14px 0 0; padding: 6px 0 4px;
   overflow: visible; list-style: none; gap: 0;
 }
 .client-workflow-mode .consultation-process li,

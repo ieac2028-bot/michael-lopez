@@ -125,29 +125,32 @@ html { scroll-behavior: smooth; }
 .admin-workspace-mode .admin-attorney-row label { display: grid; gap: 5px; color: var(--ink-soft); font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .admin-workspace-mode .admin-attorney-row .admin-available { display: flex; align-items: center; align-self: center; font-size: .8rem; letter-spacing: 0; text-transform: none; font-weight: 600; }
 .admin-workspace-mode .admin-attorney-row input:not([type='checkbox']),
-.admin-workspace-mode .admin-attorney-account input:not([type='checkbox']) {
+.admin-workspace-mode .admin-attorney-account-card input:not([type='checkbox']) {
   width: 100%; min-height: 42px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px;
   background: var(--panel); color: var(--ink); font: 500 .88rem var(--font-sans); box-shadow: none;
 }
 .admin-workspace-mode .admin-attorney-row input:focus,
-.admin-workspace-mode .admin-attorney-account input:focus { outline: 3px solid rgba(42,125,181,.28); border-color: var(--adm-blue); }
+.admin-workspace-mode .admin-attorney-account-card input:focus { outline: 3px solid rgba(42,125,181,.28); border-color: var(--adm-blue); }
 .admin-workspace-mode .admin-attorney-row .btn-ghost {
   min-height: 42px; padding: 0 22px; border: 1px solid var(--adm-blue); border-radius: 10px;
   background: transparent; color: var(--adm-blue); font: 700 .85rem var(--font-sans); cursor: pointer;
 }
 .admin-workspace-mode .admin-attorney-row .btn-ghost:hover { background: var(--adm-blue); color: #fff; }
-.admin-workspace-mode .admin-attorney-account { padding-top: 14px; border-top: 1px dashed var(--line); }
-.admin-workspace-mode .admin-attorney-account p { margin: 0; color: var(--ink-soft); font-size: .85rem; }
-.admin-workspace-mode .admin-attorney-account .admin-inline-form { align-items: end; flex-wrap: nowrap; }
-.admin-workspace-mode .admin-attorney-account .admin-inline-form label { flex: 1 1 auto; font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
-.admin-workspace-mode .admin-attorney-account .btn-primary { flex: 0 0 auto; min-height: 42px; padding: 0 20px; border-radius: 10px; white-space: nowrap; }
+.admin-workspace-mode .admin-attorney-account-card .admin-card-head { margin-bottom: 14px; }
+.admin-workspace-mode .admin-attorney-account-card .admin-card-head h3 { margin: 0 0 4px; color: var(--ink); }
+.admin-workspace-mode .admin-attorney-account-card .admin-card-head p,
+.admin-workspace-mode .admin-attorney-account-status { margin: 0; color: var(--ink-soft); font-size: .85rem; }
+.admin-workspace-mode .admin-attorney-account-card .admin-inline-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; flex: 1 1 100%; gap: 12px; }
+.admin-workspace-mode .admin-attorney-account-card .admin-inline-form label { display: grid; gap: 6px; color: var(--ink-soft); font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.admin-workspace-mode .admin-attorney-account-card .admin-inline-form .auth-help { font-weight: 400; letter-spacing: 0; text-transform: none; }
+.admin-workspace-mode .admin-attorney-account-card .btn-primary { min-height: 42px; padding: 0 20px; border-radius: 10px; justify-self: start; white-space: nowrap; }
 @media (max-width: 1100px) {
   .admin-workspace-mode .admin-attorney-row { grid-template-columns: 38px minmax(0, 1fr) auto; }
   .admin-workspace-mode .admin-attorney-row .admin-coverage,
   .admin-workspace-mode .admin-attorney-row > label:not(.admin-available):not(.admin-coverage) { grid-column: 1 / -1; }
   .admin-workspace-mode .admin-attorney-row .btn-ghost { grid-column: 1 / -1; justify-self: start; }
 }
-@media (max-width: 600px) { .admin-workspace-mode .admin-attorney-account .admin-inline-form { flex-wrap: wrap; } }
+@media (max-width: 600px) { .admin-workspace-mode .admin-attorney-account-card .admin-inline-form { grid-template-columns: 1fr; } }
 
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {

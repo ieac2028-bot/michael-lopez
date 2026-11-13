@@ -1191,7 +1191,7 @@ header .header-login:active { transform: translateY(1px); box-shadow: inset 0 2p
 .home-process h2 { margin:4px 0 8px; color:var(--ink); }
 .home-process .lead { margin:0; }
 .home-process .consultation-process { margin:28px 0; }
-.consultation-process { display:grid; grid-template-columns:repeat(9,minmax(112px,1fr)); min-width:1008px; gap:0; overflow-x:auto; list-style:none; padding:8px 0 16px; margin:24px 0 30px; scrollbar-color:var(--header-cta-bg) var(--panel); scrollbar-width:thin; }
+.consultation-process { display:grid; grid-template-columns:repeat(var(--process-step-count, 9),minmax(112px,1fr)); min-width:1008px; gap:0; overflow-x:auto; list-style:none; padding:8px 0 16px; margin:24px 0 30px; scrollbar-color:var(--header-cta-bg) var(--panel); scrollbar-width:thin; }
 .consultation-process li { position:relative; display:flex; min-width:0; flex-direction:column; align-items:center; gap:10px; padding:0 6px; color:var(--ink-soft); text-align:center; }
 .consultation-process li::before,
 .consultation-process li::after { position:absolute; z-index:0; top:21px; height:3px; content:''; background:#d7e0e6; }

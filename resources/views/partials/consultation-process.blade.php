@@ -36,7 +36,7 @@
   </div>
   <div class="cp-progress__bar" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $percent }}"><span style="width: {{ $percent }}%"></span></div>
 @endif
-<ul class="consultation-process{{ $flowExample ? ' is-flow-example' : '' }}" aria-label="{{ $ariaLabel }}" tabindex="0">
+<ul class="consultation-process{{ $flowExample ? ' is-flow-example' : '' }}" style="--process-step-count: {{ $totalSteps }}" aria-label="{{ $ariaLabel }}" tabindex="0">
   @foreach($steps as $index => $label)
     @php
       $number = $index + 1;

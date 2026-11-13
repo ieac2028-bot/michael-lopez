@@ -12,13 +12,23 @@
     <nav class="admin-quicklinks" aria-label="Jump to section">
       <a href="#admin-inquiries">Inquiries @if($pendingInquiryCount)<b>{{ $pendingInquiryCount }}</b>@endif</a>
       <a href="#admin-cases">Cases</a>
-      <a href="#admin-attorneys">Attorneys</a>
+      <a href="#admin-attorneys">Attorney availability</a>
+      <a href="#admin-attorney-accounts">Attorney accounts</a>
       <a href="#admin-accounts">Admins</a>
     </nav>
   </div>
 
   @if(session('admin_status'))<div class="glance-card admin-flash" role="status">{{ session('admin_status') }}</div>@endif
   @if($errors->any())<div class="glance-card admin-errors" role="alert">{{ $errors->first() }}</div>@endif
+  @if(session('attorney_recovery_codes'))
+    <section class="glance-card admin-flash" role="status" aria-label="One-time attorney recovery codes">
+      <strong>Save these recovery codes for {{ session('attorney_recovery_email') }}</strong>
+      <p>They are displayed once. Give the codes and initial password to the attorney through a secure channel.</p>
+      <ul style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;list-style:none;padding:0;margin:10px 0;">
+        @foreach(session('attorney_recovery_codes') as $code)<li><code style="display:block;padding:8px;border:1px solid var(--line);border-radius:8px;text-align:center;user-select:all;">{{ $code }}</code></li>@endforeach
+      </ul>
+    </section>
+  @endif
 
   <section class="admin-metrics" aria-label="Dashboard overview">
     <a class="admin-metric admin-metric--review" href="#admin-inquiries"><i class="admin-metric__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></i><span>Needs review</span><strong>{{ $pendingInquiryCount }}</strong><small>inquiries</small></a>
@@ -157,8 +167,8 @@
 
   <section class="admin-section" id="admin-attorneys" aria-labelledby="admin-attorneys-title">
     <details class="admin-attorney-section">
-    <summary class="admin-section-head"><div><div class="eyebrow">TEAM</div><h2 id="admin-attorneys-title">Attorney availability and accounts</h2></div><span>{{ $attorneys->count() }} profiles · {{ $availableAttorneyCount }} available</span></summary>
-    <p class="admin-section-note">Update service coverage or issue an individual account for a real attorney. Example profiles are sample data.</p>
+    <summary class="admin-section-head"><div><div class="eyebrow">TEAM · MATCHING</div><h2 id="admin-attorneys-title">Attorney availability</h2></div><span>{{ $attorneys->count() }} profiles · {{ $availableAttorneyCount }} available</span></summary>
+    <p class="admin-section-note">Manage whether attorney profiles can receive new matches, their service areas, and indicative budget range. Account creation is managed separately below.</p>
     <div class="admin-attorney-list">
       @foreach($attorneys as $index => $attorney)
         <div class="admin-card">
@@ -172,19 +182,32 @@
           <label>Indicative budget range (PHP)<span style="display:flex;gap:6px"><input type="number" min="0" name="budget_min" value="{{ $attorney->budget_min }}" placeholder="Minimum"><input type="number" min="0" name="budget_max" value="{{ $attorney->budget_max }}" placeholder="Maximum"></span></label>
           <button type="submit" class="btn-ghost">Save</button>
         </form>
-        <div class="admin-attorney-account">
+        </div>
+      @endforeach
+    </div>
+    </details>
+  </section>
+
+  <section class="admin-section" id="admin-attorney-accounts" aria-labelledby="admin-attorney-accounts-title">
+    <details class="admin-attorney-section" @if($errors->has('display_name') || $errors->has('attorney_email') || $errors->has('password') || $errors->has('attorney_account')) open @endif>
+    <summary class="admin-section-head"><div><div class="eyebrow">TEAM · ACCESS</div><h2 id="admin-attorney-accounts-title">Attorney account creation</h2></div><span>{{ $attorneys->filter(fn ($attorney) => ! $attorney->account)->count() }} profiles need an account</span></summary>
+    <p class="admin-section-note">Create login credentials for an existing attorney profile. New accounts are linked to the profile selected here.</p>
+    <div class="admin-attorney-list">
+      @foreach($attorneys as $attorney)
+        <div class="admin-card admin-attorney-account-card">
+          <div class="admin-card-head"><div><h3>{{ $attorney->name }}</h3><p>{{ $attorney->practiceArea?->name ?? 'Practice area not set' }} · {{ $attorney->years_experience }} years' experience</p></div></div>
           @if($attorney->account)
-            <p>Attorney login: <strong>{{ $attorney->account->email }}</strong> · Login account created</p>
+            <p class="admin-attorney-account-status">Login account active · <strong>{{ $attorney->account->email }}</strong></p>
           @else
             <form class="admin-inline-form" method="POST" action="{{ route('admin.attorneys.account.store', $attorney) }}">
               @csrf
-              <label>Attorney account email <input type="email" name="email" value="{{ old('email') }}" autocomplete="email" required maxlength="150"></label>
-              <label>Initial password<input type="password" name="password" autocomplete="new-password" minlength="12" required></label>
-              <label>Confirm password<input type="password" name="password_confirmation" autocomplete="new-password" minlength="12" required></label>
-              <button type="submit" class="btn-primary">Create login</button>
+              <label>Account holder name <input type="text" name="display_name" value="{{ old('display_name', $attorney->name) }}" autocomplete="name" required maxlength="150">@error('display_name')<small class="form-error">{{ $message }}</small>@enderror</label>
+              <label>Attorney login email <input type="email" name="attorney_email" value="{{ old('attorney_email') }}" autocomplete="email" required maxlength="150">@error('attorney_email')<small class="form-error">{{ $message }}</small>@enderror</label>
+              <label>Initial password <input type="password" name="password" autocomplete="new-password" minlength="12" required><small class="auth-help">At least 12 characters, including uppercase and lowercase letters, a number, and a symbol.</small>@error('password')<small class="form-error">{{ $message }}</small>@enderror</label>
+              <label>Confirm initial password <input type="password" name="password_confirmation" autocomplete="new-password" minlength="12" required></label>
+              <button type="submit" class="btn-primary">Create attorney account</button>
             </form>
           @endif
-        </div>
         </div>
       @endforeach
     </div>

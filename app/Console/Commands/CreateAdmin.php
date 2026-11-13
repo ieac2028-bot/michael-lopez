@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\RecoveryCodeService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -19,7 +20,7 @@ class CreateAdmin extends Command
 
     protected $description = 'Create a GPMO administrator account (used once to create the first admin; after that admins add each other from the dashboard)';
 
-    public function handle(): int
+    public function handle(RecoveryCodeService $recoveryCodes): int
     {
         $name = trim((string) ($this->option('name') ?: $this->ask('Full name')));
         $email = Str::lower(trim((string) ($this->option('email') ?: $this->ask('Email address'))));
@@ -101,6 +102,11 @@ class CreateAdmin extends Command
         }
 
         $this->info("Administrator {$email} created. Sign in at /login and choose Administrator.");
+        $codes = $recoveryCodes->issue($user);
+        $this->warn('Save these one-time recovery codes securely and give them to the account holder:');
+        foreach ($codes as $code) {
+            $this->line($code);
+        }
 
         return self::SUCCESS;
     }

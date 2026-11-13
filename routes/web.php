@@ -52,6 +52,9 @@ Route::get('/client/register', [ClientAuthController::class, 'showRegistration']
 Route::post('/client/register', [ClientAuthController::class, 'register'])
     ->middleware('throttle:client-register')
     ->name('client.register.store');
+Route::get('/client/recovery-codes', [ClientAuthController::class, 'showRecoveryCodes'])
+    ->middleware(['auth', 'can:access-client-portal'])
+    ->name('client.recovery-codes');
 Route::post('/client/logout', [ClientAuthController::class, 'logout'])
     ->middleware(['auth', 'can:access-client-portal'])
     ->name('client.logout');
@@ -69,10 +72,9 @@ Route::middleware(['auth', 'can:access-attorney-portal'])->prefix('attorney-port
 });
 
 Route::get('/forgot-password', [PasswordResetController::class, 'requestForm'])->name('password.request');
-Route::post('/forgot-password', [PasswordResetController::class, 'sendLink'])
+Route::post('/forgot-password', [PasswordResetController::class, 'sendRecoveryCode'])
     ->middleware('throttle:password-email')
     ->name('password.email');
-Route::get('/reset-password/{token}', [PasswordResetController::class, 'resetForm'])->name('password.reset');
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])
     ->middleware('throttle:password-reset')
     ->name('password.update');
