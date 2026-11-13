@@ -39,7 +39,7 @@
       <button class="admin-tab" id="tab-admin-accounts" type="button" role="tab" aria-controls="admin-accounts" aria-selected="false" tabindex="-1">Administrator accounts</button>
     </div>
 
-  <section class="admin-section admin-tab-panel" id="admin-inquiries" role="tabpanel" aria-labelledby="tab-admin-inquiries" data-inquiry-inbox data-poll-url="{{ route('admin.inquiries.poll') }}" data-latest-id="{{ $inquiries->max('id') ?? 0 }}">
+  <section class="admin-section admin-tab-panel" id="admin-inquiries" role="tabpanel" aria-labelledby="tab-admin-inquiries" data-inquiry-inbox data-poll-url="{{ route('admin.inquiries.poll') }}" data-latest-id="{{ $inquiries->max('id') ?? 0 }}" data-attorney-updated-at="{{ $attorneys->max('updated_at')?->toISOString() ?? '' }}">
     <div class="admin-section-head"><div><div class="eyebrow">INBOX</div><h2 id="admin-inquiries-title">Recent inquiries</h2></div><span>{{ $inquiries->count() }} total · {{ $pendingInquiryCount }} to review</span></div>
     @forelse($inquiries as $inquiry)
       <article class="admin-card">
@@ -63,7 +63,7 @@
           <div class="admin-inquiry-chat professional-live-chat">
             <strong>Client conversation</strong>
             <small class="live-chat-translation-note">Non-English messages are translated into English for review; original messages are kept.</small>
-            <div class="professional-chat-thread" data-message-thread data-status="{{ $inquiry->status }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('admin.inquiries.messages.poll', $inquiry) }}">
+            <div class="professional-chat-thread" data-message-thread data-status="{{ $inquiry->status }}" data-payment-status="{{ $inquiry->payment_status ?? '' }}" data-refund-requested-at="{{ $inquiry->refund_requested_at?->toISOString() ?? '' }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('admin.inquiries.messages.poll', $inquiry) }}">
             @if($inquiry->messages->isNotEmpty())
             @foreach($inquiry->messages as $message)
               <article class="consultation-chat__message" data-role="{{ $message->sender_role }}" data-message-id="{{ $message->id }}"><strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'GPMO Assistant' : 'Client') }}</strong><small>{{ $message->created_at->format('M j, g:i A') }}</small><p>{{ $message->body }}</p></article>
@@ -97,6 +97,9 @@
                 <select name="preferred_time"><option value="">Select time</option>@foreach(['Morning (9:00 AM – 12:00 PM)', 'Afternoon (1:00 PM – 5:00 PM)'] as $slot)<option value="{{ $slot }}" @selected(old('preferred_time', $inquiry->preferred_time) === $slot)>{{ $slot }}</option>@endforeach</select>
               </label>
               <label>Client requirements<textarea name="client_requirements" maxlength="2000">{{ old('client_requirements', $inquiry->client_requirements) }}</textarea></label>
+              <div class="matching-progress" data-matching-progress role="status" aria-live="polite" aria-atomic="true" hidden>
+                <span class="matching-progress__ring"><span class="matching-progress__label">Matching…</span></span>
+              </div>
               <div class="admin-workflow-actions">
                 <button type="submit" class="btn-primary">Save details and find best match</button>
               </div>
@@ -126,6 +129,44 @@
             </label>
             <button type="submit" class="btn-primary">Save referral</button>
           </form>
+          @endif
+          @if($inquiry->type === \App\Models\Inquiry::TYPE_CONSULTATION && $inquiry->payment_status)
+            <section class="admin-payment-workflow" aria-label="Consultation payment workflow">
+              <div class="admin-card-head"><div><h3>Consultation payment</h3><p>Fee: ₱{{ number_format((float) $inquiry->consultation_fee, 2) }}</p></div><span class="admin-status-pill">{{ ucfirst(str_replace('_', ' ', $inquiry->payment_status)) }}</span></div>
+              @if($inquiry->refund_requested_at)<p class="admin-payment-refund-note">Client requested cancellation / refund review {{ $inquiry->refund_requested_at->format('M j, Y g:i A') }}. Review under the firm’s policy; no refund or cancellation is automatic.</p>@endif
+              @if(in_array($inquiry->payment_status, ['fee_proposed', 'canceled', 'expired'], true))
+                @if($inquiry->payment_status === 'canceled')<p>The client canceled before reporting payment. A new fee and deadline will need confirmation before another payment request.</p>@endif
+                @if($inquiry->payment_status === 'expired')<p>The unpaid request expired {{ $inquiry->payment_expired_at?->format('M j, Y g:i A') }}. You can renew the request by confirming a current fee, payment details, and a new firm-approved deadline.</p>@endif
+                <p>Attorney’s proposed fee: <strong>₱{{ number_format((float) $inquiry->proposed_consultation_fee, 2) }}</strong></p>
+                <p>The attorney proposed this fee. Confirm the amount, GCash or bank instructions, and a firm-approved expiry before the client can choose to pay.</p>
+                <form class="admin-inline-form" method="POST" action="{{ route('admin.inquiries.payment.confirm', $inquiry) }}">
+                  @csrf
+                  <label>Attorney’s proposed fee (PHP)<input type="number" name="consultation_fee" min="0.01" max="9999999999" step="0.01" required value="{{ old('consultation_fee', $inquiry->proposed_consultation_fee) }}" readonly></label>
+                  <label>GCash or bank payment instructions<textarea name="payment_instructions" maxlength="2000" required>{{ old('payment_instructions', $inquiry->payment_instructions) }}</textarea><small>Include the payee name and the exact transfer details the client needs.</small></label>
+                  <label>Firm-approved cancellation / refund terms<textarea name="payment_refund_terms" maxlength="2000" required>{{ old('payment_refund_terms', $inquiry->payment_refund_terms) }}</textarea><small>Enter the firm's approved terms; these will be shown before the client reports payment.</small></label>
+                  <label>Payment request expiry<input type="datetime-local" name="payment_expires_at" min="{{ now()->format('Y-m-d\\TH:i') }}" value="{{ old('payment_expires_at') }}" required><small>Choose the expiry period approved by the firm.</small></label>
+                  <button type="submit" class="btn-primary">Confirm fee and send payment details</button>
+                </form>
+              @elseif($inquiry->payment_status === 'awaiting_client')
+                <p>Waiting for the client to pay or cancel. Expires {{ $inquiry->payment_expires_at?->format('M j, Y g:i A') }}.</p>
+                <p class="admin-data-wide">{{ $inquiry->payment_instructions }}</p>
+                <p><strong>Cancellation / refund terms:</strong> {{ $inquiry->payment_refund_terms }}</p>
+              @elseif($inquiry->payment_status === 'pending')
+                <p>Client reported payment {{ $inquiry->payment_requested_at?->format('M j, Y g:i A') }}. Reference: <strong>{{ $inquiry->payment_reference ?: 'Not provided' }}</strong>.</p>
+                <form method="POST" action="{{ route('admin.inquiries.payment.verify-start', $inquiry) }}">@csrf<button type="submit" class="btn-primary">Start payment verification</button></form>
+              @elseif($inquiry->payment_status === 'verifying')
+                <p>Payment is being checked against the firm account. Client reference: <strong>{{ $inquiry->payment_reference ?: 'Not provided' }}</strong>.</p>
+                <form class="admin-inline-form admin-consultation-access-form" method="POST" action="{{ route('admin.inquiries.payment.verify', $inquiry) }}">
+                  @csrf
+                  <label>Verified GCash / bank transaction reference<input type="text" name="payment_reference" maxlength="120" required value="{{ old('payment_reference', $inquiry->payment_reference) }}"></label>
+                  <label>Secure meeting link (for video, optional)<input type="url" name="meeting_access_url" maxlength="500" placeholder="https://…" value="{{ old('meeting_access_url') }}"></label>
+                  <label>Meeting access instructions<textarea name="consultation_access_details" maxlength="2000" required placeholder="Enter the confirmed venue, call-in details, or instructions for arranging the meeting.">{{ old('consultation_access_details') }}</textarea><small>This will be shown to the client after you verify payment.</small></label>
+                  <button type="submit" class="btn-primary">Verify payment and confirm consultation</button>
+                </form>
+              @elseif($inquiry->payment_status === 'verified')
+                <p>Payment verified {{ $inquiry->payment_verified_at?->format('M j, Y g:i A') }} by {{ $inquiry->paymentVerifier?->name ?? 'an administrator' }}. Transaction reference: <strong>{{ $inquiry->payment_reference }}</strong>. Consultation confirmed.</p>
+              @endif
+            </section>
           @endif
           @if($inquiry->caseRecord)<p>Case opened: <strong>{{ $inquiry->caseRecord->reference_no }}</strong></p>@endif
         </div>
@@ -178,10 +219,23 @@
           @csrf @method('PATCH')
           <strong class="admin-rank">#{{ $index + 1 }}</strong>
           <div><strong>{{ $attorney->name }}</strong><small>{{ $attorney->practiceArea?->name ?? 'Unassigned area' }} · {{ $attorney->years_experience }} years' experience</small></div>
-          <input type="hidden" name="is_available" value="0">
-          <label class="admin-available"><input type="checkbox" name="is_available" value="1" @checked($attorney->is_available)> Available</label>
+          <input type="hidden" name="is_available" value="{{ $attorney->is_available ? '1' : '0' }}">
+          @php
+            $includedInMatching = $attorney->is_available && $attorney->accepting_matches && $attorney->account;
+            $matchingLabel = $includedInMatching
+              ? 'Included in matching'
+              : (! $attorney->account ? 'Account not linked' : (! $attorney->accepting_matches ? 'Paused by attorney' : 'Unavailable by firm'));
+          @endphp
+          <div class="admin-available admin-match-status" role="status">
+            <span class="admin-availability-dot {{ $includedInMatching ? 'is-included' : 'is-paused' }}" aria-hidden="true"></span>
+            <span>{{ $matchingLabel }}</span>
+          </div>
           <label class="admin-coverage">Service areas<input type="text" name="coverage_areas" value="{{ implode(', ', $attorney->coverage_areas ?? []) }}" placeholder="All Philippines or city/region names"></label>
           <label>Indicative budget range (PHP)<span style="display:flex;gap:6px"><input type="number" min="0" name="budget_min" value="{{ $attorney->budget_min }}" placeholder="Minimum"><input type="number" min="0" name="budget_max" value="{{ $attorney->budget_max }}" placeholder="Maximum"></span></label>
+          <div class="admin-attorney-contacts">
+            <label>Client contact email<input type="email" name="contact_email" maxlength="150" value="{{ $attorney->contact_email }}" placeholder="Public contact email"></label>
+            <label>Client contact phone<input type="tel" name="contact_phone" maxlength="40" value="{{ $attorney->contact_phone }}" placeholder="Public contact number"></label>
+          </div>
           <button type="submit" class="btn-ghost">Save</button>
         </form>
         </div>
@@ -191,29 +245,75 @@
   </section>
 
   <section class="admin-section admin-tab-panel" id="admin-attorney-accounts" role="tabpanel" aria-labelledby="tab-admin-attorney-accounts" hidden>
-    <details class="admin-attorney-section" @if($errors->has('display_name') || $errors->has('attorney_email') || $errors->has('password') || $errors->has('attorney_account')) open @endif>
-    <summary class="admin-section-head"><div><div class="eyebrow">TEAM · ACCESS</div><h2 id="admin-attorney-accounts-title">Attorney account creation</h2></div><span>{{ $attorneys->filter(fn ($attorney) => ! $attorney->account)->count() }} profiles need an account</span></summary>
-    <p class="admin-section-note">Create login credentials for an existing attorney profile. New accounts are linked to the profile selected here.</p>
-    <div class="admin-attorney-list">
-      @foreach($attorneys as $attorney)
-        <div class="admin-card admin-attorney-account-card">
-          <div class="admin-card-head"><div><h3>{{ $attorney->name }}</h3><p>{{ $attorney->practiceArea?->name ?? 'Practice area not set' }} · {{ $attorney->years_experience }} years' experience</p></div></div>
-          @if($attorney->account)
-            <p class="admin-attorney-account-status">Login account active · <strong>{{ $attorney->account->email }}</strong></p>
-          @else
-            <form class="admin-inline-form" method="POST" action="{{ route('admin.attorneys.account.store', $attorney) }}">
-              @csrf
-              <label>Account holder name <input type="text" name="display_name" value="{{ old('display_name', $attorney->name) }}" autocomplete="name" required maxlength="150">@error('display_name')<small class="form-error">{{ $message }}</small>@enderror</label>
-              <label>Attorney login email <input type="email" name="attorney_email" value="{{ old('attorney_email') }}" autocomplete="email" required maxlength="150">@error('attorney_email')<small class="form-error">{{ $message }}</small>@enderror</label>
-              <label>Initial password <input type="password" name="password" autocomplete="new-password" minlength="12" required><small class="auth-help">At least 12 characters, including uppercase and lowercase letters, a number, and a symbol.</small>@error('password')<small class="form-error">{{ $message }}</small>@enderror</label>
-              <label>Confirm initial password <input type="password" name="password_confirmation" autocomplete="new-password" minlength="12" required></label>
-              <button type="submit" class="btn-primary">Create attorney account</button>
-            </form>
-          @endif
-        </div>
-      @endforeach
+    @php
+      $attorneysWithoutAccounts = $attorneys->filter(fn ($attorney) => ! $attorney->account);
+      $attorneyWithAccount = $attorneys->first(fn ($attorney) => ! $attorney->account && $attorney->id == old('attorney_profile_id')) ?? $attorneysWithoutAccounts->first();
+    @endphp
+    <div class="admin-section-head">
+      <div><div class="eyebrow">TEAM · ACCESS</div><h2 id="admin-attorney-accounts-title">Create an attorney account</h2></div>
+      <span>{{ $attorneysWithoutAccounts->count() }} profiles need an account</span>
     </div>
-    </details>
+    <p class="admin-section-note">Create sign-in credentials and link them to an existing attorney profile.</p>
+
+    @if($attorneyWithAccount)
+      <div class="attorney-create-card">
+        <div class="attorney-create-card__intro">
+          <span class="attorney-create-card__eyebrow">ATTORNEY ACCESS</span>
+          <h3>Set up a team member</h3>
+          <p>Enter their account details below. Their login will open the workspace for the selected attorney profile.</p>
+        </div>
+        <form class="attorney-create-form" method="POST" action="{{ route('admin.attorneys.account.store', $attorneyWithAccount) }}" data-attorney-account-form data-route-template="{{ route('admin.attorneys.account.store', ['attorney' => '__ATTORNEY_ID__']) }}">
+          @csrf
+          <label class="attorney-create-form__field attorney-create-form__field--profile" for="attorney-account-profile">
+            <span>Attorney profile</span>
+            <select id="attorney-account-profile" data-attorney-profile-select required>
+              @foreach($attorneysWithoutAccounts as $attorney)
+                <option value="{{ $attorney->id }}" data-profile-name="{{ $attorney->name }}" @selected($attorneyWithAccount->id === $attorney->id)>{{ $attorney->name }} · {{ $attorney->practiceArea?->name ?? 'Practice area not set' }}</option>
+              @endforeach
+            </select>
+            <small>Choose the attorney profile this login belongs to.</small>
+          </label>
+          <input type="hidden" name="attorney_profile_id" value="{{ old('attorney_profile_id', $attorneyWithAccount->id) }}" data-attorney-profile-id>
+          <label class="attorney-create-form__field" for="attorney-account-name">
+            <span>Full name</span>
+            <input id="attorney-account-name" type="text" name="display_name" value="{{ old('display_name', $attorneyWithAccount->name) }}" autocomplete="name" required maxlength="150" data-attorney-account-name>
+            @error('display_name')<small class="form-error">{{ $message }}</small>@enderror
+          </label>
+          <label class="attorney-create-form__field" for="attorney-account-email">
+            <span>Email</span>
+            <input id="attorney-account-email" type="email" name="attorney_email" value="{{ old('attorney_email') }}" autocomplete="email" required maxlength="150" placeholder="name@lawfirm.com">
+            @error('attorney_email')<small class="form-error">{{ $message }}</small>@enderror
+          </label>
+          <label class="attorney-create-form__field" for="attorney-account-password">
+            <span>Password</span>
+            <input id="attorney-account-password" type="password" name="password" autocomplete="new-password" minlength="12" required>
+            <small>Use at least 12 characters with uppercase and lowercase letters, a number, and a symbol.</small>
+            @error('password')<small class="form-error">{{ $message }}</small>@enderror
+          </label>
+          <label class="attorney-create-form__field" for="attorney-account-confirm-password">
+            <span>Confirm password</span>
+            <input id="attorney-account-confirm-password" type="password" name="password_confirmation" autocomplete="new-password" minlength="12" required>
+          </label>
+          <button class="attorney-create-form__submit" type="submit">Create attorney account</button>
+        </form>
+      </div>
+    @else
+      <div class="admin-empty">Every attorney profile already has a login account.</div>
+    @endif
+
+    <div class="attorney-account-roster">
+      <div class="attorney-account-roster__head"><div><div class="eyebrow">CURRENT ACCOUNTS</div><h3>Attorney logins</h3></div><span>{{ $attorneys->filter(fn ($attorney) => $attorney->account)->count() }} linked</span></div>
+      @forelse($attorneys->filter(fn ($attorney) => $attorney->account) as $attorney)
+        <div class="attorney-account-roster__row">
+          <span class="attorney-account-roster__initials" aria-hidden="true">{{ $attorney->initials }}</span>
+          <span class="attorney-account-roster__identity"><strong>{{ $attorney->name }}</strong><small>{{ $attorney->practiceArea?->name ?? 'Practice area not set' }}</small></span>
+          <span class="attorney-account-roster__email">{{ $attorney->account->email }}</span>
+          <span class="attorney-account-roster__badge">Account linked</span>
+        </div>
+      @empty
+        <p class="attorney-account-roster__empty">No attorney logins have been created yet.</p>
+      @endforelse
+    </div>
   </section>
 
   <section class="admin-section admin-tab-panel" id="admin-accounts" role="tabpanel" aria-labelledby="tab-admin-accounts" hidden>

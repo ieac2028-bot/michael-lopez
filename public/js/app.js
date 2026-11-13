@@ -20,6 +20,19 @@ if (hamburgerBtn) {
   mnBackdrop.addEventListener('click', closeMobileNav);
 }
 
+// Show the attorney matching animation while staff save a consultation intake.
+document.querySelectorAll('.admin-intake-form').forEach((form) => {
+  form.addEventListener('submit', () => {
+    const progress = form.querySelector('[data-matching-progress]');
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (!progress || !submitButton) return;
+
+    progress.hidden = false;
+    form.setAttribute('aria-busy', 'true');
+    submitButton.disabled = true;
+  });
+});
+
 // Open the linked practice area and bring its full description into view.
 function revealPracticeAreaHash() {
   const target = window.location.hash && document.querySelector(window.location.hash);
@@ -241,7 +254,25 @@ document.querySelectorAll('[data-message-thread][data-poll-url]').forEach((threa
       const response = await fetch(thread.dataset.pollUrl, { headers: { Accept: 'application/json' } });
       if (!response.ok) return;
       const payload = await response.json();
+      if (payload.payment_status !== undefined && String(payload.payment_status || '') !== String(thread.dataset.paymentStatus || '')) {
+        window.location.reload();
+        return;
+      }
+      if (payload.refund_requested_at !== undefined && String(payload.refund_requested_at || '') !== String(thread.dataset.refundRequestedAt || '')) {
+        window.location.reload();
+        return;
+      }
       if (payload.status && thread.dataset.status && payload.status !== thread.dataset.status) {
+        const matchCompleted = ['reviewing', 'referred', 'declined', 'accepted'].includes(payload.status);
+        const matchingStarted = ['new', 'clarifying'].includes(thread.dataset.status);
+        const chatPanel = thread.closest('[data-client-live-chat-panel]');
+        const matchingTransition = document.querySelector('[data-client-matching-transition]');
+        if (matchCompleted && matchingStarted && chatPanel && matchingTransition) {
+          chatPanel.hidden = true;
+          matchingTransition.hidden = false;
+          window.setTimeout(() => window.location.reload(), 2200);
+          return;
+        }
         window.location.reload();
         return;
       }
@@ -291,7 +322,9 @@ document.querySelectorAll('[data-inquiry-inbox][data-poll-url]').forEach((inbox)
       const response = await fetch(inbox.dataset.pollUrl, { headers: { Accept: 'application/json' } });
       if (!response.ok) return;
       const result = await response.json();
-      if (Number(result.latest_id) > Number(inbox.dataset.latestId)) window.location.reload();
+      const inquiryAdded = Number(result.latest_id) > Number(inbox.dataset.latestId);
+      const attorneyChanged = result.attorney_updated_at !== inbox.dataset.attorneyUpdatedAt;
+      if (inquiryAdded || attorneyChanged) window.location.reload();
     } catch (error) {
       // A later poll retries if the inbox endpoint is temporarily unavailable.
     }

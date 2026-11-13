@@ -12,33 +12,46 @@
       'Your matches',
       'Request sent',
       'Attorney response',
+      'Fee proposed',
+      'Payment verification',
       'Consultation confirmed',
     ];
     $status = $inquiry?->status ?? 'new';
-    $doneThrough = match($status) {
-      'clarifying' => 1,
-      'reviewing' => 2,
-      'referred' => 5,
-      'declined' => 5,
-      'accepted' => 7,
+    $paymentStatus = $inquiry?->payment_status;
+    $doneThrough = match(true) {
+      $paymentStatus === 'verified' => 9,
+      in_array($paymentStatus, ['pending', 'verifying'], true) => 7,
+      in_array($paymentStatus, ['fee_proposed', 'awaiting_client', 'canceled', 'expired'], true) => 6,
+      $status === 'clarifying' => 1,
+      $status === 'reviewing' => 2,
+      in_array($status, ['referred', 'declined'], true) => 5,
+      $status === 'accepted' => 9,
       default => 1,
     };
     // Step 1 is complete for a signed-in client, so the conversation begins at step 2.
-    $currentStep = $status === 'accepted' ? null : match($status) {
-      'new' => 2,
-      'clarifying' => 2,
-      'reviewing' => 3,
-      'referred' => 6,
-      'declined' => 6,
+    $currentStep = $paymentStatus === 'verified' || $status === 'accepted' ? null : match(true) {
+      $paymentStatus === 'fee_proposed' || $paymentStatus === 'awaiting_client' || $paymentStatus === 'canceled' || $paymentStatus === 'expired' => 7,
+      $paymentStatus === 'pending' || $paymentStatus === 'verifying' => 8,
+      $status === 'referred' || $status === 'declined' => 6,
+      $status === 'new' => 2,
+      $status === 'clarifying' => 2,
+      $status === 'reviewing' => 3,
       default => 2,
     };
-    $summaryNote = match($status) {
-      'new' => 'Next: send your first message to our team.',
-      'clarifying' => 'Our team is collecting the details needed to match you.',
-      'reviewing' => 'We found attorneys who fit your matter.',
-      'referred' => 'Your request is with the attorney. We’ll update you here.',
-      'declined' => 'The firm will follow up with you directly.',
-      'accepted' => 'Your consultation is confirmed.',
+    $summaryNote = match(true) {
+      $paymentStatus === 'fee_proposed' => 'The attorney accepted. Firm staff will confirm the fee and payment details in your chat.',
+      $paymentStatus === 'awaiting_client' => 'Review the confirmed fee and payment instructions, then choose whether to pay or cancel.',
+      $paymentStatus === 'pending' => 'The office is waiting to verify your reported payment.',
+      $paymentStatus === 'verifying' => 'Firm staff are checking the payment against the office account.',
+      $paymentStatus === 'verified' => 'Payment verified. Your consultation is confirmed.',
+      $paymentStatus === 'canceled' => 'Payment request canceled before payment. Your consultation is not confirmed.',
+      $paymentStatus === 'expired' => 'The unpaid payment request expired. Contact the office to continue.',
+      $status === 'new' => 'Next: send your first message to our team.',
+      $status === 'clarifying' => 'Our team is collecting the details needed to match you.',
+      $status === 'reviewing' => 'We found attorneys who fit your matter.',
+      $status === 'referred' => 'Your request is with the attorney. We’ll update you here.',
+      $status === 'declined' => 'The firm will follow up with you directly.',
+      $status === 'accepted' => 'Your consultation is confirmed.',
       default => null,
     };
     $showMatches = $inquiry && in_array($status, ['reviewing', 'referred', 'declined', 'accepted'], true);
@@ -61,7 +74,13 @@
   <div class="cp-layout">
     <div class="cp-main">
       @if($inquiry)
-        <section class="glance-card consultation-chat" aria-labelledby="consultation-chat-title">
+        <div class="matching-progress matching-progress--client" data-client-matching-transition role="status" aria-live="polite" aria-atomic="true" hidden>
+          <span class="matching-progress__ring"><span class="matching-progress__label">Matching…</span></span>
+          <span class="matching-progress__message">Finding the attorney best suited to your matter.</span>
+        </div>
+      @endif
+      @if($inquiry)
+        <section class="glance-card consultation-chat" data-client-live-chat-panel aria-labelledby="consultation-chat-title" @if($status === 'accepted') hidden @endif>
           <div class="consultation-chat__heading">
             <div class="k" id="consultation-chat-title">Conversation with our team</div>
             <small>Non-English messages are automatically translated into English. Original messages are kept.</small>
@@ -71,7 +90,7 @@
             <strong data-presence-label>{{ $adminOnline ? 'Admin is online' : 'Admin is offline' }}</strong>
             <small data-presence-note>{{ $adminOnline ? 'A staff member can reply here.' : 'The automated assistant will reply until staff are available.' }}</small>
           </div>
-          <div class="consultation-chat__messages" aria-live="polite" data-message-thread data-status="{{ $inquiry->status }}" data-assigned-attorney="{{ $inquiry->attorney_id ?? '' }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('consultation.messages.poll', $inquiry) }}">
+          <div class="consultation-chat__messages" aria-live="polite" data-message-thread data-status="{{ $inquiry->status }}" data-payment-status="{{ $inquiry->payment_status ?? '' }}" data-refund-requested-at="{{ $inquiry->refund_requested_at?->toISOString() ?? '' }}" data-assigned-attorney="{{ $inquiry->attorney_id ?? '' }}" data-latest-message-id="{{ $inquiry->messages->last()?->id ?? '' }}" data-translate-url="{{ route('chat.translate') }}" data-poll-url="{{ route('consultation.messages.poll', $inquiry) }}">
             @forelse($inquiry->messages as $message)
               <article class="consultation-chat__message" data-role="{{ $message->sender_role }}" data-message-id="{{ $message->id }}">
                 <strong>{{ $message->sender_role === 'admin' ? 'Firm staff' : ($message->sender_role === 'assistant' ? 'GPMO Assistant' : 'You') }}</strong>
@@ -139,6 +158,70 @@
         </section>
       @endif
 
+      @if($inquiry && $inquiry->payment_status)
+        <section class="glance-card client-payment-card" aria-labelledby="client-payment-title">
+          <div class="consultation-recommendations__heading"><div><div class="eyebrow">CONSULTATION PAYMENT</div><h2 id="client-payment-title">{{ ucfirst(str_replace('_', ' ', $inquiry->payment_status)) }}</h2></div><strong>₱{{ number_format((float) $inquiry->consultation_fee, 2) }}</strong></div>
+          @if($inquiry->payment_status === 'fee_proposed')
+            <p>The attorney proposed this fee. Firm staff will confirm the payment instructions here before you decide whether to pay.</p>
+          @elseif($inquiry->payment_status === 'awaiting_client')
+            <p>Review the fee and payment instructions. Your consultation will be confirmed only after the office verifies that the payment reached its account.</p>
+            <div class="client-payment-card__instructions">{{ $inquiry->payment_instructions }}</div>
+            <div class="client-payment-card__policy"><strong>Cancellation / refund terms</strong><p>{{ $inquiry->payment_refund_terms }}</p></div>
+            <p class="client-payment-card__expiry">Please respond by {{ $inquiry->payment_expires_at?->format('M j, Y g:i A') }}.</p>
+            <form class="client-payment-card__reference" method="POST" action="{{ route('consultation.payment.sent', $inquiry) }}">
+              @csrf
+              <label for="payment-reference">Payment reference (if available)</label>
+              <input id="payment-reference" name="payment_reference" type="text" maxlength="120" autocomplete="off" placeholder="Enter the GCash or bank transaction reference">
+              <label class="client-payment-card__ack"><input type="checkbox" name="acknowledge_terms" value="1" required> I’ve reviewed the fee, payment instructions, and cancellation / refund terms.</label>
+              <button type="submit" class="btn-primary" onclick="return confirm('Only continue if you have already sent the payment. The office will verify it before confirming your consultation.')">I’ve sent the payment</button>
+            </form>
+            <form method="POST" action="{{ route('consultation.payment.cancel', $inquiry) }}" class="client-payment-card__cancel">@csrf<button type="submit" class="btn-ghost" onclick="return confirm('Cancel this payment request before paying? The consultation will not be confirmed.')">Cancel before paying</button></form>
+          @elseif(in_array($inquiry->payment_status, ['pending', 'verifying'], true))
+            <p>{{ $inquiry->payment_status === 'pending' ? 'Your payment notice was sent' : 'The office is checking its GCash or bank account' }}{{ $inquiry->payment_requested_at ? ' on '.$inquiry->payment_requested_at->format('M j, Y g:i A') : '' }}. The consultation is not confirmed until the office verifies receipt.</p>
+            <p>Reference: <strong>{{ $inquiry->payment_reference ?: 'Not provided' }}</strong></p>
+            <form method="POST" action="{{ route('consultation.payment.refund-review', $inquiry) }}">@csrf<button type="submit" class="btn-ghost">Request cancellation / refund review</button></form>
+          @elseif($inquiry->payment_status === 'verified')
+            <div class="confirmed-meeting-card" aria-labelledby="confirmed-meeting-title">
+              <div class="confirmed-meeting-card__header"><span class="confirmed-meeting-card__icon" aria-hidden="true">✓</span><div><span class="eyebrow">CONSULTATION CONFIRMED</span><h3 id="confirmed-meeting-title">Your meeting details</h3></div></div>
+              <div class="confirmed-meeting-card__attorney"><span class="recommended-attorney-card__avatar" aria-hidden="true">{{ $inquiry->attorney?->initials ?? 'AT' }}</span><div><strong>{{ $inquiry->attorney?->name ?? 'Assigned attorney' }}</strong><span>{{ $inquiry->practiceArea?->name ?? 'Your legal matter' }}</span></div></div>
+              <dl class="confirmed-meeting-card__details">
+                <div><dt>Consultation method</dt><dd>{{ ucfirst(str_replace('_', ' ', $inquiry->consultation_method ?? 'consultation')) }}</dd></div>
+                @if($inquiry->preferred_date)<div><dt>Preferred date</dt><dd>{{ $inquiry->preferred_date->format('l, M j, Y') }}</dd></div>@endif
+                @if($inquiry->preferred_time)<div><dt>Preferred time</dt><dd>{{ $inquiry->preferred_time }}</dd></div>@endif
+                <div><dt>Case reference</dt><dd>{{ $inquiry->caseRecord?->reference_no ?? 'Being prepared' }}</dd></div>
+              </dl>
+              <div class="confirmed-meeting-card__contact">
+                <strong>Contact your attorney</strong>
+                @php($attorneyEmail = $inquiry->attorney?->contact_email)
+                @if($attorneyEmail)<a href="mailto:{{ $attorneyEmail }}">{{ $attorneyEmail }}</a>@endif
+                @if($inquiry->attorney?->contact_phone)<a href="tel:{{ preg_replace('/[^+0-9]/', '', $inquiry->attorney->contact_phone) }}">{{ $inquiry->attorney->contact_phone }}</a>@endif
+                @if(!$attorneyEmail && !$inquiry->attorney?->contact_phone)<p>Contact the firm through this chat to coordinate directly with your attorney.</p>@endif
+              </div>
+              @if($inquiry->attorney)
+                <div class="confirmed-meeting-card__profile">
+                  @if($attorneyPracticeAreas->isNotEmpty())<div><strong>Areas of practice</strong><span>{{ $attorneyPracticeAreas->join(' · ') }}</span></div>@endif
+                  @if($inquiry->attorney->specialization_note)<div><strong>Professional profile</strong><span>{{ $inquiry->attorney->specialization_note }}</span></div>@endif
+                  @if($inquiry->attorney->years_experience !== null)<div><strong>Experience</strong><span>{{ $inquiry->attorney->years_experience }} {{ \Illuminate\Support\Str::plural('year', $inquiry->attorney->years_experience) }}</span></div>@endif
+                  @if($inquiry->attorney->spoken_languages)<div><strong>Languages</strong><span>{{ implode(', ', $inquiry->attorney->spoken_languages) }}</span></div>@endif
+                </div>
+              @endif
+              <div class="confirmed-meeting-card__access"><strong>How to meet</strong><p>{{ $inquiry->consultation_access_details ?: 'Contact your attorney using the details above to coordinate meeting access.' }}</p>@if($inquiry->meeting_access_url)<a class="btn-primary confirmed-meeting-card__join" href="{{ $inquiry->meeting_access_url }}" target="_blank" rel="noopener noreferrer">Open meeting link</a>@endif</div>
+              <p class="confirmed-meeting-card__note">Payment verified {{ $inquiry->payment_verified_at?->format('M j, Y g:i A') }} · Reference {{ $inquiry->payment_reference }}{{ $inquiry->caseRecord ? ' · Case '.$inquiry->caseRecord->reference_no : '' }}</p>
+              <p class="confirmed-meeting-card__note">Your date and time above are the preferences submitted with your request. Contact the attorney using the details above if the confirmed meeting time or access needs adjustment.</p>
+              <div class="confirmed-meeting-card__next-request"><div><strong>Need help with another matter?</strong><p>Start a separate matching request. This confirmed consultation and its case history will remain saved.</p></div><a class="btn-primary" href="{{ route('consultation.new') }}">Start a new matching request</a></div>
+            </div>
+            <form method="POST" action="{{ route('consultation.payment.refund-review', $inquiry) }}">@csrf<button type="submit" class="btn-ghost">Request cancellation / refund review</button></form>
+          @elseif($inquiry->payment_status === 'canceled')
+            <p>You canceled before reporting payment. No consultation was confirmed. Your live chat remains available if you want to contact the office.</p>
+            <a class="btn-ghost client-payment-card__new-request" href="{{ route('consultation.new') }}">Start a new matching request</a>
+          @elseif($inquiry->payment_status === 'expired')
+            <p>This unpaid payment request expired. The consultation was not confirmed. Message the office in the chat if you would like to continue.</p>
+            <a class="btn-ghost client-payment-card__new-request" href="{{ route('consultation.new') }}">Start a new matching request</a>
+          @endif
+          @if($inquiry->refund_requested_at)<p class="client-payment-card__expiry">Your cancellation / refund review request was sent {{ $inquiry->refund_requested_at->format('M j, Y g:i A') }}. The office must review it; the payment status and confirmed consultation have not changed.</p>@endif
+        </section>
+      @endif
+
       @if($showMatches && $recommendedAttorneys->isNotEmpty())
         <section class="glance-card consultation-recommendations" aria-labelledby="recommendations-title">
           <div class="consultation-recommendations__heading">
@@ -149,7 +232,7 @@
               <article class="recommended-attorney-card">
                 <div class="recommended-attorney-card__identity">
                   <span class="recommended-attorney-card__avatar" aria-hidden="true">{{ $attorney->initials }}</span>
-                  <div><span class="recommended-attorney-card__eyebrow">{{ $attorney->practiceArea?->name }}</span><h3>{{ $attorney->name }}</h3><p>{{ $attorney->specialization_note }}</p></div>
+                  <div><span class="recommended-attorney-card__eyebrow">{{ $inquiry->practiceArea?->name ?? $attorney->practiceArea?->name }}</span><h3>{{ $attorney->name }}</h3><p>{{ $attorney->specialization_note }}</p></div>
                 </div>
                 <div class="recommended-attorney-card__details">
                   <span>{{ $attorney->years_experience }} years' experience</span>

@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\CaseRecord;
 use App\Models\Inquiry;
-use App\Models\User;
-use App\Notifications\ConsultationConfirmedNotification;
 use App\Services\AttorneyMatchingService;
 use App\Models\InquiryMessage;
+use App\Models\PracticeArea;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -52,10 +50,14 @@ class AttorneyAuthController extends Controller
 
     public function dashboard(Request $request): View
     {
+        $attorneyProfile = $request->user()->attorneyProfile;
+        abort_unless($attorneyProfile, 403, 'This account is not linked to an attorney profile.');
+
         $inquiries = Inquiry::query()
             ->with(['practiceArea', 'messages'])
             ->where('attorney_id', $request->user()->attorney_id)
             ->where('status', 'referred')
+            ->whereNull('payment_status')
             ->latest()
             ->get();
         $inquiries->each(function (Inquiry $inquiry) {
@@ -89,7 +91,54 @@ class AttorneyAuthController extends Controller
             ->latest('accepted_at')
             ->get();
 
-        return view('attorney.dashboard', compact('cases', 'inquiries'));
+        $practiceAreas = PracticeArea::query()->orderBy('sort_order')->orderBy('name')->get();
+        $languageOptions = ['English', 'Filipino/Tagalog', 'Cebuano', 'Ilocano', 'Hiligaynon/Ilonggo', 'Bikol', 'Waray', 'Kapampangan', 'Pangasinan', 'Maranao', 'Tausug'];
+
+        return view('attorney.dashboard', compact('attorneyProfile', 'cases', 'inquiries', 'practiceAreas', 'languageOptions'));
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $languageOptions = ['English', 'Filipino/Tagalog', 'Cebuano', 'Ilocano', 'Hiligaynon/Ilonggo', 'Bikol', 'Waray', 'Kapampangan', 'Pangasinan', 'Maranao', 'Tausug'];
+        $data = $request->validate([
+            'primary_practice_area_id' => ['required', 'integer', 'exists:practice_areas,id'],
+            'budget_min' => ['nullable', 'integer', 'min:0', 'max:100000000'],
+            'budget_max' => ['nullable', 'integer', 'min:0', 'max:100000000', 'gte:budget_min'],
+            'contact_email' => ['nullable', 'email', 'max:150'],
+            'contact_phone' => ['nullable', 'string', 'max:40'],
+            'specialization_note' => ['nullable', 'string', 'max:1000'],
+            'years_experience' => ['nullable', 'integer', 'min:0', 'max:70'],
+            'coverage_areas' => ['nullable', 'string', 'max:500'],
+            'spoken_languages' => ['required', 'array', 'min:1'],
+            'spoken_languages.*' => [Rule::in($languageOptions)],
+            'other_languages' => ['nullable', 'string', 'max:300'],
+        ]);
+
+        $attorney = $request->user()->attorneyProfile;
+        abort_unless($attorney, 403);
+
+        $primaryAreaId = (int) $data['primary_practice_area_id'];
+        $coverage = collect(explode(',', $data['coverage_areas'] ?? ''))
+            ->map(fn ($area) => trim($area))
+            ->filter()->unique(fn ($area) => mb_strtolower($area))->values()->all();
+        $languages = collect($data['spoken_languages'])
+            ->merge(explode(',', $data['other_languages'] ?? ''))
+            ->map(fn ($language) => trim($language))
+            ->filter()->unique(fn ($language) => mb_strtolower($language))->values()->all();
+
+        $attorney->update([
+            'practice_area_id' => $primaryAreaId,
+            'budget_min' => $data['budget_min'] ?? null,
+            'budget_max' => $data['budget_max'] ?? null,
+            'contact_email' => isset($data['contact_email']) ? mb_strtolower($data['contact_email']) : null,
+            'contact_phone' => $data['contact_phone'] ?? null,
+            'specialization_note' => $data['specialization_note'] ?? null,
+            'years_experience' => $data['years_experience'] ?? null,
+            'coverage_areas' => $coverage,
+            'spoken_languages' => $languages,
+        ]);
+
+        return back()->with('attorney_status', 'Your professional profile was saved. Public contact details appear to clients only after a consultation is confirmed.');
     }
 
     public function updateMatchingAvailability(Request $request): RedirectResponse
@@ -117,7 +166,10 @@ class AttorneyAuthController extends Controller
         }
         abort_unless($inquiry->type === Inquiry::TYPE_CONSULTATION && $inquiry->status === 'referred', 404);
 
-        $data = $request->validate(['decision' => ['required', Rule::in(['accepted', 'declined'])]]);
+        $data = $request->validate([
+            'decision' => ['required', Rule::in(['accepted', 'declined'])],
+            'consultation_fee' => ['required_if:decision,accepted', 'nullable', 'numeric', 'gt:0', 'max:9999999999'],
+        ]);
 
         if ($data['decision'] === 'declined') {
             $recommendations = $attorneyMatcher->match($inquiry->only([
@@ -137,63 +189,22 @@ class AttorneyAuthController extends Controller
             return back()->with('attorney_status', $next ? 'Request declined and automatically routed to ' . $next->name . '.' : 'Request declined. No other connected match is available; the firm will follow up.');
         }
 
-        $case = \Illuminate\Support\Facades\DB::transaction(function () use ($inquiry) {
-            $attorney = $inquiry->attorney;
-            abort_unless($attorney && $attorney->is_available, 422, 'This attorney is no longer available.');
+        abort_unless($inquiry->attorney?->is_available, 422, 'This attorney is no longer available.');
+        $inquiry->update([
+            'consultation_fee' => $data['consultation_fee'],
+            'proposed_consultation_fee' => $data['consultation_fee'],
+            'payment_status' => 'fee_proposed',
+            'fee_proposed_by' => $request->user()->id,
+            'fee_proposed_at' => now(),
+        ]);
+        InquiryMessage::create([
+            'inquiry_id' => $inquiry->id,
+            'sender_role' => 'assistant',
+            'sender_name' => 'GPMO Payment Desk',
+            'body' => $request->user()->attorneyProfile->name . ' accepted your request and proposed a consultation fee of ₱' . number_format((float) $data['consultation_fee'], 2) . '. Firm staff will confirm the payment details in this chat before you are asked to pay.',
+        ]);
 
-            do {
-                $reference = 'SAFA-' . now()->format('Y') . '-' . \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(6));
-            } while (CaseRecord::where('reference_no', $reference)->exists());
-
-            $acceptedAt = now();
-            $case = CaseRecord::create([
-                'inquiry_id' => $inquiry->id,
-                'reference_no' => $reference,
-                'client_email' => $inquiry->email,
-                'title' => \Illuminate\Support\Str::limit($inquiry->message, 120, ''),
-                'attorney_id' => $attorney->id,
-                'practice_area_id' => $inquiry->practice_area_id,
-                'status' => 'active',
-                'submitted_at' => $inquiry->created_at,
-                'accepted_at' => $acceptedAt,
-                'timeline' => [
-                    ['label' => 'Client intake received', 'date' => $inquiry->created_at->toDateString(), 'state' => 'done'],
-                    ['label' => 'Attorney accepted consultation', 'date' => $acceptedAt->toDateString(), 'state' => 'done'],
-                    ['label' => 'Consultation confirmed', 'date' => $acceptedAt->toDateString(), 'state' => 'current'],
-                ],
-            ]);
-            $inquiry->update(['status' => 'accepted']);
-
-            return $case;
-        });
-
-        $notification = new ConsultationConfirmedNotification($case, $inquiry);
-        $recipients = collect([
-            User::query()->whereRaw('LOWER(email) = ?', [mb_strtolower($inquiry->email)])->first(),
-            $inquiry->attorney?->account,
-        ])->filter()->unique('id');
-
-        if (in_array(config('mail.default'), ['log', 'array'], true)) {
-            Log::warning('Consultation was confirmed, but email notification was skipped because outbound email is not configured.', [
-                'inquiry_id' => $inquiry->id,
-                'case_id' => $case->id,
-            ]);
-        } else {
-            foreach ($recipients as $recipient) {
-                try {
-                    $recipient->notify($notification);
-                } catch (\Throwable $exception) {
-                    Log::warning('Consultation was confirmed, but its email notification could not be sent.', [
-                        'inquiry_id' => $inquiry->id,
-                        'case_id' => $case->id,
-                        'recipient_id' => $recipient->id,
-                        'error' => $exception->getMessage(),
-                    ]);
-                }
-            }
-        }
-
-        return back()->with('attorney_status', 'Consultation accepted. Case ' . $case->reference_no . ' is now confirmed.');
+        return back()->with('attorney_status', 'Consultation accepted. The proposed fee is waiting for firm staff to confirm payment details.');
     }
 
     public function updateCase(Request $request, CaseRecord $caseRecord): RedirectResponse

@@ -1214,7 +1214,89 @@ header .header-login:active { transform: translateY(1px); box-shadow: inset 0 2p
 .consultation-process.is-flow-example li::before,
 .consultation-process.is-flow-example li::after { background:#20a45b; }
 .consultation-process.is-flow-example .consultation-process__node { border-color:#20a45b; color:#168c49; }
+.matching-progress[hidden] { display:none; }
+.matching-progress { display:grid; justify-items:center; gap:10px; grid-column:1 / -1; padding:20px 12px; color:var(--ink); }
+.matching-progress--client { min-height:240px; align-content:center; border:1px solid var(--line); border-radius:18px; background:var(--paper); box-shadow:0 16px 42px rgb(16 41 61 / 8%); }
+.matching-progress__message { color:var(--ink-soft); font-size:.9rem; text-align:center; }
+.matching-progress__ring { position:relative; display:grid; width:112px; aspect-ratio:1; place-items:center; border:1px solid rgb(32 164 91 / 52%); border-radius:50%; background:radial-gradient(circle, color-mix(in srgb, var(--paper) 92%, #20a45b 8%) 0 56%, transparent 57%); box-shadow:0 0 24px rgb(32 164 91 / 14%), inset 0 0 18px rgb(32 164 91 / 8%); }
+.matching-progress__ring::before { position:absolute; inset:9px; border:6px solid transparent; border-top-color:#20a45b; border-right-color:#20a45b; border-bottom-color:rgb(32 164 91 / 42%); border-left-color:rgb(32 164 91 / 42%); border-radius:50%; content:''; animation:matching-ring-spin 1.25s linear infinite; }
+.matching-progress__ring::after { position:absolute; inset:17px; border:2px dashed rgb(32 164 91 / 50%); border-radius:50%; content:''; animation:matching-ring-spin 7s linear infinite reverse; }
+.matching-progress__label { position:absolute; inset:0; display:grid; place-items:center; font-size:.9rem; font-weight:700; letter-spacing:.01em; }
+.admin-intake-form[aria-busy="true"] .admin-workflow-actions button { opacity:.65; cursor:progress; }
+@keyframes matching-ring-spin { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .matching-progress__ring::before, .matching-progress__ring::after { animation:none; } }
 .admin-intake-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; width:100%; }
+.attorney-fee-proposal { display:grid; grid-template-columns:minmax(150px,220px) auto; align-items:end; gap:10px; }
+.attorney-fee-proposal label { display:grid; gap:5px; color:var(--ink-soft); font-size:.78rem; }
+.attorney-fee-proposal input, .client-payment-card__reference input { width:100%; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:9px; background:var(--paper); color:var(--ink); font:inherit; }
+.admin-payment-workflow { display:grid; gap:12px; margin-top:18px; padding:18px; border:1px solid var(--line); border-radius:14px; background:var(--panel); }
+.admin-payment-workflow > p { margin:0; color:var(--ink-soft); }
+.admin-payment-workflow .admin-inline-form { width:100%; }
+.client-payment-card { display:grid; gap:14px; max-width:860px; margin:0 0 24px; padding:24px; }
+.client-payment-card > p { margin:0; }
+.client-payment-card__instructions { padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:var(--panel); color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere; }
+.client-payment-card__expiry { color:var(--ink-soft); font-size:.86rem; }
+.client-payment-card__reference { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:10px; }
+.client-payment-card__reference label { grid-column:1 / -1; color:var(--ink-soft); font-size:.82rem; }
+.client-payment-card__reference .client-payment-card__ack { display:flex; grid-column:1 / -1; align-items:center; gap:8px; color:var(--ink); }
+.client-payment-card__ack input { width:18px; min-height:18px; accent-color:#169447; }
+.client-payment-card__policy { padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:color-mix(in srgb, var(--panel) 76%, transparent); }
+.client-payment-card__policy p { margin:6px 0 0; color:var(--ink-soft); white-space:pre-wrap; }
+.client-payment-card__cancel { justify-self:start; }
+.client-payment-card__cancel button, .client-payment-card button { min-height:42px; }
+.admin-consultation-access-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:end; }
+.admin-consultation-access-form label { display:grid; min-width:0; gap:6px; color:var(--ink-soft); font-size:.8rem; }
+.admin-consultation-access-form input, .admin-consultation-access-form textarea { width:100%; min-height:42px; padding:9px 11px; border:1px solid var(--line); border-radius:9px; background:var(--paper); color:var(--ink); font:inherit; }
+.admin-consultation-access-form textarea { min-height:90px; resize:vertical; }
+.admin-consultation-access-form label:nth-of-type(3), .admin-consultation-access-form button { grid-column:1 / -1; }
+.admin-consultation-access-form small { color:var(--ink-soft); font-weight:400; }
+.confirmed-meeting-card { display:grid; gap:16px; padding:20px; border:1px solid rgb(32 164 91 / 30%); border-radius:16px; background:linear-gradient(145deg,var(--paper),color-mix(in srgb,var(--panel) 76%,#20a45b 8%)); box-shadow:0 12px 32px rgb(16 41 61 / 7%); }
+.confirmed-meeting-card__header { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+.confirmed-meeting-card__icon { display:grid; width:38px; height:38px; place-items:center; flex:0 0 38px; border-radius:50%; background:#169447; color:#fff; font-size:1.2rem; font-weight:800; }
+.confirmed-meeting-card__header h3 { margin:2px 0 0; color:var(--ink); font-size:1.12rem; }
+.confirmed-meeting-card__attorney { display:flex; align-items:center; gap:12px; }
+.confirmed-meeting-card__attorney > div { display:grid; gap:3px; }
+.confirmed-meeting-card__attorney strong { color:var(--ink); font-size:1rem; }
+.confirmed-meeting-card__attorney span:not(.recommended-attorney-card__avatar) { color:var(--ink-soft); font-size:.83rem; }
+.confirmed-meeting-card__details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:0; }
+.confirmed-meeting-card__details > div { padding:12px; border:1px solid var(--line); border-radius:11px; background:var(--paper); }
+.confirmed-meeting-card__details dt { color:var(--ink-soft); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+.confirmed-meeting-card__details dd { margin:4px 0 0; color:var(--ink); font-weight:600; overflow-wrap:anywhere; }
+.confirmed-meeting-card__contact, .confirmed-meeting-card__access { display:grid; gap:7px; padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--paper); }
+.confirmed-meeting-card__contact > strong, .confirmed-meeting-card__access > strong { color:var(--ink); }
+.confirmed-meeting-card__contact a { width:fit-content; color:var(--header-cta-bg); font-weight:600; overflow-wrap:anywhere; }
+.confirmed-meeting-card__contact p, .confirmed-meeting-card__access p { margin:0; color:var(--ink-soft); white-space:pre-wrap; overflow-wrap:anywhere; }
+.confirmed-meeting-card__profile { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding:15px; border:1px solid var(--line); border-radius:12px; background:var(--paper); }
+.confirmed-meeting-card__profile > div { display:grid; align-content:start; gap:4px; min-width:0; }
+.confirmed-meeting-card__profile strong { color:var(--ink); font-size:.82rem; }
+.confirmed-meeting-card__profile span { color:var(--ink-soft); font-size:.86rem; line-height:1.5; overflow-wrap:anywhere; }
+@media (max-width:620px) { .confirmed-meeting-card__profile { grid-template-columns:1fr; } }
+.confirmed-meeting-card__join { justify-self:start; margin-top:5px; }
+.confirmed-meeting-card__note { margin:0; color:var(--ink-soft); font-size:.78rem; line-height:1.5; }
+.confirmed-meeting-card__next-request { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; margin-top:2px; padding:16px; border:1px solid var(--line); border-radius:12px; background:var(--panel); }
+.confirmed-meeting-card__next-request > div { display:grid; gap:5px; }
+.confirmed-meeting-card__next-request strong { color:var(--ink); }
+.confirmed-meeting-card__next-request p { margin:0; color:var(--ink-soft); font-size:.82rem; }
+.client-history-hero { display:flex; flex-wrap:wrap; align-items:end; justify-content:space-between; gap:20px; margin:4px 0 22px; padding:26px 30px; border:1px solid rgb(114 185 227 / 26%); border-radius:18px; background:linear-gradient(115deg,#102743,#1a4c72); color:#fff; box-shadow:0 16px 36px rgb(16 41 61 / 12%); }
+.client-history-hero .eyebrow, .client-history-hero .page-title, .client-history-hero .lead { color:#fff; }
+.client-history-hero .page-title { margin:4px 0 8px; }
+.client-history-hero .lead { max-width:680px; margin:0; color:rgb(255 255 255 / 78%); }
+.client-history-hero .btn-primary { white-space:nowrap; }
+.client-history-list { display:grid; gap:14px; }
+.client-history-list > .admin-section-head { margin-bottom:0; }
+.client-history-card { padding:20px 22px; border:1px solid var(--line); border-left:4px solid var(--header-cta-bg); border-radius:15px; background:var(--paper); box-shadow:0 8px 24px rgb(16 41 61 / 5%); }
+.client-history-card.is-confirmed { border-left-color:#169447; }
+.client-history-card__header { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.client-history-card__header h3 { margin:4px 0; color:var(--ink); font-size:1.08rem; }
+.client-history-card__header p { margin:0; color:var(--ink-soft); font-size:.84rem; }
+.client-history-card .consultation-process { margin:14px 0 8px; }
+.client-history-card__footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding-top:12px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:.82rem; }
+.client-history-card__footer strong { color:var(--ink); }
+.client-history-card__footer a { color:var(--header-cta-bg); font-weight:700; text-decoration:none; }
+.client-history-card__footer a:hover { text-decoration:underline; }
+@media (max-width:620px) { .client-history-hero { padding:20px; } .client-history-hero .btn-primary { width:100%; text-align:center; } .client-history-card { padding:16px; } .confirmed-meeting-card__next-request > a { width:100%; text-align:center; } }
+@media (max-width:620px) { .attorney-fee-proposal, .client-payment-card__reference { grid-template-columns:1fr; } .client-payment-card { padding:16px; } }
+@media (max-width:620px) { .admin-consultation-access-form, .confirmed-meeting-card__details { grid-template-columns:1fr; } .admin-consultation-access-form label:nth-of-type(3), .admin-consultation-access-form button { grid-column:auto; } .confirmed-meeting-card { padding:16px; } }
 .admin-intake-form h3, .admin-intake-form .admin-workflow-actions { grid-column:1 / -1; }
 .admin-intake-form label { display:grid; min-width:0; gap:5px; color:var(--ink-soft); font-size:.78rem; }
 .admin-intake-form input, .admin-intake-form select, .admin-intake-form textarea { width:100%; min-height:40px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); font:inherit; }

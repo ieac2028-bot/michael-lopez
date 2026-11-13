@@ -75,10 +75,17 @@
       <span class="workspace-brand__tile"><img src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices"></span>
       <span class="workspace-brand__text"><strong>GPMO Law Offices</strong><small>Attorney Portal</small></span>
     </a>
+    @if(request()->routeIs('attorney.dashboard'))
+      <nav class="attorney-workspace-tabs" role="tablist" aria-label="Attorney workspace sections">
+        <button type="button" id="attorney-tab-matters" role="tab" aria-selected="true" aria-controls="attorney-panel-matters" data-attorney-workspace-tab="matters">Assigned matters</button>
+        <button type="button" id="attorney-tab-profile" role="tab" aria-selected="false" aria-controls="attorney-panel-profile" tabindex="-1" data-attorney-workspace-tab="profile">Attorney profile</button>
+      </nav>
     <div class="attorney-user-chip" aria-label="Signed in as {{ auth()->user()->attorneyProfile->name }}">
       <span class="attorney-user-chip__initials" aria-hidden="true">{{ auth()->user()->attorneyProfile->initials }}</span>
       <span class="attorney-user-chip__name">{{ auth()->user()->attorneyProfile->name }}</span>
     </div>
+      <form class="attorney-header-signout" method="POST" action="{{ route('attorney.logout') }}">@csrf<button type="submit">Sign out</button></form>
+    @endif
   </div>
 </header>
 @elseif($clientWorkflowMode)

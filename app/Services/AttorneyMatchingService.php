@@ -71,13 +71,16 @@ class AttorneyMatchingService
         ])));
         $budgetRange = $intake['budget_range'] ?? null;
 
+        $practiceAreaId = (int) ($intake['practice_area_id'] ?? 0);
+
         return Attorney::query()
             ->with('practiceArea')
-            ->where('practice_area_id', $intake['practice_area_id'])
             ->where('is_available', true)
             ->where('accepting_matches', true)
             ->whereHas('account')
             ->get()
+            ->filter(fn (Attorney $attorney) => $practiceAreaId === (int) $attorney->practice_area_id
+                || in_array($practiceAreaId, array_map('intval', $attorney->additional_practice_area_ids ?? []), true))
             ->map(function (Attorney $attorney) use ($location, $issueTerms, $budgetRange) {
                 $specializationTerms = $this->terms($attorney->specialization_note ?? '');
                 $relevantTerms = array_intersect($issueTerms, $specializationTerms);

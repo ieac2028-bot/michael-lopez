@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\RecoveryCodeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
 
@@ -15,6 +16,7 @@ class AttorneyAccountController extends Controller
     public function store(Request $request, Attorney $attorney, RecoveryCodeService $recoveryCodes): RedirectResponse
     {
         $data = $request->validate([
+            'attorney_profile_id' => ['required', 'integer', Rule::in([$attorney->id])],
             'display_name' => ['required', 'string', 'max:150'],
             'attorney_email' => [
                 'required', 'email', 'max:150',

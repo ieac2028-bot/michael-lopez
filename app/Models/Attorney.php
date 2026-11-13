@@ -15,7 +15,9 @@ class Attorney extends Model
         'name', 'photo_path', 'rank', 'practice_area_id', 'specialization_note',
         'sample_rating', 'sample_last_practiced_on', 'years_experience', 'sort_order',
         'is_available', 'accepting_matches', 'coverage_areas',
+        'additional_practice_area_ids', 'spoken_languages',
         'budget_min', 'budget_max',
+        'contact_email', 'contact_phone',
     ];
 
     protected $casts = [
@@ -24,6 +26,8 @@ class Attorney extends Model
         'is_available' => 'boolean',
         'accepting_matches' => 'boolean',
         'coverage_areas' => 'array',
+        'additional_practice_area_ids' => 'array',
+        'spoken_languages' => 'array',
     ];
 
     public function practiceArea(): BelongsTo

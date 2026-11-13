@@ -3,9 +3,14 @@
 @section('title', 'Client Portal')
 
 @section('content')
-  <div class="eyebrow">FOR EXISTING CLIENTS</div>
-  <h1 class="page-title">Client portal</h1>
-  <p class="lead">Check where your matter stands. Case lookups are matched to your client account email.</p>
+  <section class="client-history-hero">
+    <div>
+      <div class="eyebrow">CLIENT PORTAL</div>
+      <h1 class="page-title">Your consultation history</h1>
+      <p class="lead">Review your requests, continue a conversation, or start a new attorney match. Confirmed consultations and their case records stay here.</p>
+    </div>
+    <a class="btn-primary" href="{{ route('consultation.new') }}">Start a new matching request</a>
+  </section>
 
   <div class="client-portal-toolbar">
     <span>Signed in as <strong>{{ auth()->user()->email }}</strong></span>
@@ -15,90 +20,52 @@
     </form>
   </div>
 
-  <section class="admin-section" aria-labelledby="client-requests-title">
-    <div class="admin-section-head"><div><div class="eyebrow">REQUEST TRACKER</div><h2 id="client-requests-title">Your consultation requests</h2></div><a class="btn-primary" href="{{ route('consultation') }}">Start a request</a></div>
+  <section class="client-history-list" aria-labelledby="client-requests-title">
+    <div class="admin-section-head"><div><div class="eyebrow">REQUEST HISTORY</div><h2 id="client-requests-title">Your consultation requests</h2></div><span>{{ $inquiries->count() }} total</span></div>
     @forelse($inquiries as $inquiry)
       @php
-        $flow = [
-          'Signed in', 'Chat with our team', 'Finding attorneys', 'Your matches',
-          'Request sent', 'Attorney response', 'Consultation confirmed',
-        ];
-        $doneThrough = match($inquiry->status) {
-          'clarifying' => 1,
-          'reviewing' => 2,
-          'referred' => 5,
-          'declined' => 5,
-          'accepted' => 7,
+        $paymentStatus = $inquiry->payment_status;
+        $flow = ['Signed in', 'Chat with our team', 'Finding attorneys', 'Your matches', 'Request sent', 'Attorney response', 'Fee & payment', 'Payment verification', 'Consultation confirmed'];
+        $doneThrough = match(true) {
+          $paymentStatus === 'verified' || $inquiry->status === 'accepted' => 9,
+          in_array($paymentStatus, ['pending', 'verifying'], true) => 7,
+          in_array($paymentStatus, ['fee_proposed', 'awaiting_client', 'canceled', 'expired'], true) => 6,
+          $inquiry->status === 'clarifying' => 1,
+          $inquiry->status === 'reviewing' => 2,
+          in_array($inquiry->status, ['referred', 'declined'], true) => 5,
           default => 1,
         };
-        $active = $inquiry->status === 'accepted' ? null : match($inquiry->status) {
-          'new' => 2,
-          'clarifying' => 2,
-          'reviewing' => 3,
-          'referred' => 6,
-          'declined' => 6,
+        $active = match(true) {
+          $paymentStatus === 'verified' || $inquiry->status === 'accepted' => null,
+          in_array($paymentStatus, ['pending', 'verifying'], true) => 8,
+          in_array($paymentStatus, ['fee_proposed', 'awaiting_client', 'canceled', 'expired'], true) => 7,
+          $inquiry->status === 'referred' || $inquiry->status === 'declined' => 6,
+          $inquiry->status === 'reviewing' => 3,
           default => 2,
         };
+        $requestStatus = $paymentStatus ? ucfirst(str_replace('_', ' ', $paymentStatus)) : ucfirst($inquiry->status);
       @endphp
-      <article class="admin-card client-request-card">
-        <div class="admin-card-head"><div><h3>{{ $inquiry->practiceArea?->name }} · {{ $inquiry->created_at->format('M j, Y') }}</h3><p>{{ $inquiry->attorney?->name ? 'Automatically matched: '.$inquiry->attorney->name : 'Finding an available match' }}</p></div><span class="admin-status-pill">{{ ucfirst($inquiry->status) }}</span></div>
+      <article class="client-history-card {{ $paymentStatus === 'verified' ? 'is-confirmed' : '' }}">
+        <div class="client-history-card__header">
+          <div><span class="eyebrow">REQUEST · {{ $inquiry->created_at->format('M j, Y') }}</span><h3>{{ $inquiry->practiceArea?->name ?? 'Legal consultation' }}</h3><p>{{ $inquiry->attorney?->name ? 'Matched attorney: '.$inquiry->attorney->name : 'Attorney matching in progress' }}</p></div>
+          <span class="admin-status-pill">{{ $requestStatus }}</span>
+        </div>
         @include('partials.consultation-process', ['steps' => $flow, 'doneThrough' => $doneThrough, 'currentStep' => $active, 'ariaLabel' => 'Consultation progress'])
-        @if($inquiry->caseRecord)<p>Case reference <strong>{{ $inquiry->caseRecord->reference_no }}</strong> · {{ ucfirst(str_replace('_', ' ', $inquiry->caseRecord->status)) }}</p>@endif
-        @if($inquiry->status === 'declined')<p>The matched attorney could not accept, and no other connected match is available. The firm will follow up.</p>@endif
-        <a href="{{ route('consultation.open', $inquiry) }}">Open request and firm conversation →</a>
+        <div class="client-history-card__footer">
+          <span>
+            @if($inquiry->caseRecord)
+              Case <strong>{{ $inquiry->caseRecord->reference_no }}</strong> · {{ ucfirst(str_replace('_', ' ', $inquiry->caseRecord->status)) }}
+            @elseif($paymentStatus === 'verified')
+              Payment verified · Consultation confirmed
+            @else
+              Consultation request · {{ $inquiry->updated_at->diffForHumans() }}
+            @endif
+          </span>
+          <a href="{{ route('consultation.open', $inquiry) }}">Open request and conversation <span aria-hidden="true">→</span></a>
+        </div>
       </article>
     @empty
-      <div class="admin-empty">You haven’t sent a consultation request yet. Start one to find a matching attorney.</div>
+      <div class="admin-empty">You haven’t sent a consultation request yet. Start one to find an attorney matched to your needs.</div>
     @endforelse
   </section>
-
-  <div class="contact-grid">
-    <form method="POST" action="{{ route('client-portal.lookup') }}">
-      @csrf
-      <div class="form-field">
-        <label for="case-reference">Case reference number</label>
-        <input id="case-reference" type="text" name="reference_no" placeholder="e.g. SAFA-2026-ABC123" value="{{ old('reference_no') }}" maxlength="50" required>
-      </div>
-      @error('reference_no')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
-      <button type="submit" class="btn-primary" style="width:100%;">View case status</button>
-      <p style="font-size:0.76rem;color:var(--ink-soft);margin-top:10px;">For your privacy, results are limited to cases associated with your account email.</p>
-    </form>
-
-    <div>
-      @if($notFound)
-        <div class="glance-card">
-          <div class="k">No match found</div>
-          <div class="v">Double-check your email and case reference number, or contact the office if you believe this is an error.</div>
-        </div>
-      @endif
-      @if($caseRecord)
-        <div class="glance-card" style="margin-bottom:12px;">
-          <div class="k">Case reference</div><div class="v">{{ $caseRecord->reference_no }} — {{ $caseRecord->title }}</div>
-        </div>
-        <div class="glance-card" style="margin-bottom:12px;">
-          <div class="k">Assigned attorney</div><div class="v">{{ $caseRecord->attorney->name ?? 'Unassigned' }}</div>
-        </div>
-        <div class="glance-card" style="margin-bottom:12px;">
-          <div class="k">Practice area · case status</div><div class="v">{{ $caseRecord->practiceArea?->name ?? 'Under review' }} · {{ ucfirst(str_replace('_', ' ', $caseRecord->status ?? 'active')) }}</div>
-        </div>
-        @if($caseRecord->submitted_at && $caseRecord->accepted_at)
-          <div class="glance-card" style="margin-bottom:12px;">
-            <div class="k">Referral accepted</div><div class="v">{{ $caseRecord->accepted_at->format('M j, Y') }} · Response time {{ $caseRecord->submitted_at->diffForHumans($caseRecord->accepted_at, true) }}</div>
-          </div>
-        @endif
-        <div class="glance-card">
-          <div class="k">Status timeline</div>
-          <div class="v" style="margin-top:8px;">
-            @foreach($caseRecord->timeline as $step)
-              <div style="margin-bottom:8px; {{ $step['state'] === 'pending' ? 'color:var(--ink-soft);' : '' }}">
-                {{ $step['state'] === 'done' ? '✅' : ($step['state'] === 'current' ? '🔶' : '⬜') }}
-                {{ $step['label'] }}
-                @if($step['date']) — {{ \Carbon\Carbon::parse($step['date'])->format('M j, Y') }} @endif
-              </div>
-            @endforeach
-          </div>
-        </div>
-      @endif
-    </div>
-  </div>
 @endsection

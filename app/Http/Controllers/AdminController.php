@@ -9,6 +9,7 @@ use App\Models\InquiryMessage;
 use App\Models\PracticeArea;
 use App\Models\User;
 use App\Services\AttorneyMatchingService;
+use App\Services\ConsultationPaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(ConsultationPaymentService $payments)
     {
+        $payments->expireDueProposals();
         Cache::put('gpmo-admin-presence:'.auth()->id(), true, now()->addSeconds(45));
-        $inquiries = Inquiry::with(['practiceArea', 'attorney', 'caseRecord', 'messages'])->latest()->get();
+        $inquiries = Inquiry::with(['practiceArea', 'attorney.account', 'caseRecord', 'messages', 'paymentVerifier'])->latest()->get();
         $cases = CaseRecord::with(['attorney', 'practiceArea'])->latest()->get();
         $attorneys = Attorney::with(['practiceArea', 'account'])
             ->orderByDesc('years_experience')
@@ -38,14 +40,20 @@ class AdminController extends Controller
             'admins' => $admins,
             'pendingInquiryCount' => $inquiries->whereIn('status', ['new', 'reviewing', 'clarifying', 'referred'])->count(),
             'openCaseCount' => $cases->whereIn('status', ['active', 'on_hold'])->count(),
-            'availableAttorneyCount' => $attorneys->where('is_available', true)->count(),
+            'availableAttorneyCount' => $attorneys->filter(fn ($attorney) => $attorney->is_available && $attorney->accepting_matches && $attorney->account)->count(),
         ]);
     }
 
-    public function pollInquiryInbox()
+    public function pollInquiryInbox(ConsultationPaymentService $payments)
     {
+        $payments->expireDueProposals();
         Cache::put('gpmo-admin-presence:'.auth()->id(), true, now()->addSeconds(45));
-        return response()->json(['latest_id' => Inquiry::max('id') ?? 0]);
+        $attorneyUpdatedAt = Attorney::max('updated_at');
+
+        return response()->json([
+            'latest_id' => Inquiry::max('id') ?? 0,
+            'attorney_updated_at' => $attorneyUpdatedAt ? \Illuminate\Support\Carbon::parse($attorneyUpdatedAt)->toISOString() : '',
+        ]);
     }
 
     public function updateInquiry(Request $request, Inquiry $inquiry): RedirectResponse
@@ -90,10 +98,90 @@ class AdminController extends Controller
 
     public function pollInquiryMessages(Inquiry $inquiry)
     {
+        $inquiry->refresh();
         return response()->json([
             'status' => $inquiry->status,
+            'payment_status' => $inquiry->payment_status,
+            'refund_requested_at' => $inquiry->refund_requested_at?->toISOString(),
             'messages' => $inquiry->messages()->oldest()->get(['id', 'sender_role', 'sender_name', 'body', 'created_at']),
         ]);
+    }
+
+    public function confirmPaymentDetails(Request $request, Inquiry $inquiry): RedirectResponse
+    {
+        abort_unless($inquiry->type === Inquiry::TYPE_CONSULTATION && $inquiry->status === 'referred', 404);
+        abort_unless(in_array($inquiry->payment_status, ['fee_proposed', 'canceled', 'expired'], true), 409, 'This consultation is not awaiting payment details.');
+        $data = $request->validate([
+            'consultation_fee' => ['required', 'numeric', 'gt:0', 'max:9999999999'],
+            'payment_instructions' => ['required', 'string', 'max:2000'],
+            'payment_refund_terms' => ['required', 'string', 'max:2000'],
+            'payment_expires_at' => ['required', 'date', 'after:now'],
+        ]);
+
+        $inquiry->update([
+            'consultation_fee' => $data['consultation_fee'],
+            'payment_instructions' => $data['payment_instructions'],
+            'payment_refund_terms' => $data['payment_refund_terms'],
+            'payment_status' => 'awaiting_client',
+            'fee_confirmed_by' => $request->user()->id,
+            'fee_confirmed_at' => now(),
+            'payment_expires_at' => $data['payment_expires_at'],
+            'payment_requested_at' => null,
+            'payment_terms_accepted_at' => null,
+            'payment_reference' => null,
+            'payment_canceled_at' => null,
+            'payment_expired_at' => null,
+            'payment_verification_started_by' => null,
+            'payment_verification_started_at' => null,
+            'payment_verified_by' => null,
+            'payment_verified_at' => null,
+        ]);
+        InquiryMessage::create([
+            'inquiry_id' => $inquiry->id,
+            'sender_role' => 'admin',
+            'sender_name' => $request->user()->name,
+            'body' => 'The consultation fee is ₱' . number_format((float) $data['consultation_fee'], 2) . '. Payment instructions: ' . $data['payment_instructions'] . ' Cancellation / refund terms: ' . $data['payment_refund_terms'] . ' Payment is due by ' . \Illuminate\Support\Carbon::parse($data['payment_expires_at'])->format('M j, Y g:i A') . '. Please use the payment option below to tell us when you have sent it; the office will verify receipt before confirming the consultation.',
+        ]);
+
+        return back()->with('admin_status', 'Fee and payment instructions were confirmed with the client.');
+    }
+
+    public function startPaymentVerification(Request $request, Inquiry $inquiry, ConsultationPaymentService $payments): RedirectResponse
+    {
+        $payments->expireDueProposals();
+        $inquiry->refresh();
+        abort_unless($inquiry->type === Inquiry::TYPE_CONSULTATION && $inquiry->payment_status === 'pending', 409, 'This payment is not pending verification.');
+        $inquiry->update([
+            'payment_status' => 'verifying',
+            'payment_verification_started_by' => $request->user()->id,
+            'payment_verification_started_at' => now(),
+        ]);
+        InquiryMessage::create([
+            'inquiry_id' => $inquiry->id,
+            'sender_role' => 'admin',
+            'sender_name' => $request->user()->name,
+            'body' => 'The office is checking the GCash or bank account for your payment. We will confirm your consultation here after the transfer is verified.',
+        ]);
+
+        return back()->with('admin_status', 'Payment marked as under verification.');
+    }
+
+    public function verifyPayment(Request $request, Inquiry $inquiry, ConsultationPaymentService $payments): RedirectResponse
+    {
+        $data = $request->validate([
+            'payment_reference' => ['required', 'string', 'max:120'],
+            'meeting_access_url' => ['nullable', 'url', 'max:500', 'starts_with:https://'],
+            'consultation_access_details' => ['required', 'string', 'max:2000'],
+        ]);
+        $case = $payments->verifyAndConfirm(
+            $inquiry,
+            $request->user(),
+            trim($data['payment_reference']),
+            filled($data['meeting_access_url'] ?? null) ? trim($data['meeting_access_url']) : null,
+            trim($data['consultation_access_details']),
+        );
+
+        return back()->with('admin_status', 'Payment verified and consultation confirmed as case ' . $case->reference_no . '.');
     }
 
     public function updateIntake(Request $request, Inquiry $inquiry, AttorneyMatchingService $attorneyMatcher): RedirectResponse
@@ -309,6 +397,8 @@ class AdminController extends Controller
             'coverage_areas' => ['nullable', 'string', 'max:500'],
             'budget_min' => ['nullable', 'integer', 'min:0', 'max:100000000'],
             'budget_max' => ['nullable', 'integer', 'min:0', 'max:100000000', 'gte:budget_min'],
+            'contact_email' => ['nullable', 'email', 'max:150'],
+            'contact_phone' => ['nullable', 'string', 'max:40'],
         ]);
 
         $coverage = collect(explode(',', $data['coverage_areas'] ?? ''))
@@ -323,8 +413,10 @@ class AdminController extends Controller
             'coverage_areas' => $coverage,
             'budget_min' => $data['budget_min'] ?? null,
             'budget_max' => $data['budget_max'] ?? null,
+            'contact_email' => $data['contact_email'] ?? null,
+            'contact_phone' => $data['contact_phone'] ?? null,
         ]);
 
-        return back()->with('admin_status', 'Attorney availability and service coverage saved.');
+        return back()->with('admin_status', 'Attorney availability, service coverage, and client contact details saved.');
     }
 }

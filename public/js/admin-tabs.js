@@ -46,4 +46,24 @@
 
   window.addEventListener('hashchange', activateFromLocation);
   activateFromLocation();
+
+  const accountForm = root.querySelector('[data-attorney-account-form]');
+  const profileSelect = accountForm?.querySelector('[data-attorney-profile-select]');
+  const profileIdInput = accountForm?.querySelector('[data-attorney-profile-id]');
+  const accountName = accountForm?.querySelector('[data-attorney-account-name]');
+
+  if (accountForm && profileSelect) {
+    const routeTemplate = accountForm.dataset.routeTemplate;
+    let nameEdited = false;
+
+    accountName?.addEventListener('input', () => { nameEdited = true; });
+    profileSelect.addEventListener('change', () => {
+      accountForm.action = routeTemplate.replace('__ATTORNEY_ID__', profileSelect.value);
+      if (profileIdInput) profileIdInput.value = profileSelect.value;
+      if (accountName && !nameEdited) {
+        accountName.value = profileSelect.selectedOptions[0]?.dataset.profileName ?? '';
+      }
+    });
+    profileSelect.dispatchEvent(new Event('change'));
+  }
 })();

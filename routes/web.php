@@ -34,10 +34,14 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware(['auth', 'can:access-client-portal'])->group(function () {
     Route::get('/book-consultation', [ConsultationController::class, 'show'])->name('consultation');
     Route::get('/book-consultation/admin-status', [ConsultationController::class, 'adminStatus'])->name('consultation.admin-status');
+    Route::get('/book-consultation/new', [ConsultationController::class, 'startNew'])->name('consultation.new');
     Route::get('/book-consultation/{inquiry}', [ConsultationController::class, 'open'])->name('consultation.open');
     Route::post('/book-consultation', [ConsultationController::class, 'store'])->name('consultation.store');
     Route::post('/book-consultation/{inquiry}/messages', [ConsultationController::class, 'sendMessage'])->name('consultation.messages.store');
     Route::get('/book-consultation/{inquiry}/messages/poll', [ConsultationController::class, 'pollMessages'])->name('consultation.messages.poll');
+    Route::post('/book-consultation/{inquiry}/payment/sent', [ConsultationController::class, 'markPaymentSent'])->name('consultation.payment.sent');
+    Route::post('/book-consultation/{inquiry}/payment/cancel', [ConsultationController::class, 'cancelPayment'])->name('consultation.payment.cancel');
+    Route::post('/book-consultation/{inquiry}/payment/refund-review', [ConsultationController::class, 'requestRefundReview'])->name('consultation.payment.refund-review');
 });
 
 Route::post('/api/chat', [ChatbotController::class, 'respond'])->middleware(['throttle:30,1', LocalizeChatbotResponse::class])->name('chat.respond');
@@ -65,6 +69,7 @@ Route::post('/attorney/login', [AttorneyAuthController::class, 'login'])
     ->name('attorney.login.store');
 Route::middleware(['auth', 'can:access-attorney-portal'])->prefix('attorney-portal')->name('attorney.')->group(function () {
     Route::get('/', [AttorneyAuthController::class, 'dashboard'])->name('dashboard');
+    Route::patch('/profile', [AttorneyAuthController::class, 'updateProfile'])->name('profile.update');
     Route::post('/matching-availability', [AttorneyAuthController::class, 'updateMatchingAvailability'])->name('matching-availability.update');
     Route::patch('/cases/{caseRecord}', [AttorneyAuthController::class, 'updateCase'])->name('cases.update');
     Route::post('/inquiries/{inquiry}/respond', [AttorneyAuthController::class, 'respondToInquiry'])->name('inquiries.respond');
@@ -91,6 +96,9 @@ Route::middleware(['auth', 'can:manage-gpmo'])->prefix('admin')->name('admin.')-
     Route::patch('/inquiries/{inquiry}', [AdminController::class, 'updateInquiry'])->name('inquiries.update');
     Route::post('/inquiries/{inquiry}/messages', [AdminController::class, 'sendInquiryMessage'])->name('inquiries.messages.store');
     Route::get('/inquiries/{inquiry}/messages/poll', [AdminController::class, 'pollInquiryMessages'])->name('inquiries.messages.poll');
+    Route::post('/inquiries/{inquiry}/payment/confirm', [AdminController::class, 'confirmPaymentDetails'])->name('inquiries.payment.confirm');
+    Route::post('/inquiries/{inquiry}/payment/verify-start', [AdminController::class, 'startPaymentVerification'])->name('inquiries.payment.verify-start');
+    Route::post('/inquiries/{inquiry}/payment/verify', [AdminController::class, 'verifyPayment'])->name('inquiries.payment.verify');
     Route::post('/inquiries/{inquiry}/intake', [AdminController::class, 'updateIntake'])->name('inquiries.intake.update');
     Route::post('/inquiries/{inquiry}/match', [AdminController::class, 'prepareMatches'])->name('inquiries.match');
     Route::patch('/cases/{caseRecord}', [AdminController::class, 'updateCase'])->name('cases.update');
