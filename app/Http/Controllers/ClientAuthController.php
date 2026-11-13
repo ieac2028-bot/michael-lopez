@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,30 +89,7 @@ class ClientAuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
-
         return redirect()->route('client-portal');
-    }
-
-    public function verifyEmail(EmailVerificationRequest $request): RedirectResponse
-    {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('client-portal'));
-        }
-
-        $request->fulfill();
-
-        return redirect()->intended(route('client-portal'))->with('status', 'Your email address has been verified.');
-    }
-
-    public function resendVerification(Request $request): RedirectResponse
-    {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('client-portal'));
-        }
-
-        $request->user()->sendEmailVerificationNotification();
-
-        return back()->with('status', 'A new verification link has been sent to your email address.');
     }
 
     public function logout(Request $request): RedirectResponse
@@ -131,9 +107,10 @@ class ClientAuthController extends Controller
         $destination = $user->isAdministrator()
             ? route('admin.dashboard')
             : ($user->isAttorney()
-                ? ($user->hasVerifiedEmail() ? route('attorney.dashboard') : route('verification.notice'))
+                ? route('attorney.dashboard')
                 : route('client-portal'));
 
         return redirect()->intended($destination);
     }
+
 }

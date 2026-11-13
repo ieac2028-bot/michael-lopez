@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\AdminAccountController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AttorneyAccountController;
@@ -55,25 +56,15 @@ Route::post('/client/logout', [ClientAuthController::class, 'logout'])
     ->middleware(['auth', 'can:access-client-portal'])
     ->name('client.logout');
 
-Route::get('/email/verify', fn () => view('auth.verify-email'))
-    ->middleware(['auth', 'can:verify-gpmo-account'])
-    ->name('verification.notice');
-Route::get('/email/verify/{id}/{hash}', [ClientAuthController::class, 'verifyEmail'])
-    ->middleware(['auth', 'can:verify-gpmo-account', 'signed', 'throttle:6,1'])
-    ->name('verification.verify');
-Route::post('/email/verification-notification', [ClientAuthController::class, 'resendVerification'])
-    ->middleware(['auth', 'can:verify-gpmo-account', 'throttle:6,1'])
-    ->name('verification.send');
-
 Route::get('/attorney/login', [AttorneyAuthController::class, 'showLogin'])->name('attorney.login');
 Route::post('/attorney/login', [AttorneyAuthController::class, 'login'])
     ->middleware('throttle:attorney-login')
     ->name('attorney.login.store');
 Route::middleware(['auth', 'can:access-attorney-portal'])->prefix('attorney-portal')->name('attorney.')->group(function () {
-    Route::get('/', [AttorneyAuthController::class, 'dashboard'])->middleware('verified')->name('dashboard');
-    Route::post('/matching-availability', [AttorneyAuthController::class, 'updateMatchingAvailability'])->middleware('verified')->name('matching-availability.update');
-    Route::patch('/cases/{caseRecord}', [AttorneyAuthController::class, 'updateCase'])->middleware('verified')->name('cases.update');
-    Route::post('/inquiries/{inquiry}/respond', [AttorneyAuthController::class, 'respondToInquiry'])->middleware('verified')->name('inquiries.respond');
+    Route::get('/', [AttorneyAuthController::class, 'dashboard'])->name('dashboard');
+    Route::post('/matching-availability', [AttorneyAuthController::class, 'updateMatchingAvailability'])->name('matching-availability.update');
+    Route::patch('/cases/{caseRecord}', [AttorneyAuthController::class, 'updateCase'])->name('cases.update');
+    Route::post('/inquiries/{inquiry}/respond', [AttorneyAuthController::class, 'respondToInquiry'])->name('inquiries.respond');
     Route::post('/logout', [AttorneyAuthController::class, 'logout'])->name('logout');
 });
 
@@ -103,5 +94,13 @@ Route::middleware(['auth', 'can:manage-gpmo'])->prefix('admin')->name('admin.')-
     Route::patch('/cases/{caseRecord}', [AdminController::class, 'updateCase'])->name('cases.update');
     Route::delete('/cases/{caseRecord}', fn (string $caseRecord) => abort(404))->name('cases.destroy');
     Route::patch('/attorneys/{attorney}', [AdminController::class, 'updateAttorney'])->name('attorneys.update');
-    Route::post('/attorneys/{attorney}/account', [AttorneyAccountController::class, 'store'])->name('attorneys.account.store');
+    Route::post('/attorneys/{attorney}/account', [AttorneyAccountController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('attorneys.account.store');
+
+    // Administrator accounts: only existing, active admins reach these (see the group's can:manage-gpmo).
+    Route::post('/admins', [AdminAccountController::class, 'store'])->middleware('throttle:10,1')->name('admins.store');
+    Route::post('/admins/{admin}/deactivate', [AdminAccountController::class, 'deactivate'])->name('admins.deactivate');
+    Route::post('/admins/{admin}/reactivate', [AdminAccountController::class, 'reactivate'])->name('admins.reactivate');
+    Route::post('/admins/{admin}/invite', [AdminAccountController::class, 'resendInvite'])->middleware('throttle:10,1')->name('admins.invite.resend');
 });

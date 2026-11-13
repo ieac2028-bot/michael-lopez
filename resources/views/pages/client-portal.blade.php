@@ -5,7 +5,7 @@
 @section('content')
   <div class="eyebrow">FOR EXISTING CLIENTS</div>
   <h1 class="page-title">Client portal</h1>
-  <p class="lead">Check where your matter stands. Case lookups are matched to your verified client account email.</p>
+  <p class="lead">Check where your matter stands. Case lookups are matched to your client account email.</p>
 
   <div class="client-portal-toolbar">
     <span>Signed in as <strong>{{ auth()->user()->email }}</strong></span>
@@ -20,24 +20,23 @@
     @forelse($inquiries as $inquiry)
       @php
         $flow = [
-          'Client login', 'Admin live chat', 'Admin collects client information',
-          'Legal category identified', 'Search matching attorneys', 'Recommendations displayed',
-          'System sends best match', 'Attorney accepts or declines', 'Consultation confirmed',
+          'Signed in', 'Chat with our team', 'Finding attorneys', 'Your matches',
+          'Request sent', 'Attorney response', 'Consultation confirmed',
         ];
         $doneThrough = match($inquiry->status) {
-          'clarifying' => 2,
-          'reviewing' => 5,
-          'referred' => 7,
-          'declined' => 6,
-          'accepted' => 9,
+          'clarifying' => 1,
+          'reviewing' => 2,
+          'referred' => 5,
+          'declined' => 5,
+          'accepted' => 7,
           default => 1,
         };
         $active = $inquiry->status === 'accepted' ? null : match($inquiry->status) {
           'new' => 2,
-          'clarifying' => 3,
-          'reviewing' => 6,
-          'referred' => 8,
-          'declined' => 8,
+          'clarifying' => 2,
+          'reviewing' => 3,
+          'referred' => 6,
+          'declined' => 6,
           default => 2,
         };
       @endphp
@@ -62,7 +61,7 @@
       </div>
       @error('reference_no')<p style="color:var(--red);font-size:0.78rem;">{{ $message }}</p>@enderror
       <button type="submit" class="btn-primary" style="width:100%;">View case status</button>
-      <p style="font-size:0.76rem;color:var(--ink-soft);margin-top:10px;">For your privacy, results are limited to cases associated with your verified account email.</p>
+      <p style="font-size:0.76rem;color:var(--ink-soft);margin-top:10px;">For your privacy, results are limited to cases associated with your account email.</p>
     </form>
 
     <div>

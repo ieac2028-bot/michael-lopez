@@ -25,6 +25,6 @@
 
   <section class="practice-contact-cta" aria-labelledby="practice-contact-title">
     <h2 id="practice-contact-title">Get Started with Your Case</h2>
-    <p>Call us: <a href="tel:+63288970527">(+632) 8897 0527 to 30</a> or <a href="tel:+639171640184">(+63) 917 164-0184</a></p>
+    <p>Call us: <a href="tel:+639153523068">09153523068</a></p>
   </section>
 @endsection

@@ -29,6 +29,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/workspace.css') }}?v={{ filemtime(public_path('css/workspace.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/client-portal.css') }}?v={{ filemtime(public_path('css/client-portal.css')) }}">
 </head>
 @php
   $clientWorkflowMode = auth()->check()
@@ -55,20 +57,23 @@
 @if($adminWorkspaceMode)
 <header class="client-workflow-header admin-workspace-header">
   <div class="header-inner">
-    <a href="{{ route('admin.dashboard') }}" class="brand" style="text-decoration:none;">
-      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    <a href="{{ route('admin.dashboard') }}" class="brand workspace-brand" style="text-decoration:none;">
+      <span class="workspace-brand__tile"><img src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices"></span>
+      <span class="workspace-brand__text"><strong>GPMO Law Offices</strong><small>Administration Console</small></span>
     </a>
     <div class="admin-user-chip" aria-label="Signed in as {{ auth()->user()->name }}">
       <span class="admin-user-chip__initials" aria-hidden="true">{{ collect(explode(' ', auth()->user()->name))->filter()->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}</span>
       <span>{{ auth()->user()->name }}</span>
     </div>
+    <form class="admin-header-signout" method="POST" action="{{ route('admin.logout') }}">@csrf<button type="submit">Sign out</button></form>
   </div>
 </header>
 @elseif($attorneyWorkspaceMode)
 <header class="client-workflow-header attorney-workspace-header">
   <div class="header-inner">
-    <a href="{{ route('attorney.dashboard') }}" class="brand" style="text-decoration:none;">
-      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    <a href="{{ route('attorney.dashboard') }}" class="brand workspace-brand" style="text-decoration:none;">
+      <span class="workspace-brand__tile"><img src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices"></span>
+      <span class="workspace-brand__text"><strong>GPMO Law Offices</strong><small>Attorney Portal</small></span>
     </a>
     <div class="attorney-user-chip" aria-label="Signed in as {{ auth()->user()->attorneyProfile->name }}">
       <span class="attorney-user-chip__initials" aria-hidden="true">{{ auth()->user()->attorneyProfile->initials }}</span>
@@ -79,10 +84,11 @@
 @elseif($clientWorkflowMode)
 <header class="client-workflow-header">
   <div class="header-inner">
-    <a href="{{ route('client-portal') }}" class="brand" style="text-decoration:none;">
-      <img class="brand__ocampo-logo" data-theme-logo data-logo-light="{{ asset('images/ocampo-logo.svg') }}" data-logo-dark="{{ asset('images/ocampo-logo-dark.svg') }}" src="{{ asset('images/ocampo-logo.svg') }}" alt="Ocampo &amp; Associates Law Offices">
+    <a href="{{ route('client-portal') }}" class="brand workspace-brand" style="text-decoration:none;">
+      <span class="workspace-brand__tile"><img src="{{ asset('images/safalaw/gpmo-law-offices-logo.png') }}" alt="GPMO Law Offices"></span>
+      <span class="workspace-brand__text"><strong>GPMO Law Offices</strong><small>Client Portal</small></span>
     </a>
-    <form method="POST" action="{{ route('client.logout') }}">@csrf<button class="btn-secondary" type="submit">Sign out</button></form>
+    <form method="POST" action="{{ route('client.logout') }}">@csrf<button class="client-signout" type="submit">Sign out</button></form>
   </div>
 </header>
 @else
@@ -98,7 +104,7 @@
       <a href="{{ route('practice-areas') }}" class="{{ request()->routeIs('practice-areas') ? 'active' : '' }}">Practice Areas</a>
       <a href="{{ route('legal-insights') }}" class="{{ request()->routeIs('legal-insights') ? 'active' : '' }}" aria-current="{{ request()->routeIs('legal-insights') ? 'page' : 'false' }}">Legal Insights</a>
       <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact*') ? 'active' : '' }}">Contact Us</a>
-      <a href="{{ route('login') }}" class="consult-btn header-login {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'active' : '' }}" aria-label="Choose login access" aria-current="{{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'page' : 'false' }}">Login</a>
+      <a href="{{ route('login') }}" class="consult-btn header-login {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'password.*') ? 'active' : '' }}" aria-label="Choose login access" aria-current="{{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'password.*') ? 'page' : 'false' }}">Login</a>
     </nav>
     <button class="theme-toggle theme-toggle--header" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">
       <span class="theme-toggle__icon" data-active-theme="light" aria-hidden="true">
@@ -125,7 +131,7 @@
       <svg class="theme-toggle__moon" viewBox="0 0 24 24" focusable="false"><path d="M20.3 15.4A8.7 8.7 0 0 1 8.6 3.7 8.8 8.8 0 1 0 20.3 15.4Z"/></svg>
     </span><span class="theme-toggle__label">Dark mode</span>
   </button>
-  <a class="mn-book {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'verification.*', 'password.*') ? 'active' : '' }}" href="{{ route('login') }}" aria-label="Choose login access" style="text-decoration:none;display:block;text-align:center;">Login</a>
+  <a class="mn-book {{ request()->routeIs('login', 'client.login', 'client.register', 'client-portal*', 'admin.login', 'admin.dashboard', 'attorney.login', 'attorney.*', 'password.*') ? 'active' : '' }}" href="{{ route('login') }}" aria-label="Choose login access" style="text-decoration:none;display:block;text-align:center;">Login</a>
 </nav>
 @endif
 
@@ -142,17 +148,12 @@
     <div class="footer-brand">
       <div class="tagline">A Legacy of Excellence in Philippine Law</div>
       <address class="footer-contact">
-        SAFA Building, 5858 Alfonso cor. Fermina Streets<br>
-        Poblacion, Makati City 1210<br>
-        Metro Manila, Philippines<br>
-        <a href="tel:+63288970527">+63 2 8897 0527 to 30</a><br>
-        <a href="tel:+639171640184">+63 917 164 0184</a><br>
-        <a href="mailto:safa@safalaw.com.ph">safa@safalaw.com.ph</a>
+        1442 Franco Corner Perla St<br>
+        Tondo Manila, Philippines<br>
+        <a href="tel:+639153523068">Cellular number: 09153523068</a><br>
+        <a href="mailto:gpmooffice1@gmail.com">gpmooffice1@gmail.com</a>
       </address>
       <div class="footer-app-note">Trusted Philippine legal counsel for over 60 years</div>
-      <div class="footer-social">
-        <a href="https://www.facebook.com/SaludoTaleonOcampo" target="_blank" rel="noopener noreferrer" aria-label="Visit GPMO Law Offices on Facebook">f</a>
-      </div>
     </div>
 
     <div class="footer-col">

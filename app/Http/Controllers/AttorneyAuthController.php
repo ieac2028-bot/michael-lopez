@@ -173,10 +173,8 @@ class AttorneyAuthController extends Controller
             $inquiry->attorney?->account,
         ])->filter()->unique('id');
 
-        $smtpCredentialsMissing = config('mail.default') === 'smtp'
-            && (! filled(config('mail.mailers.smtp.username')) || ! filled(config('mail.mailers.smtp.password')));
-        if ($smtpCredentialsMissing || ! filled(config('mail.from.address'))) {
-            Log::warning('Consultation was confirmed, but email notification was skipped because mail settings are incomplete.', [
+        if (in_array(config('mail.default'), ['log', 'array'], true)) {
+            Log::warning('Consultation was confirmed, but email notification was skipped because outbound email is not configured.', [
                 'inquiry_id' => $inquiry->id,
                 'case_id' => $case->id,
             ]);

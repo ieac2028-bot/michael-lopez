@@ -110,7 +110,8 @@ class ConsultationController extends Controller
     private function adminIsOnline(): bool
     {
         return User::query()
-            ->where(fn ($query) => $query->where('role', 'admin')->orWhere('is_admin', true))
+            ->administrators()
+            ->active()
             ->pluck('id')
             ->contains(fn ($id) => Cache::has('gpmo-admin-presence:'.$id));
     }

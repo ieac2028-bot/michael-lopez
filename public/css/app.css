@@ -587,9 +587,6 @@ input, select, textarea { border-radius: 12px; }
 .gpmo-recognitions__grid img { display: block; width: auto; max-width: 100%; height: 66px; object-fit: contain; }
 .gpmo-recognitions__grid figcaption { color: var(--ink-soft); font-size: .73rem; line-height: 1.35; }
 .firm-profile { margin: 10px 0 40px; }
-.firm-profile__image-frame { width: 100%; height: clamp(230px, 38vw, 480px); margin: 0 0 28px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; }
-.firm-profile__image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 43%; transform: scale(1); transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%); transition: transform 220ms ease-out; }
-.firm-profile__image-frame.is-zooming .firm-profile__image { transform: scale(1.65); }
 .firm-profile__practice-heading { margin: 0 0 14px; }
 .firm-profile__practice-heading a { color: var(--red-deep); text-decoration: none; font-weight: 600; }
 .firm-profile__practice-heading a:hover, .firm-profile__practice-heading a:focus-visible { text-decoration: underline; text-underline-offset: .18em; }
@@ -639,7 +636,6 @@ input, select, textarea { border-radius: 12px; }
 @media (max-width: 600px) {
   .brand__gpmo-logo { width: 158px; height: 75px; }
   .gpmo-recognitions { padding: 18px 12px; }
-  .firm-profile__image-frame { height: clamp(210px, 58vw, 340px); margin-bottom: 20px; border-radius: 12px; }
   .firm-review-grid { grid-template-columns: 1fr; }
   .firm-profile__practice-heading { align-items: flex-start; }
   .firm-profile__recognitions { padding: 18px 12px; }

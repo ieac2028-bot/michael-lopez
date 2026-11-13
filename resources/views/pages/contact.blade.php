@@ -5,7 +5,7 @@
 @section('content')
   <div class="eyebrow">GET IN TOUCH</div>
   <h1 class="page-title">Contact Us</h1>
-  <p class="lead">Contact GPMO Law Offices by phone, email, or visit the Makati office.</p>
+  <p class="lead">Contact GPMO Law Offices by email, cellular number, or visit the Tondo office.</p>
 
   @if(session('status'))
     <div class="contact-status" role="status">{{ session('status') }}</div>
@@ -19,32 +19,28 @@
       <address class="contact-address">
         <div class="contact-detail">
           <span class="contact-detail__icon" aria-hidden="true">⌖</span>
-          <div><strong>Office</strong><a href="https://maps.google.com/maps?q=Safa%20Bldg%2C%205858%20Alfonso%20Cor%20Fermina%2C%20Makati%2C%201210%20Metro%20Manila%2C%20Philippines&amp;t=m&amp;z=15" target="_blank" rel="noopener noreferrer">SAFA Building, 5858 Alfonso cor. Fermina Streets, Poblacion, Makati City 1210, Metro Manila, Philippines</a></div>
+          <div><strong>Office</strong><a href="https://maps.google.com/maps?q=1442%20Franco%20Corner%20Perla%20St%2C%20Tondo%2C%20Manila%2C%20Philippines&amp;t=m&amp;z=15" target="_blank" rel="noopener noreferrer">1442 Franco Corner Perla St, Tondo Manila</a></div>
         </div>
         <div class="contact-detail">
           <span class="contact-detail__icon" aria-hidden="true">☎</span>
-          <div><strong>Telephone</strong><a href="tel:+63288970527">+63 2 8897 0527 to 30</a></div>
-        </div>
-        <div class="contact-detail">
-          <span class="contact-detail__icon" aria-hidden="true">▣</span>
-          <div><strong>Mobile</strong><a href="tel:+639171640184">+63 917 164 0184</a></div>
+          <div><strong>Cellular number</strong><a href="tel:+639153523068">09153523068</a></div>
         </div>
         <div class="contact-detail">
           <span class="contact-detail__icon" aria-hidden="true">✉</span>
-          <div><strong>Email</strong><a href="mailto:safa@safalaw.com.ph">safa@safalaw.com.ph</a></div>
+          <div><strong>Email</strong><a href="mailto:gpmooffice1@gmail.com">gpmooffice1@gmail.com</a></div>
         </div>
         <div class="contact-detail">
           <span class="contact-detail__icon" aria-hidden="true">◷</span>
           <div><strong>Office hours</strong><span>Monday–Friday, 9 AM–5 PM</span></div>
         </div>
       </address>
-      <a class="contact-directions" href="https://www.google.com/maps/dir/?api=1&amp;destination=SAFA%20Building%2C%205858%20Alfonso%20cor.%20Fermina%20Streets%2C%20Poblacion%2C%20Makati%20City%201210%2C%20Metro%20Manila%2C%20Philippines" target="_blank" rel="noopener noreferrer">Get directions <span aria-hidden="true">↗</span></a>
+      <a class="contact-directions" href="https://www.google.com/maps/dir/?api=1&amp;destination=1442%20Franco%20Corner%20Perla%20St%2C%20Tondo%20Manila%2C%20Philippines" target="_blank" rel="noopener noreferrer">Get directions <span aria-hidden="true">↗</span></a>
     </div>
 
     <div class="contact-map-card">
       <iframe
-        title="Map showing the GPMO office at SAFA Building in Makati City"
-        src="https://maps.google.com/maps?q=Safa%20Bldg%2C%205858%20Alfonso%20Cor%20Fermina%2C%20Makati%2C%201210%20Metro%20Manila%2C%20Philippines&amp;t=m&amp;z=15&amp;output=embed&amp;iwloc=near"
+        title="Map showing the GPMO office at 1442 Franco Corner Perla St, Tondo Manila"
+        src="https://maps.google.com/maps?q=1442%20Franco%20Corner%20Perla%20St%2C%20Tondo%2C%20Manila%2C%20Philippines&amp;t=m&amp;z=15&amp;output=embed&amp;iwloc=near"
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"
         allowfullscreen>

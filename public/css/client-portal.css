@@ -1,0 +1,284 @@
+/* ==========================================================================
+   GPMO Client Portal — professional, client-friendly redesign
+   Scoped to .client-workflow-mode so public pages, admin and attorney
+   workspaces are untouched. Load AFTER app.css and workspace.css.
+   Light + dark follow the site's existing mechanism: the data-theme
+   attribute, falling back to prefers-color-scheme.
+   ========================================================================== */
+
+.client-workflow-mode {
+  --cp-bg: #F3F6FA;
+  --cp-surface: #FFFFFF;
+  --cp-surface-2: #F6F9FC;
+  --cp-text: #0F2342;
+  --cp-muted: #55627A;
+  --cp-line: #DCE4EE;
+  --cp-accent: #1F5FA8;
+  --cp-accent-strong: #174A85;
+  --cp-accent-soft: #E6F0FB;
+  --cp-on-accent: #FFFFFF;
+  --cp-success: #17855A;
+  --cp-success-soft: #E2F3EA;
+  --cp-offline: #8A97AB;
+  --cp-bubble-client: #174A85;
+  --cp-shadow: 0 1px 2px rgb(15 35 66 / 6%), 0 12px 32px -18px rgb(15 35 66 / 22%);
+  --cp-radius: 16px;
+  background: var(--cp-bg);
+  color: var(--cp-text);
+}
+:root[data-theme='dark'] .client-workflow-mode {
+  --cp-bg: #0D1A2B; --cp-surface: #13243A; --cp-surface-2: #172C45; --cp-text: #EAF1FA;
+  --cp-muted: #A7B6CB; --cp-line: #27425F; --cp-accent: #7CC0EE; --cp-accent-strong: #9ED2F4;
+  --cp-accent-soft: #163450; --cp-on-accent: #0B1E3F; --cp-success: #45C48D; --cp-success-soft: #123A2D;
+  --cp-offline: #7C8CA3; --cp-bubble-client: #2A66A8;
+  --cp-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 14px 34px -18px rgb(0 0 0 / 60%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .client-workflow-mode {
+    --cp-bg: #0D1A2B; --cp-surface: #13243A; --cp-surface-2: #172C45; --cp-text: #EAF1FA;
+    --cp-muted: #A7B6CB; --cp-line: #27425F; --cp-accent: #7CC0EE; --cp-accent-strong: #9ED2F4;
+    --cp-accent-soft: #163450; --cp-on-accent: #0B1E3F; --cp-success: #45C48D; --cp-success-soft: #123A2D;
+    --cp-offline: #7C8CA3; --cp-bubble-client: #2A66A8;
+    --cp-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 14px 34px -18px rgb(0 0 0 / 60%);
+  }
+}
+
+/* ---------- Header: fixes the unstyled "Sign out" button ---------- */
+.client-workflow-header .client-signout {
+  min-height: 40px; padding: 0 18px; border: 1px solid rgb(255 255 255 / 40%); border-radius: 999px;
+  background: transparent; color: #fff; font: 600 .85rem var(--font-sans); cursor: pointer; white-space: nowrap;
+  transition: background .15s ease, border-color .15s ease;
+}
+.client-workflow-header .client-signout:hover { background: rgb(255 255 255 / 12%); border-color: rgb(255 255 255 / 70%); }
+.client-workflow-header .client-signout:focus-visible { outline: 3px solid #9DD6F1; outline-offset: 2px; }
+
+/* ---------- Page frame ---------- */
+.client-workflow-mode .page { max-width: 1120px; padding: 40px 24px 72px; }
+.cp-intro { max-width: 720px; margin-bottom: 28px; }
+.client-workflow-mode .cp-intro .eyebrow { color: var(--cp-accent); letter-spacing: .14em; font-size: .74rem; font-weight: 700; }
+.client-workflow-mode .cp-intro .page-title {
+  max-width: none; margin: 6px 0 12px; color: var(--cp-text);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem); font-weight: 700; letter-spacing: -.025em; line-height: 1.15;
+}
+.client-workflow-mode .cp-intro .lead { margin: 0; max-width: 60ch; color: var(--cp-muted); font-size: 1.02rem; line-height: 1.65; }
+.client-workflow-mode .cp-flash {
+  max-width: none; margin: 0 0 20px; padding: 14px 16px; border: 1px solid var(--cp-line);
+  border-left: 4px solid var(--cp-accent); border-radius: 12px; background: var(--cp-surface); color: var(--cp-text);
+}
+
+/* ---------- Progress card ---------- */
+.cp-progress {
+  margin-bottom: 24px; padding: 22px 24px 18px; border: 1px solid var(--cp-line);
+  border-radius: var(--cp-radius); background: var(--cp-surface); box-shadow: var(--cp-shadow);
+}
+.cp-progress__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 20px; }
+.cp-progress__kicker { margin: 0 0 2px; color: var(--cp-muted); font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.cp-progress__title { margin: 0; color: var(--cp-text); font-size: 1.12rem; font-weight: 700; }
+.cp-progress__note { margin: 0; color: var(--cp-muted); font-size: .9rem; }
+.cp-progress__bar { height: 6px; margin: 16px 0 4px; overflow: hidden; border-radius: 999px; background: var(--cp-line); }
+.cp-progress__bar > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cp-success), var(--cp-accent)); transition: width .4s ease; }
+
+/* ---------- Stepper (replaces the legacy 9-column / 1008px-wide layout) ---------- */
+.client-workflow-mode .consultation-process {
+  display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); min-width: 0; margin: 14px 0 0; padding: 6px 0 4px;
+  overflow: visible; list-style: none; gap: 0;
+}
+.client-workflow-mode .consultation-process li,
+.client-workflow-mode .consultation-process li.is-done,
+.client-workflow-mode .consultation-process li.is-current {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; padding: 0 4px;
+  border: 0; border-radius: 0; background: none; box-shadow: none; color: var(--cp-muted); text-align: center;
+}
+.client-workflow-mode .consultation-process li::before,
+.client-workflow-mode .consultation-process li::after {
+  position: absolute; z-index: 0; top: 19px; height: 2px; content: ''; background: var(--cp-line);
+}
+.client-workflow-mode .consultation-process li::before { inset-inline: 0 50%; }
+.client-workflow-mode .consultation-process li::after { inset-inline: 50% 0; }
+.client-workflow-mode .consultation-process li:first-child::before,
+.client-workflow-mode .consultation-process li:last-child::after { display: none; }
+.client-workflow-mode .consultation-process li.is-done::before,
+.client-workflow-mode .consultation-process li.is-done::after,
+.client-workflow-mode .consultation-process li.is-current::before { background: var(--cp-success); }
+
+.client-workflow-mode .consultation-process__node {
+  position: relative; z-index: 1; display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px;
+  border: 2px solid var(--cp-line); border-radius: 50%; background: var(--cp-surface); color: var(--cp-muted);
+}
+.client-workflow-mode .consultation-process__node svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.client-workflow-mode .consultation-process li.is-done .consultation-process__node { border-color: var(--cp-success); background: var(--cp-success); color: #fff; }
+.client-workflow-mode .consultation-process li.is-current .consultation-process__node {
+  border-color: var(--cp-accent); background: var(--cp-accent); color: var(--cp-on-accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--cp-accent) 22%, transparent);
+}
+.client-workflow-mode .consultation-process__copy { display: grid; justify-items: center; gap: 4px; max-width: 118px; }
+.client-workflow-mode .consultation-process__copy strong { color: var(--cp-muted); font-size: .76rem; font-weight: 600; line-height: 1.3; }
+.client-workflow-mode .consultation-process__copy small { color: var(--cp-muted); font-size: .68rem; line-height: 1.2; opacity: .8; }
+.client-workflow-mode .consultation-process li.is-done .consultation-process__copy strong,
+.client-workflow-mode .consultation-process li.is-current .consultation-process__copy strong { color: var(--cp-text); }
+.client-workflow-mode .consultation-process li.is-done .consultation-process__copy small { color: var(--cp-success); opacity: 1; font-weight: 600; }
+.client-workflow-mode .consultation-process li.is-current .consultation-process__copy small {
+  padding: 2px 8px; border-radius: 999px; background: var(--cp-accent-soft); color: var(--cp-accent-strong); font-weight: 700; opacity: 1;
+}
+@keyframes cp-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--cp-accent) 24%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--cp-accent) 8%, transparent); }
+}
+.client-workflow-mode .consultation-process li.is-current .consultation-process__node { animation: cp-pulse 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .client-workflow-mode .consultation-process li.is-current .consultation-process__node { animation: none; }
+  .cp-progress__bar > span { transition: none; }
+}
+
+/* Tablet / phone: vertical timeline, no sideways scrolling */
+@media (max-width: 899px) {
+  .client-workflow-mode .consultation-process { display: flex; flex-direction: column; gap: 0; padding: 4px 0; }
+  .client-workflow-mode .consultation-process li,
+  .client-workflow-mode .consultation-process li.is-done,
+  .client-workflow-mode .consultation-process li.is-current { flex-direction: row; align-items: flex-start; gap: 14px; padding: 0 0 18px; text-align: left; }
+  .client-workflow-mode .consultation-process li:last-child { padding-bottom: 0; }
+  .client-workflow-mode .consultation-process li::before,
+  .client-workflow-mode .consultation-process li.is-done::before,
+  .client-workflow-mode .consultation-process li.is-current::before { display: none; }
+  .client-workflow-mode .consultation-process li::after { display: block; inset: 40px auto 0 19px; width: 2px; height: auto; background: var(--cp-line); }
+  .client-workflow-mode .consultation-process li.is-done::after { background: var(--cp-success); }
+  .client-workflow-mode .consultation-process li:last-child::after { display: none; }
+  .client-workflow-mode .consultation-process__copy { justify-items: start; gap: 3px; max-width: none; padding-top: 2px; }
+  .client-workflow-mode .consultation-process__copy strong { font-size: .92rem; }
+  .client-workflow-mode .consultation-process__copy small { font-size: .76rem; }
+  .cp-progress { padding: 18px 16px; }
+}
+
+/* ---------- Two-column layout: conversation + guidance sidebar ---------- */
+.cp-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (min-width: 1000px) {
+  .cp-layout { grid-template-columns: minmax(0, 1fr) 320px; }
+  .cp-aside { position: sticky; top: 24px; }
+}
+.cp-main { display: grid; gap: 24px; min-width: 0; }
+.cp-aside { display: grid; gap: 16px; }
+.cp-aside__card { padding: 20px; border: 1px solid var(--cp-line); border-radius: var(--cp-radius); background: var(--cp-surface); box-shadow: var(--cp-shadow); }
+.cp-aside__card h2 { margin: 0 0 12px; color: var(--cp-text); font-size: .98rem; font-weight: 700; }
+.cp-aside__card p { margin: 0; color: var(--cp-muted); font-size: .88rem; line-height: 1.6; }
+.cp-aside__card a { color: var(--cp-accent-strong); font-weight: 600; }
+.cp-next { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: cp-next; }
+.cp-next li { position: relative; padding-left: 38px; color: var(--cp-muted); font-size: .88rem; line-height: 1.5; counter-increment: cp-next; }
+.cp-next li strong { display: block; color: var(--cp-text); font-size: .9rem; }
+.cp-next li::before {
+  position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--cp-accent-soft); color: var(--cp-accent-strong); content: counter(cp-next); font-size: .78rem; font-weight: 700;
+}
+
+/* ---------- Conversation card ---------- */
+.client-workflow-mode .consultation-chat {
+  max-width: none; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--cp-line);
+  border-radius: var(--cp-radius); background: var(--cp-surface); box-shadow: var(--cp-shadow); color: var(--cp-text);
+}
+.client-workflow-mode .consultation-chat__heading { display: block; padding: 22px 24px 16px; border-bottom: 1px solid var(--cp-line); }
+.client-workflow-mode .consultation-chat__heading .k { margin: 0 0 4px; color: var(--cp-text); font-size: 1.12rem; font-weight: 700; letter-spacing: normal; text-transform: none; }
+.client-workflow-mode .consultation-chat__heading small { display: block; color: var(--cp-muted); font-size: .8rem; line-height: 1.45; }
+.client-workflow-mode .consultation-chat > * { margin-inline: 24px; }
+.client-workflow-mode .consultation-chat > .consultation-chat__heading { margin-inline: 0; }
+
+/* Staff availability */
+.client-workflow-mode .consultation-admin-presence {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 12px; margin-block: 18px 0; padding: 12px 14px;
+  border: 1px solid var(--cp-line); border-radius: 12px; background: var(--cp-surface-2); color: var(--cp-text);
+}
+.client-workflow-mode .consultation-admin-presence__dot { grid-row: 1 / 3; width: 10px; height: 10px; border-radius: 50%; }
+.client-workflow-mode .consultation-admin-presence__dot.is-online { background: var(--cp-success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cp-success) 22%, transparent); }
+.client-workflow-mode .consultation-admin-presence__dot.is-offline { background: var(--cp-offline); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cp-offline) 22%, transparent); }
+.client-workflow-mode .consultation-admin-presence strong { grid-column: 2; font-size: .92rem; font-weight: 700; }
+.client-workflow-mode .consultation-admin-presence small { grid-column: 2; flex-basis: auto; margin: 0; color: var(--cp-muted); font-size: .82rem; }
+
+/* Guidance above the composer */
+.cp-guide { margin-block: 20px 0; }
+.cp-guide__lead { margin: 0 0 14px; color: var(--cp-text); font-size: 1rem; font-weight: 500; line-height: 1.6; }
+.cp-guide__label { margin: 0 0 8px; color: var(--cp-muted); font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.cp-guide__list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; }
+.cp-guide__list li { padding: 6px 12px; border: 1px solid var(--cp-line); border-radius: 999px; background: var(--cp-surface-2); color: var(--cp-text); font-size: .84rem; }
+.cp-notice {
+  display: flex; gap: 10px; align-items: flex-start; margin: 0; padding: 12px 14px; border-radius: 12px;
+  background: var(--cp-accent-soft); color: var(--cp-text); font-size: .85rem; line-height: 1.5;
+}
+.cp-notice svg { flex: 0 0 18px; width: 18px; height: 18px; margin-top: 1px; fill: none; stroke: var(--cp-accent-strong); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Messages */
+.client-workflow-mode .consultation-chat__messages {
+  max-height: 420px; margin-block: 18px; padding: 18px; gap: 14px; border: 1px solid var(--cp-line); border-radius: 14px; background: var(--cp-surface-2);
+}
+.client-workflow-mode .consultation-chat__message {
+  max-width: min(84%, 560px); padding: 12px 15px; border: 1px solid var(--cp-line); border-radius: 14px 14px 14px 4px;
+  background: var(--cp-surface); color: var(--cp-text); box-shadow: none;
+}
+.client-workflow-mode .consultation-chat__message[data-role='client'] {
+  border-color: transparent; border-radius: 14px 14px 4px 14px; background: var(--cp-bubble-client); color: #fff;
+}
+.client-workflow-mode .consultation-chat__message[data-role='client'] small { color: rgb(255 255 255 / 78%); }
+.client-workflow-mode .consultation-chat__message[data-role='assistant'] { border-left: 3px solid var(--cp-accent); }
+.client-workflow-mode .consultation-chat__message strong { font-size: .8rem; font-weight: 700; }
+.client-workflow-mode .consultation-chat__message small { color: var(--cp-muted); }
+.client-workflow-mode .consultation-chat__messages > p { margin: 0; padding: 18px 8px; color: var(--cp-muted); text-align: center; }
+
+/* Composer */
+.client-workflow-mode .consultation-chat__composer { display: block; margin-block: 0; padding: 0 0 24px; border: 0; }
+.client-workflow-mode .consultation-chat__composer .form-field { display: grid; gap: 8px; margin: 18px 0 0; }
+.client-workflow-mode .consultation-chat__composer label { color: var(--cp-text); font-size: .86rem; font-weight: 600; }
+.client-workflow-mode .consultation-chat__composer textarea {
+  width: 100%; min-height: 120px; padding: 14px 16px; border: 1px solid var(--cp-line); border-radius: 12px; background: var(--cp-surface-2);
+  color: var(--cp-text); font: inherit; font-size: .96rem; line-height: 1.55; resize: vertical; box-shadow: none;
+}
+.client-workflow-mode .consultation-chat__composer textarea::placeholder { color: var(--cp-muted); opacity: .85; }
+.client-workflow-mode .consultation-chat__composer textarea:focus {
+  outline: 3px solid color-mix(in srgb, var(--cp-accent) 35%, transparent); border-color: var(--cp-accent); background: var(--cp-surface);
+}
+.cp-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 0; }
+.cp-chips__label { color: var(--cp-muted); font-size: .8rem; }
+.cp-chip {
+  padding: 7px 13px; border: 1px solid var(--cp-line); border-radius: 999px; background: var(--cp-surface); color: var(--cp-accent-strong);
+  font: 600 .8rem var(--font-sans); cursor: pointer; transition: background .15s ease, border-color .15s ease;
+}
+.cp-chip:hover { border-color: var(--cp-accent); background: var(--cp-accent-soft); }
+.cp-chip:focus-visible { outline: 3px solid color-mix(in srgb, var(--cp-accent) 40%, transparent); outline-offset: 1px; }
+.cp-composer__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.cp-composer__hint { color: var(--cp-muted); font-size: .8rem; }
+.client-workflow-mode .cp-btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 22px; border: 0; border-radius: 999px;
+  background: var(--cp-accent); color: var(--cp-on-accent); font: 700 .92rem var(--font-sans); cursor: pointer; box-shadow: none;
+  transition: background .15s ease, transform .15s ease;
+}
+.client-workflow-mode .cp-btn:hover { background: var(--cp-accent-strong); transform: translateY(-1px); }
+.client-workflow-mode .cp-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--cp-accent) 45%, transparent); outline-offset: 2px; }
+.client-workflow-mode .cp-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 620px) {
+  .client-workflow-mode .consultation-chat > * { margin-inline: 16px; }
+  .client-workflow-mode .consultation-chat__heading { padding: 18px 16px 14px; }
+  .client-workflow-mode .consultation-chat__message { max-width: 94%; }
+  .cp-composer__footer { flex-direction: column-reverse; align-items: stretch; }
+  .client-workflow-mode .cp-btn { justify-content: center; }
+}
+
+/* ---------- Attorney recommendations ---------- */
+.client-workflow-mode .consultation-recommendations {
+  max-width: none; margin: 0; padding: clamp(20px, 3vw, 28px); border: 1px solid var(--cp-line);
+  border-radius: var(--cp-radius); background: var(--cp-surface); box-shadow: var(--cp-shadow);
+}
+.client-workflow-mode .consultation-recommendations .eyebrow { color: var(--cp-accent); font-weight: 700; letter-spacing: .12em; }
+.client-workflow-mode .consultation-recommendations__heading h2 { margin: 4px 0 8px; color: var(--cp-text); font-size: clamp(1.25rem, 2.4vw, 1.55rem); }
+.client-workflow-mode .consultation-recommendations__heading p { color: var(--cp-muted); }
+.client-workflow-mode .consultation-recommendations__grid { max-width: none; margin-top: 20px; }
+.client-workflow-mode .recommended-attorney-card { border: 1px solid var(--cp-line); border-radius: 14px; background: var(--cp-surface-2); }
+.client-workflow-mode .recommended-attorney-card__avatar { border: 0; background: var(--cp-accent-soft); color: var(--cp-accent-strong); }
+.client-workflow-mode .recommended-attorney-card__eyebrow { color: var(--cp-accent-strong); }
+.client-workflow-mode .recommended-attorney-card h3 { color: var(--cp-text); }
+.client-workflow-mode .recommended-attorney-card__identity p,
+.client-workflow-mode .recommended-attorney-card__details { color: var(--cp-muted); }
+.client-workflow-mode .recommended-attorney-card__details { border-color: var(--cp-line); }
+.client-workflow-mode .recommended-attorney-card__details > strong { color: var(--cp-success); }
+.client-workflow-mode .recommended-attorney-card__status { background: var(--cp-accent-soft); color: var(--cp-accent-strong); }
+.client-workflow-mode .recommended-attorney-card__status.is-confirmed { background: var(--cp-success-soft); color: var(--cp-success); }
+
+/* ---------- Client portal request cards reuse the same tracker ---------- */
+.client-workflow-mode .client-request-card { border-color: var(--cp-line); background: var(--cp-surface); box-shadow: var(--cp-shadow); }
+.client-workflow-mode .client-request-card .consultation-process { margin-top: 8px; }
+.client-workflow-mode .admin-status-pill { background: var(--cp-accent-soft); color: var(--cp-accent-strong); }

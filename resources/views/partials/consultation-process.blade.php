@@ -1,5 +1,12 @@
 @php
   $flowExample = $flowExample ?? false;
+  $showSummary = $showSummary ?? false;
+  $summaryNote = $summaryNote ?? null;
+  $doneThrough = $doneThrough ?? 0;
+  $currentStep = $currentStep ?? null;
+  $totalSteps = count($steps);
+  $percent = $flowExample ? 0 : (int) round(min($doneThrough, $totalSteps) / max($totalSteps, 1) * 100);
+  $currentLabel = $currentStep ? ($steps[$currentStep - 1] ?? null) : null;
   $processIcons = [
     1 => '<circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.6-3.6 2.8-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/>',
     2 => '<path d="M4 5.5h16v11H11l-4.5 3v-3H4z"/><path d="M8 9.5h8M8 12.5h5"/>',
@@ -11,18 +18,35 @@
     8 => '<path d="M6 3.5h8l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20z"/><path d="M14 3.5v4h4M9 13h6M9 16.5h3"/>',
     9 => '<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
   ];
+  $checkIcon = '<path d="m5 12.5 4.5 4.5L19 7.5"/>';
 @endphp
+@if($showSummary && ! $flowExample)
+  <div class="cp-progress__head">
+    <div>
+      <p class="cp-progress__kicker">Your progress</p>
+      <h2 class="cp-progress__title">
+        @if($currentLabel)
+          Step {{ $currentStep }} of {{ $totalSteps }} · {{ $currentLabel }}
+        @else
+          All {{ $totalSteps }} steps complete
+        @endif
+      </h2>
+    </div>
+    @if($summaryNote)<p class="cp-progress__note">{{ $summaryNote }}</p>@endif
+  </div>
+  <div class="cp-progress__bar" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $percent }}"><span style="width: {{ $percent }}%"></span></div>
+@endif
 <ul class="consultation-process{{ $flowExample ? ' is-flow-example' : '' }}" aria-label="{{ $ariaLabel }}" tabindex="0">
   @foreach($steps as $index => $label)
     @php
       $number = $index + 1;
       $isDone = ! $flowExample && $number <= $doneThrough;
-      $isCurrent = ! $flowExample && $number === $currentStep;
+      $isCurrent = ! $flowExample && ! $isDone && $number === $currentStep;
       $state = $isDone ? 'is-done' : ($isCurrent ? 'is-current' : '');
     @endphp
     <li class="{{ $state }}" @if($isCurrent) aria-current="step" @endif>
       <span class="consultation-process__node" aria-hidden="true">
-        <svg viewBox="0 0 24 24" focusable="false">{!! $processIcons[$number] ?? $processIcons[9] !!}</svg>
+        <svg viewBox="0 0 24 24" focusable="false">{!! $isDone ? $checkIcon : ($processIcons[$number] ?? $processIcons[9]) !!}</svg>
       </span>
       <span class="consultation-process__copy">
         <strong>{{ $label }}</strong>

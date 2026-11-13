@@ -27,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-gpmo', fn (User $user) => $user->isAdministrator());
         Gate::define('access-client-portal', fn (User $user) => $user->isClient());
         Gate::define('access-attorney-portal', fn (User $user) => $user->isAttorney());
-        Gate::define('verify-gpmo-account', fn (User $user) => $user->isClient() || $user->isAttorney());
 
         RateLimiter::for('admin-login', function (Request $request) {
             return Limit::perMinute(5)

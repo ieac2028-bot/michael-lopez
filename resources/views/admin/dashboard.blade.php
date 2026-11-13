@@ -3,23 +3,28 @@
 @section('title', 'Admin dashboard')
 
 @section('content')
-  <div class="admin-page-head">
+  <div class="admin-page-head admin-hero">
     <div>
-      <div class="eyebrow">GPMO STAFF</div>
-      <h1 class="page-title">Dashboard</h1>
-      <p class="lead">A quick view of new inquiries, active matters, and attorney availability.</p>
+      <div class="eyebrow">GPMO STAFF CONSOLE</div>
+      <h1 class="page-title">Welcome back, {{ auth()->user()->name }}</h1>
+      <p class="lead">{{ now()->format('l, F j, Y') }} · A quick view of new inquiries, active matters, and attorney availability.</p>
     </div>
-    <form method="POST" action="{{ route('admin.logout') }}">@csrf<button class="btn-ghost" type="submit">Sign out</button></form>
+    <nav class="admin-quicklinks" aria-label="Jump to section">
+      <a href="#admin-inquiries">Inquiries @if($pendingInquiryCount)<b>{{ $pendingInquiryCount }}</b>@endif</a>
+      <a href="#admin-cases">Cases</a>
+      <a href="#admin-attorneys">Attorneys</a>
+      <a href="#admin-accounts">Admins</a>
+    </nav>
   </div>
 
   @if(session('admin_status'))<div class="glance-card admin-flash" role="status">{{ session('admin_status') }}</div>@endif
   @if($errors->any())<div class="glance-card admin-errors" role="alert">{{ $errors->first() }}</div>@endif
 
   <section class="admin-metrics" aria-label="Dashboard overview">
-    <a class="admin-metric" href="#admin-inquiries"><span>Needs review</span><strong>{{ $pendingInquiryCount }}</strong><small>inquiries</small></a>
-    <a class="admin-metric" href="#admin-cases"><span>In progress</span><strong>{{ $openCaseCount }}</strong><small>matters</small></a>
-    <a class="admin-metric" href="#admin-attorneys"><span>Available</span><strong>{{ $availableAttorneyCount }}</strong><small>attorneys</small></a>
-    <a class="admin-metric" href="#admin-cases"><span>Total</span><strong>{{ $cases->count() }}</strong><small>cases</small></a>
+    <a class="admin-metric admin-metric--review" href="#admin-inquiries"><i class="admin-metric__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></i><span>Needs review</span><strong>{{ $pendingInquiryCount }}</strong><small>inquiries</small></a>
+    <a class="admin-metric admin-metric--progress" href="#admin-cases"><i class="admin-metric__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3M3 13h18"/></svg></i><span>In progress</span><strong>{{ $openCaseCount }}</strong><small>matters</small></a>
+    <a class="admin-metric admin-metric--available" href="#admin-attorneys"><i class="admin-metric__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></i><span>Available</span><strong>{{ $availableAttorneyCount }}</strong><small>attorneys</small></a>
+    <a class="admin-metric admin-metric--total" href="#admin-cases"><i class="admin-metric__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg></i><span>Total</span><strong>{{ $cases->count() }}</strong><small>cases</small></a>
   </section>
 
   <section class="admin-section" id="admin-inquiries" aria-labelledby="admin-inquiries-title" data-inquiry-inbox data-poll-url="{{ route('admin.inquiries.poll') }}" data-latest-id="{{ $inquiries->max('id') ?? 0 }}">
@@ -28,7 +33,7 @@
       <article class="admin-card">
         <div class="admin-card-head">
           <div><h3>{{ $inquiry->full_name }}</h3><p>{{ $inquiry->practiceArea?->name ?? 'General inquiry' }} · {{ $inquiry->created_at->format('M j, Y') }} · {{ $inquiry->email }}</p></div>
-          <span class="admin-status-pill">{{ ucfirst($inquiry->status) }}</span>
+          <span class="admin-status-pill admin-status-pill--{{ $inquiry->status }}">{{ ucfirst($inquiry->status) }}</span>
         </div>
         <details class="admin-record-details" @if((int) session('expanded_inquiry_id') === $inquiry->id) open @endif>
           <summary>Review details and manage referral</summary>
@@ -123,7 +128,7 @@
     <div class="admin-section-head"><div><div class="eyebrow">CASEWORK</div><h2 id="admin-cases-title">Case tracking</h2></div><span>{{ $cases->count() }} total</span></div>
     @forelse($cases as $case)
       <article class="admin-card">
-        <div class="admin-card-head"><div><h3>{{ $case->reference_no }}</h3><p>{{ $case->practiceArea?->name ?? 'Practice area not set' }} · {{ $case->attorney?->name ?? 'Unassigned' }} · Updated {{ $case->updated_at->format('M j, Y') }}</p></div><span class="admin-status-pill">{{ ucfirst(str_replace('_', ' ', $case->status ?? 'active')) }}</span></div>
+        <div class="admin-card-head"><div><h3>{{ $case->reference_no }}</h3><p>{{ $case->practiceArea?->name ?? 'Practice area not set' }} · {{ $case->attorney?->name ?? 'Unassigned' }} · Updated {{ $case->updated_at->format('M j, Y') }}</p></div><span class="admin-status-pill admin-status-pill--{{ $case->status ?? 'active' }}">{{ ucfirst(str_replace('_', ' ', $case->status ?? 'active')) }}</span></div>
         <details class="admin-record-details">
           <summary>View case details and update progress</summary>
           <p class="admin-case-title">{{ $case->title }}</p>
@@ -169,12 +174,14 @@
         </form>
         <div class="admin-attorney-account">
           @if($attorney->account)
-            <p>Attorney login: <strong>{{ $attorney->account->email }}</strong> · {{ $attorney->account->hasVerifiedEmail() ? 'Email verified' : 'Awaiting password setup and email verification' }}</p>
+            <p>Attorney login: <strong>{{ $attorney->account->email }}</strong> · Login account created</p>
           @else
             <form class="admin-inline-form" method="POST" action="{{ route('admin.attorneys.account.store', $attorney) }}">
               @csrf
               <label>Attorney account email <input type="email" name="email" value="{{ old('email') }}" autocomplete="email" required maxlength="150"></label>
-              <button type="submit" class="btn-primary">Create login and email setup link</button>
+              <label>Initial password<input type="password" name="password" autocomplete="new-password" minlength="12" required></label>
+              <label>Confirm password<input type="password" name="password_confirmation" autocomplete="new-password" minlength="12" required></label>
+              <button type="submit" class="btn-primary">Create login</button>
             </form>
           @endif
         </div>
@@ -182,5 +189,51 @@
       @endforeach
     </div>
     </details>
+  </section>
+
+  <section class="admin-section" id="admin-accounts" aria-labelledby="admin-accounts-title">
+    <link rel="stylesheet" href="{{ asset('css/admin-accounts.css') }}?v={{ filemtime(public_path('css/admin-accounts.css')) }}">
+    <div class="admin-section-head"><div><div class="eyebrow">ACCESS</div><h2 id="admin-accounts-title">Administrator accounts</h2></div><span>{{ $admins->whereNull('deactivated_at')->count() }} active</span></div>
+    <p class="aa-note">Manage who can sign in to this console. Only signed-in administrators can add or deactivate administrators, and there is no public admin sign-up.</p>
+
+    <div class="aa-invite">
+      <div>
+        <h3>Invite an administrator</h3>
+        <p>They receive an email with a secure, time-limited link to choose their own password, so no password is ever shared.</p>
+      </div>
+      <form class="aa-invite__form" method="POST" action="{{ route('admin.admins.store') }}">
+        @csrf
+        <div class="aa-field"><label for="aa-name">Full name</label><input id="aa-name" type="text" name="name" value="{{ old('name') }}" placeholder="e.g. Maria Santos" autocomplete="off" required maxlength="150"></div>
+        <div class="aa-field"><label for="aa-email">Work email</label><input id="aa-email" type="email" name="email" value="{{ old('email') }}" placeholder="name@yourfirm.com" autocomplete="off" required maxlength="150"></div>
+        <button type="submit" class="aa-btn aa-btn--primary"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>Send invitation</button>
+      </form>
+    </div>
+
+    <h3 class="aa-list-title">Team access <span>{{ $admins->count() }}</span></h3>
+    <ul class="aa-list">
+      @foreach($admins as $adminUser)
+        @php
+          $isSelf = $adminUser->is(auth()->user());
+          $initials = \Illuminate\Support\Str::of($adminUser->name)->explode(' ')->filter()->map(fn ($part) => \Illuminate\Support\Str::substr($part, 0, 1))->take(2)->implode('');
+          $state = $adminUser->isDeactivated() ? 'off' : (! $adminUser->email_verified_at ? 'pending' : 'active');
+        @endphp
+        <li class="aa-row{{ $state === 'off' ? ' is-off' : '' }}">
+          <span class="aa-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::upper($initials) }}</span>
+          <div class="aa-who"><strong>{{ $adminUser->name }}@if($isSelf)<span class="aa-you">You</span>@endif</strong><span>{{ $adminUser->email }}</span></div>
+          <span class="aa-meta">Added {{ $adminUser->created_at?->format('M j, Y') }}</span>
+          <span class="aa-badge aa-badge--{{ $state }}">{{ $state === 'off' ? 'Deactivated' : ($state === 'pending' ? 'Invitation sent' : 'Active') }}</span>
+          <div class="aa-actions">
+            @if($state === 'off')
+              <form method="POST" action="{{ route('admin.admins.reactivate', $adminUser) }}">@csrf<button type="submit" class="aa-btn">Reactivate</button></form>
+            @elseif($state === 'pending')
+              <form method="POST" action="{{ route('admin.admins.invite.resend', $adminUser) }}">@csrf<button type="submit" class="aa-btn">Resend link</button></form>
+            @endif
+            @if($state !== 'off' && ! $isSelf)
+              <form method="POST" action="{{ route('admin.admins.deactivate', $adminUser) }}" onsubmit="return confirm('Deactivate this administrator? They will lose access immediately.');">@csrf<button type="submit" class="aa-btn aa-btn--danger">Deactivate</button></form>
+            @endif
+          </div>
+        </li>
+      @endforeach
+    </ul>
   </section>
 @endsection

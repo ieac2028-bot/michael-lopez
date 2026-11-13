@@ -6,8 +6,7 @@ use App\Models\Attorney;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
 
 class AttorneyAccountController extends Controller
@@ -23,6 +22,7 @@ class AttorneyAccountController extends Controller
                     }
                 },
             ],
+            'password' => ['required', 'confirmed', Password::min(12)->mixedCase()->numbers()->symbols()],
         ]);
 
         if ($attorney->account()->exists()) {
@@ -32,26 +32,12 @@ class AttorneyAccountController extends Controller
         $user = new User([
             'name' => $attorney->name,
             'email' => Str::lower($data['email']),
-            'password' => Hash::make(Str::random(64)),
+            'password' => $data['password'],
             'is_admin' => false,
         ]);
         $user->forceFill(['role' => 'attorney', 'attorney_id' => $attorney->id]);
         $user->save();
 
-        try {
-            $status = Password::sendResetLink(['email' => $user->email]);
-        } catch (\Throwable $exception) {
-            report($exception);
-            $user->delete();
-
-            return back()->withErrors(['attorney_account' => 'The invitation email could not be sent. Check mail configuration and try again.']);
-        }
-
-        if ($status !== Password::RESET_LINK_SENT) {
-            $user->delete();
-            return back()->withErrors(['attorney_account' => 'The invitation email could not be sent. Check mail configuration and try again.']);
-        }
-
-        return back()->with('admin_status', 'Attorney account created. A secure password setup link was emailed to '.$user->email.'.');
+        return back()->with('admin_status', 'Attorney login account created. Share the initial password securely with the attorney.');
     }
 }

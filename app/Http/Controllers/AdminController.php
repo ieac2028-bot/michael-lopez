@@ -7,6 +7,7 @@ use App\Models\CaseRecord;
 use App\Models\Inquiry;
 use App\Models\InquiryMessage;
 use App\Models\PracticeArea;
+use App\Models\User;
 use App\Services\AttorneyMatchingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,12 +28,14 @@ class AdminController extends Controller
             ->orderByDesc('years_experience')
             ->get();
         $practiceAreas = PracticeArea::orderBy('sort_order')->get();
+        $admins = User::query()->administrators()->orderBy('name')->get();
 
         return view('admin.dashboard', [
             'inquiries' => $inquiries,
             'cases' => $cases,
             'attorneys' => $attorneys,
             'practiceAreas' => $practiceAreas,
+            'admins' => $admins,
             'pendingInquiryCount' => $inquiries->whereIn('status', ['new', 'reviewing', 'clarifying', 'referred'])->count(),
             'openCaseCount' => $cases->whereIn('status', ['active', 'on_hold'])->count(),
             'availableAttorneyCount' => $attorneys->where('is_available', true)->count(),
