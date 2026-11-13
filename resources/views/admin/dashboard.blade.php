@@ -9,13 +9,6 @@
       <h1 class="page-title">Welcome back, {{ auth()->user()->name }}</h1>
       <p class="lead">{{ now()->format('l, F j, Y') }} · A quick view of new inquiries, active matters, and attorney availability.</p>
     </div>
-    <nav class="admin-quicklinks" aria-label="Jump to section">
-      <a href="#admin-inquiries">Inquiries @if($pendingInquiryCount)<b>{{ $pendingInquiryCount }}</b>@endif</a>
-      <a href="#admin-cases">Cases</a>
-      <a href="#admin-attorneys">Attorney availability</a>
-      <a href="#admin-attorney-accounts">Attorney accounts</a>
-      <a href="#admin-accounts">Admins</a>
-    </nav>
   </div>
 
   @if(session('admin_status'))<div class="glance-card admin-flash" role="status">{{ session('admin_status') }}</div>@endif
@@ -37,7 +30,16 @@
     <a class="admin-metric admin-metric--total" href="#admin-cases"><i class="admin-metric__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg></i><span>Total</span><strong>{{ $cases->count() }}</strong><small>cases</small></a>
   </section>
 
-  <section class="admin-section" id="admin-inquiries" aria-labelledby="admin-inquiries-title" data-inquiry-inbox data-poll-url="{{ route('admin.inquiries.poll') }}" data-latest-id="{{ $inquiries->max('id') ?? 0 }}">
+  <div class="admin-tabs" data-admin-tabs>
+    <div class="admin-tab-list" role="tablist" aria-label="Admin dashboard sections" aria-orientation="horizontal">
+      <button class="admin-tab" id="tab-admin-inquiries" type="button" role="tab" aria-controls="admin-inquiries" aria-selected="true">Recent inquiries @if($pendingInquiryCount)<b>{{ $pendingInquiryCount }}</b>@endif</button>
+      <button class="admin-tab" id="tab-admin-cases" type="button" role="tab" aria-controls="admin-cases" aria-selected="false" tabindex="-1">Case tracking</button>
+      <button class="admin-tab" id="tab-admin-attorneys" type="button" role="tab" aria-controls="admin-attorneys" aria-selected="false" tabindex="-1">Attorney availability</button>
+      <button class="admin-tab" id="tab-admin-attorney-accounts" type="button" role="tab" aria-controls="admin-attorney-accounts" aria-selected="false" tabindex="-1">Attorney accounts</button>
+      <button class="admin-tab" id="tab-admin-accounts" type="button" role="tab" aria-controls="admin-accounts" aria-selected="false" tabindex="-1">Administrator accounts</button>
+    </div>
+
+  <section class="admin-section admin-tab-panel" id="admin-inquiries" role="tabpanel" aria-labelledby="tab-admin-inquiries" data-inquiry-inbox data-poll-url="{{ route('admin.inquiries.poll') }}" data-latest-id="{{ $inquiries->max('id') ?? 0 }}">
     <div class="admin-section-head"><div><div class="eyebrow">INBOX</div><h2 id="admin-inquiries-title">Recent inquiries</h2></div><span>{{ $inquiries->count() }} total · {{ $pendingInquiryCount }} to review</span></div>
     @forelse($inquiries as $inquiry)
       <article class="admin-card">
@@ -134,7 +136,7 @@
     @endforelse
   </section>
 
-  <section class="admin-section" id="admin-cases" aria-labelledby="admin-cases-title">
+  <section class="admin-section admin-tab-panel" id="admin-cases" role="tabpanel" aria-labelledby="tab-admin-cases" hidden>
     <div class="admin-section-head"><div><div class="eyebrow">CASEWORK</div><h2 id="admin-cases-title">Case tracking</h2></div><span>{{ $cases->count() }} total</span></div>
     @forelse($cases as $case)
       <article class="admin-card">
@@ -165,7 +167,7 @@
     @endforelse
   </section>
 
-  <section class="admin-section" id="admin-attorneys" aria-labelledby="admin-attorneys-title">
+  <section class="admin-section admin-tab-panel" id="admin-attorneys" role="tabpanel" aria-labelledby="tab-admin-attorneys" hidden>
     <details class="admin-attorney-section">
     <summary class="admin-section-head"><div><div class="eyebrow">TEAM · MATCHING</div><h2 id="admin-attorneys-title">Attorney availability</h2></div><span>{{ $attorneys->count() }} profiles · {{ $availableAttorneyCount }} available</span></summary>
     <p class="admin-section-note">Manage whether attorney profiles can receive new matches, their service areas, and indicative budget range. Account creation is managed separately below.</p>
@@ -188,7 +190,7 @@
     </details>
   </section>
 
-  <section class="admin-section" id="admin-attorney-accounts" aria-labelledby="admin-attorney-accounts-title">
+  <section class="admin-section admin-tab-panel" id="admin-attorney-accounts" role="tabpanel" aria-labelledby="tab-admin-attorney-accounts" hidden>
     <details class="admin-attorney-section" @if($errors->has('display_name') || $errors->has('attorney_email') || $errors->has('password') || $errors->has('attorney_account')) open @endif>
     <summary class="admin-section-head"><div><div class="eyebrow">TEAM · ACCESS</div><h2 id="admin-attorney-accounts-title">Attorney account creation</h2></div><span>{{ $attorneys->filter(fn ($attorney) => ! $attorney->account)->count() }} profiles need an account</span></summary>
     <p class="admin-section-note">Create login credentials for an existing attorney profile. New accounts are linked to the profile selected here.</p>
@@ -214,7 +216,7 @@
     </details>
   </section>
 
-  <section class="admin-section" id="admin-accounts" aria-labelledby="admin-accounts-title">
+  <section class="admin-section admin-tab-panel" id="admin-accounts" role="tabpanel" aria-labelledby="tab-admin-accounts" hidden>
     <link rel="stylesheet" href="{{ asset('css/admin-accounts.css') }}?v={{ filemtime(public_path('css/admin-accounts.css')) }}">
     <div class="admin-section-head"><div><div class="eyebrow">ACCESS</div><h2 id="admin-accounts-title">Administrator accounts</h2></div><span>{{ $admins->whereNull('deactivated_at')->count() }} active</span></div>
     <p class="aa-note">Manage who can sign in to this console. Only signed-in administrators can add or deactivate administrators, and there is no public admin sign-up.</p>
@@ -259,4 +261,5 @@
       @endforeach
     </ul>
   </section>
+  </div>
 @endsection
